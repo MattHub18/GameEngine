@@ -1,5 +1,8 @@
 package com.company.graphic;
 
+import com.company.graphic.major.Controller;
+import com.company.graphic.major.Window;
+
 public class GameLoop implements Runnable {
     public static final int WIDTH = 160;
     public static final int HEIGHT = 90;
@@ -9,6 +12,9 @@ public class GameLoop implements Runnable {
 
     private Thread gameThread;
 
+    private Window window;
+    private Controller controller;
+
     public GameLoop() {
 
     }
@@ -16,6 +22,9 @@ public class GameLoop implements Runnable {
     public synchronized void start() {
         if (running)
             return;
+
+        window = new Window(this);
+
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -79,5 +88,9 @@ public class GameLoop implements Runnable {
 
     public String getTitle() {
         return title;
+    }
+
+    public Window getWindow() {
+        return window;
     }
 }
