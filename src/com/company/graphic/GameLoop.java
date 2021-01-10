@@ -1,6 +1,7 @@
 package com.company.graphic;
 
 import com.company.graphic.major.Controller;
+import com.company.graphic.major.Render;
 import com.company.graphic.major.Window;
 
 public class GameLoop implements Runnable {
@@ -12,18 +13,22 @@ public class GameLoop implements Runnable {
 
     private Thread gameThread;
 
+    private Graphic game;
+
     private Window window;
     private Controller controller;
+    private Render render;
 
-    public GameLoop() {
-
+    public GameLoop(Graphic game) {
+        window = new Window(this);
+        controller = new Controller(this);
+        render = new Render(this);
+        this.game = game;
     }
 
     public synchronized void start() {
         if (running)
             return;
-
-        window = new Window(this);
 
         gameThread = new Thread(this);
         gameThread.start();
@@ -40,7 +45,7 @@ public class GameLoop implements Runnable {
     public void run() {
         running = true;
 
-        boolean render;
+        boolean rendering;
         double startTime;
         double finishTime = System.nanoTime() / 1000000000.0;
         double passedTime;
@@ -51,7 +56,7 @@ public class GameLoop implements Runnable {
         int fps;
 
         while (running) {
-            render = true;
+            rendering = true;
 
             startTime = System.nanoTime() / 1000000000.0;
             passedTime = startTime - finishTime;
@@ -61,9 +66,11 @@ public class GameLoop implements Runnable {
 
             while (remainingTime >= UPDATE_TIME) {
                 remainingTime -= UPDATE_TIME;
-                render = false;
+                rendering = false;
 
                 //TODO:UPDATE
+                game.update(this, (float) UPDATE_TIME);
+                controller.update();
 
                 if (frameTime >= 1.0) {
                     frameTime = 0;
@@ -73,8 +80,11 @@ public class GameLoop implements Runnable {
                 }
             }
 
-            if (render) {
+            if (rendering) {
                 //TODO:RENDER
+                render.clear();
+                game.render(this, render);
+                window.update();
                 frames++;
             }
 
