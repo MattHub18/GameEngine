@@ -103,4 +103,8 @@ public class GameLoop implements Runnable {
     public Window getWindow() {
         return window;
     }
+
+    public Controller getController() {
+        return controller;
+    }
 }
