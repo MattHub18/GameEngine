@@ -33,6 +33,10 @@ public class Image {
 
     }
 
+    public int[] getPixels() {
+        return pixels;
+    }
+
     public int getWidth() {
         return width;
     }
