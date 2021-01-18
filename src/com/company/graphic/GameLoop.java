@@ -81,9 +81,9 @@ public class GameLoop implements Runnable {
             }
 
             if (rendering) {
-                //TODO:RENDER
                 render.clear();
                 game.render(this, render);
+                render.process();
                 window.update();
                 frames++;
             }
