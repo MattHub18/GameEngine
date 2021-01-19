@@ -28,6 +28,8 @@ public class Animation extends Image {
                 pixels[x + y * tileWidth] = this.getPixels()[(x + row * tileWidth) + (y + column * tileHeight) * this.getWidth()];
             }
         }
-        return new Image(pixels, tileWidth, tileHeight);
+        Image img = new Image(pixels, tileWidth, tileHeight);
+        img.setLightBlock(getLightBlock());
+        return img;
     }
 }

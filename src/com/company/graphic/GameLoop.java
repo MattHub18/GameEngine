@@ -68,7 +68,6 @@ public class GameLoop implements Runnable {
                 remainingTime -= UPDATE_TIME;
                 rendering = false;
 
-                //TODO:UPDATE
                 game.update(this, (float) UPDATE_TIME);
                 controller.update();
 
