@@ -151,7 +151,7 @@ public class Render {
         }
     }
 
-    public void drawImageTile(Animation image, int offX, int offY, int tileX, int tileY) {
+    public void drawAnimation(Animation image, int offX, int offY, int tileX, int tileY) {
 
         if (image.isAlpha() && !processing) {
             images.add(new ImageWrapper(image.getAnimation(tileX, tileY), zDepth, offX, offY));
