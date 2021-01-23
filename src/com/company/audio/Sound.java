@@ -24,11 +24,11 @@ public class Sound {
             return;
         stop();
         clip.setFramePosition(0);
-        while (!clip.isRunning())
+        if (!clip.isRunning())
             clip.start();
     }
 
-    public void stop() {
+    private void stop() {
         if (clip.isRunning())
             clip.stop();
     }

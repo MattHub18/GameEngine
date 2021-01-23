@@ -4,6 +4,8 @@ import com.company.graphic.GameLoop;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -23,7 +25,13 @@ public class Window {
         canvas.setMinimumSize(dim);
 
         JFrame frame = new JFrame(gl.getTitle());
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                gl.setRunning(false);
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            }
+        });
         frame.setLayout(new BorderLayout());
         frame.add(canvas, BorderLayout.CENTER);
         frame.pack();

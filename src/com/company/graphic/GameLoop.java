@@ -13,11 +13,11 @@ public class GameLoop implements Runnable {
 
     private Thread gameThread;
 
-    private Graphic game;
+    private final Graphic game;
 
-    private Window window;
-    private Controller controller;
-    private Render render;
+    private final Window window;
+    private final Controller controller;
+    private final Render render;
 
     public GameLoop(Graphic game) {
         window = new Window(this);
@@ -39,8 +39,6 @@ public class GameLoop implements Runnable {
             return;
         gameThread.interrupt();
     }
-
-
     @Override
     public void run() {
         running = true;
@@ -105,5 +103,9 @@ public class GameLoop implements Runnable {
 
     public Controller getController() {
         return controller;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }

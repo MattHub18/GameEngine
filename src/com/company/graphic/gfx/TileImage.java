@@ -1,11 +1,11 @@
 package com.company.graphic.gfx;
 
-public class Animation extends Image {
+public class TileImage extends Image {
 
     private final int tileWidth;
     private final int tileHeight;
 
-    public Animation(String path, int tileW, int tileH) {
+    public TileImage(String path, int tileW, int tileH) {
         super(path);
         this.tileWidth = tileW;
         this.tileHeight = tileH;
@@ -21,7 +21,7 @@ public class Animation extends Image {
         return tileHeight;
     }
 
-    public Image getAnimation(int row, int column) {
+    public Image getTile(int row, int column) {
         int[] pixels = new int[tileWidth * tileHeight];
         for (int y = 0; y < tileHeight; y++) {
             for (int x = 0; x < tileWidth; x++) {
@@ -29,7 +29,7 @@ public class Animation extends Image {
             }
         }
         Image img = new Image(pixels, tileWidth, tileHeight);
-        img.setLightBlock(getLightBlock());
+        img.setBrightness(getBrightness());
         return img;
     }
 }

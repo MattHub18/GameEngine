@@ -1,9 +1,9 @@
 package com.company.graphic.gfx;
 
 public class LightWrapper {
-    private Light light;
-    private int x;
-    private int y;
+    private final Light light;
+    private final int x;
+    private final int y;
 
     public LightWrapper(Light light, int x, int y) {
         this.light = light;

@@ -8,10 +8,9 @@ import java.io.IOException;
 public class Image {
     private int width;
     private int height;
-    private boolean alpha = false;
     private int[] pixels;
-
-    private int lightBlock = Light.NONE;
+    private int brightness = Light.NONE;
+    private boolean alpha = false;
 
     public Image(String path) {
         BufferedImage image = null;
@@ -47,19 +46,19 @@ public class Image {
         return height;
     }
 
+    public int getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(int brightness) {
+        this.brightness = brightness;
+    }
+
     public boolean isAlpha() {
         return alpha;
     }
 
     public void setAlpha(boolean alpha) {
         this.alpha = alpha;
-    }
-
-    public int getLightBlock() {
-        return lightBlock;
-    }
-
-    public void setLightBlock(int lightBlock) {
-        this.lightBlock = lightBlock;
     }
 }

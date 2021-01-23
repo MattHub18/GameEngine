@@ -4,14 +4,12 @@ public class Light {
     public static final int NONE = 0;
     public static final int FULL = 1;
 
-    private int radius;
-    private int color;
-    private int[] lightPixels;
+    private final int radius;
+    private final int[] lightPixels;
 
     public Light(int radius, int color) {
         this.radius = radius;
         int diameter = radius * 2;
-        this.color = color;
         lightPixels = new int[diameter * diameter];
 
         for (int y = 0; y < diameter; y++) {

@@ -8,33 +8,30 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Render {
-    private int width;
-    private int height;
-    private int[] pixels;
-
-    private final int[] depths;
-    private int zDepth = 0;
+    private final int WIDTH;
+    private final int HEIGHT;
+    private final int[] pixels;
 
     private final ArrayList<ImageWrapper> images;
     private final ArrayList<LightWrapper> lights;
-
     private final int[] lightPixels;
-    private final int[] lightBlock;
+    private final int[] brightness;
+
+    private int depth = 0;
+    private final int[] depths;
 
     private boolean processing = false;
 
     public Render(GameLoop gl) {
-        width = GameLoop.WIDTH;
-        height = GameLoop.HEIGHT;
+        WIDTH = GameLoop.WIDTH;
+        HEIGHT = GameLoop.HEIGHT;
         pixels = ((DataBufferInt) gl.getWindow().getImage().getRaster().getDataBuffer()).getData();
-
-        depths = new int[pixels.length];
 
         images = new ArrayList<>();
         lights = new ArrayList<>();
-
         lightPixels = new int[pixels.length];
-        lightBlock = new int[pixels.length];
+        depths = new int[pixels.length];
+        brightness = new int[pixels.length];
     }
 
     public void process() {
@@ -42,12 +39,12 @@ public class Render {
         images.sort(Comparator.comparingInt(ImageWrapper::getDepth));
 
         for (ImageWrapper img : images) {
-            zDepth = img.getDepth();
+            depth = img.getDepth();
             drawImage(img.getImage(), img.getOffX(), img.getOffY());
         }
 
         for (LightWrapper lgh : lights) {
-            drawLightRequest(lgh.getLight(), lgh.getX(), lgh.getY());
+            drawLight(lgh.getLight(), lgh.getX(), lgh.getY());
         }
 
         for (int i = 0; i < pixels.length; i++) {
@@ -66,32 +63,8 @@ public class Render {
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = 0;
             depths[i] = 0;
-            lightPixels[i] = 0;
-            lightBlock[i] = 0;
-        }
-    }
-
-    private void setPixel(int x, int y, int value) {
-        int alpha = (value >> 24) & 0xff;
-
-        if ((x < 0 || x >= width || y < 0 || y >= height) || alpha == 0)
-            return;
-
-        int index = x + y * width;
-
-        if (depths[index] > zDepth)//TODO true solo se printo in ordine inverso di chiamata
-            return;
-
-        depths[index] = zDepth;
-
-        if (alpha == 255)
-            pixels[index] = value;
-        else {
-            int pixelColor = pixels[index];
-            int red = ((pixelColor >> 16) & 0xff) - (int) ((((pixelColor >> 16) & 0xff) - ((value >> 16) & 0xff)) * (alpha / 255f));
-            int green = ((pixelColor >> 8) & 0xff) - (int) ((((pixelColor >> 8) & 0xff) - ((value >> 8) & 0xff)) * (alpha / 255f));
-            int blue = ((pixelColor) & 0xff) - (int) ((((pixelColor) & 0xff) - ((value) & 0xff)) * (alpha / 255f));
-            pixels[index] = (red << 16 | green << 8 | blue);
+            lightPixels[i] = 0xff6b6b6b;
+            brightness[i] = 0;
         }
     }
 
@@ -106,33 +79,27 @@ public class Render {
             setPixel(x + offX, offY, color);
             setPixel(x + offX, offY + height, color);
         }
-
     }
 
     public void drawFullRectangle(int offX, int offY, int width, int height, int color) {
 
-        if (offX < -width || offX >= width)
-            return;
-        if (offY < -height || offY >= this.height)
+        if (outOfBounds(offX, -width, WIDTH, offY, -height, HEIGHT))
             return;
 
         int startX = 0;
         int startY = 0;
-        int newWidth = width;
-        int newHeight = height;
-
 
         if (offX < 0)
             startX -= offX;
         if (offY < 0)
             startY -= offY;
-        if (width + offX >= this.width)
-            newWidth -= (newWidth + offX - this.width);
-        if (height + offY >= this.height)
-            newHeight -= (newHeight + offY - this.height);
+        if (width + offX >= WIDTH)
+            width -= (width + offX - WIDTH);
+        if (height + offY >= HEIGHT)
+            height -= (height + offY - HEIGHT);
 
-        for (int y = startY; y < newHeight; y++) {
-            for (int x = startX; x < newWidth; x++) {
+        for (int y = startY; y < height; y++) {
+            for (int x = startX; x < width; x++) {
                 setPixel(x + offX, y + offY, color);
             }
         }
@@ -140,13 +107,11 @@ public class Render {
 
     public void drawImage(Image image, int offX, int offY) {
         if (image.isAlpha() && !processing) {
-            images.add(new ImageWrapper(image, zDepth, offX, offY));
+            images.add(new ImageWrapper(image, depth, offX, offY));
             return;
         }
 
-        if (offX < -image.getWidth() || offX >= width)
-            return;
-        if (offY < -image.getHeight() || offY >= height)
+        if (outOfBounds(offX, -image.getWidth(), WIDTH, offY, -image.getHeight(), HEIGHT))
             return;
 
         int startX = 0;
@@ -154,54 +119,19 @@ public class Render {
         int width = image.getWidth();
         int height = image.getHeight();
 
-
         if (offX < 0)
             startX -= offX;
         if (offY < 0)
             startY -= offY;
-        if (width + offX >= this.width)
-            width -= (width + offX - this.width);
-        if (height + offY >= this.height)
-            height -= (height + offY - this.height);
+        if (width + offX >= WIDTH)
+            width -= (width + offX - WIDTH);
+        if (height + offY >= HEIGHT)
+            height -= (height + offY - HEIGHT);
 
         for (int y = startY; y < height; y++) {
             for (int x = startX; x < width; x++) {
                 setPixel(x + offX, y + offY, image.getPixels()[x + y * image.getWidth()]);
-                setLightBlock(x + offX, y + offY, image.getLightBlock());
-            }
-        }
-    }
-
-    public void drawAnimation(Animation image, int offX, int offY, int tileX, int tileY) {
-
-        if (image.isAlpha() && !processing) {
-            images.add(new ImageWrapper(image.getAnimation(tileX, tileY), zDepth, offX, offY));
-            return;
-        }
-
-        if (offX < -image.getWidth() || offX >= this.width)
-            return;
-        if (offY < -image.getHeight() || offY >= this.height)
-            return;
-
-        int startX = 0;
-        int startY = 0;
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        if (offX < 0)
-            startX -= offX;
-        if (offY < 0)
-            startY -= offY;
-        if (width + offX >= this.width)
-            width -= (width + offX - this.width);
-        if (height + offY >= this.height)
-            height -= (height + offY - this.height);
-
-        for (int y = startY; y < height; y++) {
-            for (int x = startX; x < width; x++) {
-                setPixel(x + offX, y + offY, image.getPixels()[(x + tileX * image.getWidth()) + (y + tileY * image.getHeight()) * image.getWidth()]);
-                setLightBlock(x + offX, y + offY, image.getLightBlock());
+                setBrightness(x + offX, y + offY, image.getBrightness());
             }
         }
     }
@@ -222,11 +152,11 @@ public class Render {
         }
     }
 
-    public void drawLight(Light light, int offX, int offY) {
+    public void addLight(Light light, int offX, int offY) {
         lights.add(new LightWrapper(light, offX, offY));
     }
 
-    private void drawLightRequest(Light light, int offX, int offY) {
+    private void drawLight(Light light, int offX, int offY) {
         for (int i = 0; i <= light.getDiameter(); i++) {
             drawLightLine(light, light.getRadius(), light.getRadius(), i, 0, offX, offY);
             drawLightLine(light, light.getRadius(), light.getRadius(), i, light.getDiameter(), offX, offY);
@@ -248,7 +178,7 @@ public class Render {
             int screenX = x0 - light.getRadius() + offX;
             int screenY = y0 - light.getRadius() + offY;
 
-            if (screenX < 0 || screenX >= width || screenY < 0 || screenY >= height)
+            if (outOfBounds(screenX, 0, WIDTH, screenY, 0, HEIGHT))
                 return;
 
             int lightColor = light.getLightValue(x0, y0);
@@ -256,10 +186,10 @@ public class Render {
             if (lightColor == 0)
                 return;
 
-            if (lightBlock[screenX + screenY * width] == Light.FULL)
+            if (brightness[screenX + screenY * WIDTH] == Light.FULL)
                 return;
 
-            setLightMap(screenX, screenY, lightColor);
+            setLightPixels(screenX, screenY, lightColor);
 
             if (x0 == x1 && y0 == y1)
                 break;
@@ -275,24 +205,55 @@ public class Render {
         }
     }
 
-    private void setLightMap(int x, int y, int value) {
-        if (x < 0 || x >= width || y < 0 || y >= height)
+    private void setPixel(int x, int y, int value) {
+        int alpha = (value >> 24) & 0xff;
+
+        if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT) || alpha == 0)
             return;
 
-        int baseColor = lightPixels[x + y * width];
+        int index = x + y * WIDTH;
+
+        if (depths[index] > depth)
+            return;
+
+        depths[index] = depth;
+
+        if (alpha == 255)
+            pixels[index] = value;
+        else {
+            int pixelColor = pixels[index];
+            int red = ((pixelColor >> 16) & 0xff) - (int) ((((pixelColor >> 16) & 0xff) - ((value >> 16) & 0xff)) * (alpha / 255f));
+            int green = ((pixelColor >> 8) & 0xff) - (int) ((((pixelColor >> 8) & 0xff) - ((value >> 8) & 0xff)) * (alpha / 255f));
+            int blue = ((pixelColor) & 0xff) - (int) ((((pixelColor) & 0xff) - ((value) & 0xff)) * (alpha / 255f));
+            pixels[index] = (red << 16 | green << 8 | blue);
+        }
+    }
+
+    private void setLightPixels(int x, int y, int value) {
+        if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT))
+            return;
+
+        int baseColor = lightPixels[x + y * WIDTH];
         int maxRed = Math.max(((baseColor >> 16) & 0xff), ((value >> 16) & 0xff));
         int maxGreen = Math.max(((baseColor >> 8) & 0xff), ((value >> 8) & 0xff));
         int maxBlue = Math.max(((baseColor) & 0xff), ((value) & 0xff));
-        lightPixels[x + y * width] = (maxRed << 16 | maxGreen << 8 | maxBlue);
+        lightPixels[x + y * WIDTH] = (maxRed << 16 | maxGreen << 8 | maxBlue);
 
     }
 
-    private void setLightBlock(int x, int y, int value) {
-        if (x < 0 || x >= width || y < 0 || y >= height)
+    private void setBrightness(int x, int y, int value) {
+        if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT))
             return;
-        if (depths[x + y * width] > zDepth)
+        if (depths[x + y * WIDTH] > depth)
             return;
-        lightBlock[x + y * width] = value;
+        brightness[x + y * WIDTH] = value;
+    }
 
+    private boolean outOfBounds(int width, int lw, int rw, int height, int lh, int rh) {
+        return width < lw || width >= rw || height < lh || height >= rh;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 }
