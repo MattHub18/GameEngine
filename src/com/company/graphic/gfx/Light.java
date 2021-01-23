@@ -1,9 +1,6 @@
 package com.company.graphic.gfx;
 
 public class Light {
-    public static final int NONE = 0;
-    public static final int FULL = 1;
-
     private final int radius;
     private final int[] lightPixels;
 

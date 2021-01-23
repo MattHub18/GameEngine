@@ -15,12 +15,10 @@ public class Render {
     private final ArrayList<ImageWrapper> images;
     private final ArrayList<LightWrapper> lights;
     private final int[] lightPixels;
-    private final int[] brightness;
+    private final boolean[] brightness;
 
     private int depth = 0;
     private final int[] depths;
-
-    private boolean processing = false;
 
     public Render(GameLoop gl) {
         WIDTH = GameLoop.WIDTH;
@@ -31,11 +29,10 @@ public class Render {
         lights = new ArrayList<>();
         lightPixels = new int[pixels.length];
         depths = new int[pixels.length];
-        brightness = new int[pixels.length];
+        brightness = new boolean[pixels.length];
     }
 
     public void process() {
-        processing = true;
         images.sort(Comparator.comparingInt(ImageWrapper::getDepth));
 
         for (ImageWrapper img : images) {
@@ -56,7 +53,6 @@ public class Render {
 
         images.clear();
         lights.clear();
-        processing = false;
     }
 
     public void clear() {
@@ -64,7 +60,7 @@ public class Render {
             pixels[i] = 0;
             depths[i] = 0;
             lightPixels[i] = 0xff6b6b6b;
-            brightness[i] = 0;
+            brightness[i] = false;
         }
     }
 
@@ -105,12 +101,11 @@ public class Render {
         }
     }
 
-    public void drawImage(Image image, int offX, int offY) {
-        if (image.isAlpha() && !processing) {
-            images.add(new ImageWrapper(image, depth, offX, offY));
-            return;
-        }
+    public void addImage(Image image, int offX, int offY) {
+        images.add(new ImageWrapper(image, depth, offX, offY));
+    }
 
+    private void drawImage(Image image, int offX, int offY) {
         if (outOfBounds(offX, -image.getWidth(), WIDTH, offY, -image.getHeight(), HEIGHT))
             return;
 
@@ -131,7 +126,7 @@ public class Render {
         for (int y = startY; y < height; y++) {
             for (int x = startX; x < width; x++) {
                 setPixel(x + offX, y + offY, image.getPixels()[x + y * image.getWidth()]);
-                setBrightness(x + offX, y + offY, image.getBrightness());
+                setBrightness(x + offX, y + offY, image.isOpaque());
             }
         }
     }
@@ -186,7 +181,7 @@ public class Render {
             if (lightColor == 0)
                 return;
 
-            if (brightness[screenX + screenY * WIDTH] == Light.FULL)
+            if (brightness[screenX + screenY * WIDTH])
                 return;
 
             setLightPixels(screenX, screenY, lightColor);
@@ -241,7 +236,7 @@ public class Render {
 
     }
 
-    private void setBrightness(int x, int y, int value) {
+    private void setBrightness(int x, int y, boolean value) {
         if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT))
             return;
         if (depths[x + y * WIDTH] > depth)

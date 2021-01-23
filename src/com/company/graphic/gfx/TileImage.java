@@ -29,7 +29,7 @@ public class TileImage extends Image {
             }
         }
         Image img = new Image(pixels, tileWidth, tileHeight);
-        img.setBrightness(getBrightness());
+        img.setOpaque(isOpaque());
         return img;
     }
 }

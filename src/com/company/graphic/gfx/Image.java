@@ -9,8 +9,7 @@ public class Image {
     private int width;
     private int height;
     private int[] pixels;
-    private int brightness = Light.NONE;
-    private boolean alpha = false;
+    private boolean opaque = false;
 
     public Image(String path) {
         BufferedImage image = null;
@@ -46,19 +45,11 @@ public class Image {
         return height;
     }
 
-    public int getBrightness() {
-        return brightness;
+    public boolean isOpaque() {
+        return opaque;
     }
 
-    public void setBrightness(int brightness) {
-        this.brightness = brightness;
-    }
-
-    public boolean isAlpha() {
-        return alpha;
-    }
-
-    public void setAlpha(boolean alpha) {
-        this.alpha = alpha;
+    public void setOpaque(boolean opaque) {
+        this.opaque = opaque;
     }
 }
