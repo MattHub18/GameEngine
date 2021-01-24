@@ -1,6 +1,4 @@
-package com.company.graphic.major;
-
-import com.company.graphic.GameLoop;
+package com.company.graphic.primitives;
 
 import javax.swing.*;
 import java.awt.*;

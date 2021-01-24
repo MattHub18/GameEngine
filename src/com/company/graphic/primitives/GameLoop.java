@@ -1,13 +1,11 @@
-package com.company.graphic;
+package com.company.graphic.primitives;
 
-import com.company.graphic.major.Controller;
-import com.company.graphic.major.Render;
-import com.company.graphic.major.Window;
+import com.company.graphic.Graphic;
 
 public class GameLoop implements Runnable {
     public static final int WIDTH = 160;
     public static final int HEIGHT = 90;
-    public static final float SCALE = 1f;
+    public static final float SCALE = 5f;
     private String title = "GameEngine2D v0.0";
     private boolean running = false;
 

@@ -1,6 +1,5 @@
-package com.company.graphic.major;
+package com.company.graphic.primitives;
 
-import com.company.graphic.GameLoop;
 import com.company.graphic.gfx.*;
 
 import java.awt.image.DataBufferInt;
