@@ -5,8 +5,8 @@ import com.company.physics.basics.Vector;
 public class RigidBody {
     private Vector position;
 
-    public RigidBody(int posX, int posY) {
-        this.position = new Vector(posX, posY);
+    public RigidBody(Vector center) {
+        this.position = new Vector(center);
     }
 
     public Vector getPosition() {

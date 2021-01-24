@@ -6,8 +6,8 @@ public class Circle {
     private int radius;
     private RigidBody body;
 
-    public Circle(int posX, int posY, int radius) {
-        body = new RigidBody(posX, posY);
+    public Circle(Vector center, int radius) {
+        body = new RigidBody(center);
         this.radius = radius;
     }
 
