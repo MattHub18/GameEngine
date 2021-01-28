@@ -1,8 +1,8 @@
 package com.company.physics.basics;
 
 public class Vector {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
 
     public Vector(int x, int y) {
         this.x = x;
@@ -14,30 +14,35 @@ public class Vector {
         y = v.y;
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
     public Vector add(Vector v) {
-        this.x = x + v.x;
-        this.y = y + v.y;
+        this.x += v.x;
+        this.y += v.y;
         return this;
     }
 
     public Vector sub(Vector v) {
-        this.x = x - v.x;
-        this.y = y - v.y;
+        this.x -= v.x;
+        this.y -= v.y;
         return this;
     }
 
     public Vector mul(float value) {
-        this.x = (int) (x * value);
-        this.y = (int) (y * value);
+        this.x *= value;
+        this.y *= value;
         return this;
+    }
+
+    public void zero() {
+        this.x = 0;
+        this.y = 0;
     }
 
 }
