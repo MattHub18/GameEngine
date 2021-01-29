@@ -4,7 +4,7 @@ public class Vector {
     private float x;
     private float y;
 
-    public Vector(int x, int y) {
+    public Vector(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -12,6 +12,14 @@ public class Vector {
     public Vector(Vector v) {
         x = v.x;
         y = v.y;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public float getX() {
@@ -44,5 +52,14 @@ public class Vector {
         this.x = 0;
         this.y = 0;
     }
+
+    public float lengthSquared() {
+        return x * x + y * y;
+    }
+
+    public float dot(Vector v) {
+        return x * v.x + y * v.y;
+    }
+
 
 }

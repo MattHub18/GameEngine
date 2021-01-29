@@ -1,8 +1,9 @@
 package com.company.physics.primitives;
 
 import com.company.physics.basics.Vector;
+import com.company.physics.collisions.Collider;
 
-public class Circle {
+public class Circle implements Collider {
     private int radius;
     private RigidBody body;
 
