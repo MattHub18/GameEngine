@@ -3,9 +3,9 @@ package com.company.physics.primitives;
 import com.company.physics.basics.Vector;
 
 public class RigidBody {
-    private Vector position;
+    private final Vector position;
     private int mass;
-    private Vector resultantForce;
+    private final Vector resultantForce;
 
     public RigidBody(Vector center) {
         this.position = new Vector(center);

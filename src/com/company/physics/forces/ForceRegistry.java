@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ForceRegistry {
-    private List<ForceWrapper> registry;
+    private final List<ForceWrapper> registry;
 
     public ForceRegistry() {
         registry = new ArrayList<>();

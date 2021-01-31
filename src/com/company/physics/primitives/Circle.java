@@ -4,8 +4,8 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 
 public class Circle implements Collider {
-    private int radius;
-    private RigidBody body;
+    private final int radius;
+    private final RigidBody body;
 
     public Circle(Vector center, int radius) {
         body = new RigidBody(center);

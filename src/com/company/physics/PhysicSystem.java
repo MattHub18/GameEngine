@@ -6,7 +6,7 @@ import com.company.physics.primitives.RigidBody;
 
 public class PhysicSystem {
 
-    private ForceRegistry registry;
+    private final ForceRegistry registry;
 
     public PhysicSystem() {
         registry = new ForceRegistry();

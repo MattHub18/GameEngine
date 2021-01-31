@@ -56,10 +56,4 @@ public class Vector {
     public float lengthSquared() {
         return x * x + y * y;
     }
-
-    public float dot(Vector v) {
-        return x * v.x + y * v.y;
-    }
-
-
 }

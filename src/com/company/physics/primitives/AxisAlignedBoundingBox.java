@@ -4,12 +4,11 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 
 public class AxisAlignedBoundingBox implements Collider {
-    private Vector size;
-    private Vector halfSize;
-    private RigidBody body;
+    private final Vector halfSize;
+    private final RigidBody body;
 
     public AxisAlignedBoundingBox(Vector min, Vector max) {
-        this.size = new Vector(max).sub(min);
+        Vector size = new Vector(max).sub(min);
         this.halfSize = new Vector(size).mul(0.5f);
         body = new RigidBody(halfSize);
     }

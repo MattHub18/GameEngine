@@ -3,8 +3,8 @@ package com.company.physics.forces;
 import com.company.physics.primitives.RigidBody;
 
 public class ForceWrapper {
-    private Force f;
-    private RigidBody body;
+    private final Force f;
+    private final RigidBody body;
 
     public ForceWrapper(Force f, RigidBody body) {
         this.f = f;
