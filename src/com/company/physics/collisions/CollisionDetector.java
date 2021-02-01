@@ -39,43 +39,10 @@ public class CollisionDetector {
     }
 
     private static boolean AABBAndAABB(AxisAlignedBoundingBox box1, AxisAlignedBoundingBox box2) {
-        Vector[] axesToTest = {new Vector(0, 1), new Vector(1, 0)};
-        for (Vector vector : axesToTest) {
-            if (!overlapOnAxis(box1, box2, vector))
-                return false;
-        }
-        return true;
-    }
-
-    private static boolean overlapOnAxis(AxisAlignedBoundingBox box1, AxisAlignedBoundingBox box2, Vector axis) {
-        Vector interval1 = getInterval(box1, axis);
-        Vector interval2 = getInterval(box2, axis);
-
-        return ((interval2.getX() <= interval1.getY()) && (interval1.getX() <= interval2.getY()));
-    }
-
-    private static Vector getInterval(AxisAlignedBoundingBox rect, Vector axis) {
-        Vector result = new Vector(0, 0);
-
-        Vector min = rect.getMin();
-        Vector max = rect.getMax();
-
-        Vector[] vertices = {
-                new Vector(min.getX(), min.getY()), new Vector(min.getX(), max.getY()), new Vector(max.getX(), min.getY()), new Vector(max.getX(), max.getY())
-        };
-
-        result.setX(axis.dot(vertices[0]));
-        result.setY(result.getX());
-
-        for (int i = 1; i < 4; i++) {
-            float projection = axis.dot(vertices[i]);
-            if (projection < result.getX())
-                result.setX(projection);
-            if (projection > result.getY())
-                result.setY(projection);
-        }
-
-        return result;
+        Vector distance = box2.getPosition().sub(box1.getPosition());
+        Vector b1Size = box1.getMax().sub(box1.getMin());
+        Vector b2Size = box2.getMax().sub(box2.getMin());
+        return distance.lengthSquared() <= b1Size.lengthSquared() + b2Size.lengthSquared();
     }
 
     private static boolean circleAndAABB(Circle circle, AxisAlignedBoundingBox box) {

@@ -10,7 +10,7 @@ public class AxisAlignedBoundingBox implements Collider {
     public AxisAlignedBoundingBox(Vector min, Vector max) {
         Vector size = new Vector(max).sub(min);
         this.halfSize = new Vector(size).mul(0.5f);
-        body = new RigidBody(halfSize);
+        body = new RigidBody(new Vector(halfSize).add(min));
     }
 
     public Vector getMin() {
@@ -19,5 +19,9 @@ public class AxisAlignedBoundingBox implements Collider {
 
     public Vector getMax() {
         return new Vector(this.body.getPosition()).add(this.halfSize);
+    }
+
+    public Vector getPosition() {
+        return new Vector(this.body.getPosition());
     }
 }
