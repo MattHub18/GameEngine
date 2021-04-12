@@ -25,7 +25,7 @@ public class TileImage extends Image {
         int[] pixels = new int[tileWidth * tileHeight];
         for (int y = 0; y < tileHeight; y++) {
             for (int x = 0; x < tileWidth; x++) {
-                pixels[x + y * tileWidth] = this.getPixels()[(x + row * tileWidth) + (y + column * tileHeight) * this.getWidth()];
+                pixels[x + y * tileWidth] = this.getPixels()[(x + row * tileWidth) + (y + column * tileHeight) * super.getWidth()];
             }
         }
         Image img = new Image(pixels, tileWidth, tileHeight);

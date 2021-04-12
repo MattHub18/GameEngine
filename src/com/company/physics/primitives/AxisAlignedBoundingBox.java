@@ -21,7 +21,8 @@ public class AxisAlignedBoundingBox implements Collider {
         return new Vector(this.body.getPosition()).add(this.halfSize);
     }
 
-    public Vector getPosition() {
+    @Override
+    public Vector getCenter() {
         return new Vector(this.body.getPosition());
     }
 }

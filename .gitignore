@@ -1,0 +1,7 @@
+/.gradle/
+/.idea/
+/out/
+/res/
+/src/com/company/FakeGame.java
+/src/com/company/Main.java
+/GameEngine.iml

@@ -16,6 +16,7 @@ public class Circle implements Collider {
         return radius;
     }
 
+    @Override
     public Vector getCenter() {
         return body.getPosition();
     }

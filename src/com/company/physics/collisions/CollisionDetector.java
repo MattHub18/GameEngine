@@ -39,7 +39,7 @@ public class CollisionDetector {
     }
 
     private static boolean AABBAndAABB(AxisAlignedBoundingBox box1, AxisAlignedBoundingBox box2) {
-        Vector distance = box2.getPosition().sub(box1.getPosition());
+        Vector distance = box2.getCenter().sub(box1.getCenter());
         Vector b1Size = box1.getMax().sub(box1.getMin());
         Vector b2Size = box2.getMax().sub(box2.getMin());
         return distance.lengthSquared() <= b1Size.lengthSquared() + b2Size.lengthSquared();
