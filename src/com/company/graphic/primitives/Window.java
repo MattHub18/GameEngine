@@ -1,5 +1,7 @@
 package com.company.graphic.primitives;
 
+import com.company.worlds.Map;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -14,7 +16,7 @@ public class Window {
     private final Graphics g;
 
     public Window(GameLoop gl) {
-        image = new BufferedImage(GameLoop.WIDTH, GameLoop.HEIGHT, BufferedImage.TYPE_INT_RGB);
+        image = new BufferedImage(Map.WIDTH_IN_PIXEL, Map.HEIGHT_IN_PIXEL, BufferedImage.TYPE_INT_RGB);
 
         canvas = new Canvas();
         Dimension dim = new Dimension((int) (GameLoop.WIDTH * GameLoop.SCALE), (int) (GameLoop.HEIGHT * GameLoop.SCALE));
@@ -43,7 +45,7 @@ public class Window {
     }
 
     public void update() {
-        g.drawImage(image, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
+        g.drawImage(image, 0, 0, (int) (image.getWidth() * GameLoop.SCALE), (int) (image.getHeight() * GameLoop.SCALE), null);
         bs.show();
     }
 

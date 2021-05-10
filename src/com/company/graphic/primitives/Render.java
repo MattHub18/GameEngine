@@ -1,6 +1,7 @@
 package com.company.graphic.primitives;
 
 import com.company.graphic.gfx.*;
+import com.company.worlds.Map;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -19,10 +20,14 @@ public class Render {
     private int depth = 0;
     private final int[] depths;
 
+    private final Camera camera;
+
     public Render(GameLoop gl) {
         WIDTH = GameLoop.WIDTH;
         HEIGHT = GameLoop.HEIGHT;
         pixels = ((DataBufferInt) gl.getWindow().getImage().getRaster().getDataBuffer()).getData();
+
+        camera = new Camera();
 
         images = new ArrayList<>();
         lights = new ArrayList<>();
@@ -105,26 +110,30 @@ public class Render {
     }
 
     private void drawImage(Image image, int offX, int offY) {
-        if (outOfBounds(offX, -image.getWidth(), WIDTH, offY, -image.getHeight(), HEIGHT))
-            return;
+        camera.centerCamera();
+
+        int camX = camera.getCamX();
+        int camY = camera.getCamY();
+        int maxViewX = camera.getMaxViewX();
+        int maxViewY = camera.getMaxViewY();
 
         int startX = 0;
         int startY = 0;
         int width = image.getWidth();
         int height = image.getHeight();
 
-        if (offX < 0)
-            startX -= offX;
-        if (offY < 0)
-            startY -= offY;
-        if (width + offX >= WIDTH)
-            width -= (width + offX - WIDTH);
-        if (height + offY >= HEIGHT)
-            height -= (height + offY - HEIGHT);
+        if (offX < camX)
+            startX -= (offX - camX);
+        if (offY < camY)
+            startY -= (offY - camY);
+        if (offX + width >= maxViewX)
+            width -= (width + offX - maxViewX);
+        if (offY + height >= maxViewY)
+            height -= (height + offY - maxViewY);
 
         for (int y = startY; y < height; y++) {
             for (int x = startX; x < width; x++) {
-                setPixel(x + offX, y + offY, image.getPixels()[x + y * image.getWidth()]);
+                setPixel(x + offX - camX, y + offY - camY, image.getPixels()[x + y * image.getWidth()]);
                 setBrightness(x + offX, y + offY, image.isOpaque());
             }
         }
@@ -205,7 +214,7 @@ public class Render {
         if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT) || alpha == 0)
             return;
 
-        int index = x + y * WIDTH;
+        int index = x + y * Map.WIDTH_IN_PIXEL;
 
         if (depths[index] > depth)
             return;
@@ -249,5 +258,9 @@ public class Render {
 
     public void setDepth(int depth) {
         this.depth = depth;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

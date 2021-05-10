@@ -3,9 +3,9 @@ package com.company.graphic.primitives;
 import com.company.graphic.Graphic;
 
 public class GameLoop implements Runnable {
-    public static final int WIDTH = 160;
-    public static final int HEIGHT = 90;
-    public static final float SCALE = 5f;
+    public static final int WIDTH = 320;
+    public static final int HEIGHT = 180;
+    public static final float SCALE = 2f;
     private String title = "GameEngine2D v0.0";
     private boolean running = false;
 
