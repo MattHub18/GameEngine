@@ -1,6 +1,5 @@
 package com.company.entities;
 
-import com.company.FAKE.FakeGame;
 import com.company.directions.Direction;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.Camera;
@@ -9,6 +8,7 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
+import com.company.zzzfake.FakeGame;
 
 public abstract class Entity implements Collider, Graphic {
     protected byte entityID;
@@ -22,7 +22,7 @@ public abstract class Entity implements Collider, Graphic {
 
     protected Direction facing;
 
-    protected byte animationFrame;
+    protected float animationFrame;
     protected float animationDelay;
 
     protected boolean alive;
