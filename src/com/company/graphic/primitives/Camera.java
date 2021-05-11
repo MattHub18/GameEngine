@@ -4,25 +4,28 @@ import com.company.entities.Entity;
 import com.company.worlds.Map;
 
 public class Camera {
-    private Entity entityCameraCentered;
+    private Entity entityRegistered;
+    private Map mapRegistered;
     private final int viewportSizeX;
     private final int viewportSizeY;
     private int camX;
     private int camY;
 
-    public Camera() {
+    public Camera(Entity entity, Map map) {
+        this.entityRegistered = entity;
+        this.mapRegistered = map;
         viewportSizeX = GameLoop.WIDTH;
         viewportSizeY = GameLoop.HEIGHT;
     }
 
     public void centerCamera() {
-        int offsetMaxX = Map.WIDTH_IN_PIXEL - viewportSizeX;
-        int offsetMaxY = Map.HEIGHT_IN_PIXEL - viewportSizeY;
+        int offsetMaxX = mapRegistered.getWidthInPixel() - viewportSizeX;
+        int offsetMaxY = mapRegistered.getHeightInPixel() - viewportSizeY;
         int offsetMinX = 0;
         int offsetMinY = 0;
 
-        camX = entityCameraCentered.getPosX() - viewportSizeX / 2;
-        camY = entityCameraCentered.getPosY() - viewportSizeY / 2;
+        camX = entityRegistered.getPosX() - viewportSizeX / 2;
+        camY = entityRegistered.getPosY() - viewportSizeY / 2;
 
         if (camX > offsetMaxX)
             camX = offsetMaxX;
@@ -51,6 +54,18 @@ public class Camera {
     }
 
     public void setEntity(Entity entity) {
-        this.entityCameraCentered = entity;
+        this.entityRegistered = entity;
+    }
+
+    public void setMap(Map map) {
+        this.mapRegistered = map;
+    }
+
+    public int getMapWidthInPixel() {
+        return mapRegistered.getWidthInPixel();
+    }
+
+    public int getMapHeightInPixel() {
+        return mapRegistered.getHeightInPixel();
     }
 }

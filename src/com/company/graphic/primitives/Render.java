@@ -1,7 +1,6 @@
 package com.company.graphic.primitives;
 
 import com.company.graphic.gfx.*;
-import com.company.worlds.Map;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class Render {
         HEIGHT = GameLoop.HEIGHT;
         pixels = ((DataBufferInt) gl.getWindow().getImage().getRaster().getDataBuffer()).getData();
 
-        camera = new Camera();
+        camera = gl.getCamera();
 
         images = new ArrayList<>();
         lights = new ArrayList<>();
@@ -214,7 +213,7 @@ public class Render {
         if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT) || alpha == 0)
             return;
 
-        int index = x + y * Map.WIDTH_IN_PIXEL;
+        int index = x + y * camera.getMapWidthInPixel();
 
         if (depths[index] > depth)
             return;

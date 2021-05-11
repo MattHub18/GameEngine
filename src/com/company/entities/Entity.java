@@ -8,9 +8,10 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
-import com.company.worlds.Map;
 
-public abstract class Entity implements Collider, Graphic {
+import java.io.Serializable;
+
+public abstract class Entity implements Collider, Graphic, Serializable {
     protected byte entityID;
     protected int posX;
     protected int posY;
@@ -87,11 +88,9 @@ public abstract class Entity implements Collider, Graphic {
         if (Math.abs(distance.getY()) < TILE_HEIGHT) {
 
             if (body.getCenter().getY() < collider.getCenter().getY())
-                if (collider.getCenter().getY() > Map.HEIGHT_IN_PIXEL / 2f)
                     posY = (int) (collider.getCenter().getY() - TILE_HEIGHT / 2f - TILE_HEIGHT);
 
             if (body.getCenter().getY() > collider.getCenter().getY())
-                if (collider.getCenter().getY() < Map.HEIGHT_IN_PIXEL / 2.0)
                     posY = (int) (collider.getCenter().getY() + TILE_HEIGHT / 2f) + 1;
 
         }
@@ -99,11 +98,9 @@ public abstract class Entity implements Collider, Graphic {
         if (Math.abs(distance.getX()) < TILE_WIDTH) {
 
             if (body.getCenter().getX() < collider.getCenter().getX())
-                if (collider.getCenter().getX() > Map.WIDTH_IN_PIXEL / 2.0)
                     posX = (int) (collider.getCenter().getX() - TILE_WIDTH / 2f - TILE_WIDTH);
 
             if (body.getCenter().getX() > collider.getCenter().getX())
-                if (collider.getCenter().getX() < Map.WIDTH_IN_PIXEL / 2.0)
                     posX = (int) (collider.getCenter().getX() + TILE_WIDTH / 2f) + 1;
         }
     }

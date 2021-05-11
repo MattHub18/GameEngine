@@ -2,18 +2,21 @@ package com.company.worlds;
 
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.TileImage;
+import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.physics.basics.Vector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
 import com.company.resources.Resources;
 
-public abstract class Map implements Graphic {
+import java.io.Serializable;
+
+public abstract class Map implements Graphic, Serializable {
     protected final int width;
     protected final int height;
 
-    public static int WIDTH_IN_PIXEL;
-    public static int HEIGHT_IN_PIXEL;
+    private final int WIDTH_IN_PIXEL;
+    private final int HEIGHT_IN_PIXEL;
 
     private final byte mapId;
     private final Room[] rooms;
@@ -62,5 +65,17 @@ public abstract class Map implements Graphic {
             return new AxisAlignedBoundingBox(new Vector(x + TILE_WIDTH, y + TILE_HEIGHT), new Vector(WIDTH_IN_PIXEL, HEIGHT_IN_PIXEL));
 
         return null;
+    }
+
+    public int getWidthInPixel() {
+        return WIDTH_IN_PIXEL;
+    }
+
+    public int getHeightInPixel() {
+        return HEIGHT_IN_PIXEL;
+    }
+
+    public void registerWorldToCamera(Camera camera) {
+        camera.setMap(this);
     }
 }

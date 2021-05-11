@@ -1,6 +1,8 @@
 package com.company.worlds;
 
-public class Room {
+import java.io.Serializable;
+
+public class Room implements Serializable {
     protected byte[][] tiles;
 
     public Room(byte[][] tiles) {

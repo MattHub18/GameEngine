@@ -23,9 +23,12 @@ public class GameLoop implements Runnable {
     private final Controller controller;
     private final Render render;
 
+    private final Camera camera;
+
     private boolean pause = false;
 
     public GameLoop(Graphic game) {
+        camera = new Camera(((CameraRegistration) game).registerInitialEntity(), ((CameraRegistration) game).registerInitialMap());
         window = new Window(this);
         controller = new Controller(this);
         render = new Render(this);
@@ -116,5 +119,9 @@ public class GameLoop implements Runnable {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }
