@@ -2,6 +2,8 @@ package com.company.graphic.primitives;
 
 import com.company.graphic.Graphic;
 
+import java.awt.event.KeyEvent;
+
 public class GameLoop implements Runnable {
     public static final int WIDTH = 320;
     public static final int HEIGHT = 180;
@@ -20,6 +22,8 @@ public class GameLoop implements Runnable {
     private final Window window;
     private final Controller controller;
     private final Render render;
+
+    private boolean pause = false;
 
     public GameLoop(Graphic game) {
         window = new Window(this);
@@ -68,7 +72,10 @@ public class GameLoop implements Runnable {
                 remainingTime -= UPDATE_TIME;
                 rendering = false;
 
-                game.update(this, (float) UPDATE_TIME);
+                if (controller.isKey(KeyEvent.VK_P))
+                    pause = !pause;
+                if (!pause)
+                    game.update(this, (float) UPDATE_TIME);
                 controller.update();
 
                 if (frameTime >= 1.0) {
