@@ -8,7 +8,6 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
-import com.company.zzzfake.FakeGame;
 
 public abstract class Entity implements Collider, Graphic {
     protected byte entityID;
@@ -27,11 +26,14 @@ public abstract class Entity implements Collider, Graphic {
 
     protected boolean alive;
 
+    private final int TILE_WIDTH = GameLoop.TILE_WIDTH;
+    private final int TILE_HEIGHT = GameLoop.TILE_HEIGHT;
+
     public Entity(byte id, int posX, int posY, float delay) {
         this.entityID = id;
 
-        this.posX = posX * FakeGame.TILE_WIDTH;
-        this.posY = posY * FakeGame.TILE_HEIGHT;
+        this.posX = posX * TILE_WIDTH;
+        this.posY = posY * TILE_HEIGHT;
 
         this.up = false;
         this.down = false;
@@ -74,32 +76,28 @@ public abstract class Entity implements Collider, Graphic {
     }
 
     public void handleCollisionWith(Collider collider) {
-        AxisAlignedBoundingBox body = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + FakeGame.TILE_WIDTH, posY + FakeGame.TILE_HEIGHT));
+        AxisAlignedBoundingBox body = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + TILE_WIDTH, posY + TILE_HEIGHT));
 
         if (!CollisionDetector.isCollided(body, collider))
             return;
 
         Vector distance = collider.getCenter().sub(body.getCenter());
-        if (Math.abs(distance.getY()) < FakeGame.TILE_HEIGHT) {
+        if (Math.abs(distance.getY()) < TILE_HEIGHT) {
             if (body.getCenter().getY() < collider.getCenter().getY())
-                posY = (int) (collider.getCenter().getY() - FakeGame.HALF_TILE - FakeGame.TILE_HEIGHT);
+                posY = (int) (collider.getCenter().getY() - TILE_HEIGHT / 2 - TILE_HEIGHT);
             else
-                posY = (int) (collider.getCenter().getY() + FakeGame.HALF_TILE) + 1;
+                posY = (int) (collider.getCenter().getY() + TILE_HEIGHT / 2) + 1;
         } else {
             if (body.getCenter().getX() < collider.getCenter().getX())
-                posX = (int) (collider.getCenter().getX() - FakeGame.HALF_TILE - FakeGame.TILE_WIDTH);
+                posX = (int) (collider.getCenter().getX() - TILE_WIDTH / 2 - TILE_WIDTH);
             else
-                posX = (int) (collider.getCenter().getX() + FakeGame.HALF_TILE) + 1;
+                posX = (int) (collider.getCenter().getX() + TILE_WIDTH / 2) + 1;
         }
     }
 
     @Override
     public Vector getCenter() {
-        return new Vector(posX + FakeGame.HALF_TILE, posY + FakeGame.HALF_TILE);
-    }
-
-    public void checkMovement(GameLoop gl) {
-        throw new RuntimeException("OPERATION NOT PERMITTED");
+        return new Vector(posX + TILE_WIDTH / 2f, posY + TILE_HEIGHT / 2f);
     }
 
     public void registerEntityToCamera(Camera camera) {

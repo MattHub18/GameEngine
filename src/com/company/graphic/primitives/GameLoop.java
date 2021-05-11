@@ -6,6 +6,10 @@ public class GameLoop implements Runnable {
     public static final int WIDTH = 320;
     public static final int HEIGHT = 180;
     public static final float SCALE = 2f;
+
+    public static final int TILE_WIDTH = 64;
+    public static final int TILE_HEIGHT = 64;
+
     private String title = "GameEngine2D v0.0";
     private boolean running = false;
 
