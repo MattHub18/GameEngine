@@ -49,17 +49,17 @@ public abstract class Map implements Graphic {
     }
 
     public AxisAlignedBoundingBox getTile(int x, int y) {
+        if (rooms[roomId].tiles[y / TILE_HEIGHT][x / TILE_WIDTH] != Resources.FLOOR && rooms[roomId].tiles[(y - 1) / TILE_HEIGHT + 1][(x - 1) / TILE_WIDTH + 1] != Resources.FLOOR) {
+            if (x < y)
+                return new AxisAlignedBoundingBox(new Vector(0, HEIGHT_IN_PIXEL), new Vector(x, y + TILE_HEIGHT));
+            return new AxisAlignedBoundingBox(new Vector(WIDTH_IN_PIXEL, 0), new Vector(x + TILE_WIDTH, y));
+        }
+
         if (rooms[roomId].tiles[y / TILE_HEIGHT][x / TILE_WIDTH] != Resources.FLOOR)
             return new AxisAlignedBoundingBox(new Vector(0, 0), new Vector(x, y));
 
-        else if (rooms[roomId].tiles[(y - 1) / TILE_HEIGHT + 1][(x - 1) / TILE_WIDTH + 1] != Resources.FLOOR)
+        if (rooms[roomId].tiles[(y - 1) / TILE_HEIGHT + 1][(x - 1) / TILE_WIDTH + 1] != Resources.FLOOR)
             return new AxisAlignedBoundingBox(new Vector(x + TILE_WIDTH, y + TILE_HEIGHT), new Vector(WIDTH_IN_PIXEL, HEIGHT_IN_PIXEL));
-
-        else if (rooms[roomId].tiles[y / TILE_HEIGHT][(x - 1) / TILE_WIDTH + 1] != Resources.FLOOR)
-            return new AxisAlignedBoundingBox(new Vector(x + TILE_WIDTH, 0), new Vector(WIDTH_IN_PIXEL, y));
-
-        else if (rooms[roomId].tiles[(y - 1) / TILE_HEIGHT + 1][x / TILE_WIDTH] != Resources.FLOOR)
-            return new AxisAlignedBoundingBox(new Vector(0, y + TILE_HEIGHT), new Vector(x, HEIGHT_IN_PIXEL));
 
         return null;
     }

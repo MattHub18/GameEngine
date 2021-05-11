@@ -8,6 +8,7 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
+import com.company.worlds.Map;
 
 public abstract class Entity implements Collider, Graphic {
     protected byte entityID;
@@ -82,16 +83,28 @@ public abstract class Entity implements Collider, Graphic {
             return;
 
         Vector distance = collider.getCenter().sub(body.getCenter());
+
         if (Math.abs(distance.getY()) < TILE_HEIGHT) {
+
             if (body.getCenter().getY() < collider.getCenter().getY())
-                posY = (int) (collider.getCenter().getY() - TILE_HEIGHT / 2 - TILE_HEIGHT);
-            else
-                posY = (int) (collider.getCenter().getY() + TILE_HEIGHT / 2) + 1;
-        } else {
+                if (collider.getCenter().getY() > Map.HEIGHT_IN_PIXEL / 2f)
+                    posY = (int) (collider.getCenter().getY() - TILE_HEIGHT / 2f - TILE_HEIGHT);
+
+            if (body.getCenter().getY() > collider.getCenter().getY())
+                if (collider.getCenter().getY() < Map.HEIGHT_IN_PIXEL / 2.0)
+                    posY = (int) (collider.getCenter().getY() + TILE_HEIGHT / 2f) + 1;
+
+        }
+
+        if (Math.abs(distance.getX()) < TILE_WIDTH) {
+
             if (body.getCenter().getX() < collider.getCenter().getX())
-                posX = (int) (collider.getCenter().getX() - TILE_WIDTH / 2 - TILE_WIDTH);
-            else
-                posX = (int) (collider.getCenter().getX() + TILE_WIDTH / 2) + 1;
+                if (collider.getCenter().getX() > Map.WIDTH_IN_PIXEL / 2.0)
+                    posX = (int) (collider.getCenter().getX() - TILE_WIDTH / 2f - TILE_WIDTH);
+
+            if (body.getCenter().getX() > collider.getCenter().getX())
+                if (collider.getCenter().getX() < Map.WIDTH_IN_PIXEL / 2.0)
+                    posX = (int) (collider.getCenter().getX() + TILE_WIDTH / 2f) + 1;
         }
     }
 
