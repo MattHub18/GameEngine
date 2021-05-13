@@ -21,10 +21,10 @@ public class Server {
         Socket socket = null;
         try {
             serverSocket = new ServerSocket(port);
-            //System.out.println("Server has started to running.\nWaiting for a player...\nWaiting for connection...");
+            System.out.println("Server has started to running.\nWaiting for a player...\nWaiting for connection...");
             do {
                 socket = serverSocket.accept();
-                //System.out.println("Player connected");
+                System.out.println("Player connected");
                 ClientHandler clientThread = new ClientHandler(socket, clients);
                 clients.add(clientThread);
                 new Thread(clientThread).start();

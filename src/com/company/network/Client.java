@@ -20,12 +20,12 @@ public class Client {
         String address = JOptionPane.showInputDialog(null, "Enter address:", "Enter address:", JOptionPane.INFORMATION_MESSAGE);
         if (address != null) {
             address = decrypt(address);
-            //System.out.println("Finding server...\nConnecting ... ");
+            System.out.println("Finding server...\nConnecting ... ");
             try {
                 Socket socket = new Socket(address, port);
-                //System.out.println("Client is connecting...");
+                System.out.println("Client is connecting...");
                 ServerConnection serverConn = new ServerConnection(socket);
-                //System.out.println("Client connected");
+                System.out.println("Client connected");
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 new Thread(serverConn).start();
 
@@ -53,10 +53,10 @@ public class Client {
 
             address = address.toUpperCase();
 
-            char[] addr = address.toCharArray();
+            char[] addressCharArray = address.toCharArray();
 
-            for (int i = 0; i < addr.length; i += 2) {
-                int value = 16 * alpha.indexOf(addr[i]) + alpha.indexOf(addr[i + 1]);
+            for (int i = 0; i < addressCharArray.length; i += 2) {
+                int value = 16 * alpha.indexOf(addressCharArray[i]) + alpha.indexOf(addressCharArray[i + 1]);
                 sb.append(value);
                 if (i != 6)
                     sb.append(".");

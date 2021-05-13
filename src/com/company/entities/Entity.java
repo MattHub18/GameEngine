@@ -100,17 +100,19 @@ public abstract class Entity implements Collider, Graphic, Serializable {
 
         AxisAlignedBoundingBox intersection = CollisionDetector.intersection(body, tileBox);
 
-        if (intersection.getWidth() > intersection.getHeight()) {
+        if (intersection != null) {
+            if (intersection.getWidth() > intersection.getHeight()) {
 
-            if (posY < tileBox.getMin().getY())
-                posY = (int) (tileBox.getMin().getY() - body.getHeight());
-            else
-                posY = (int) (tileBox.getMin().getY() + body.getHeight());
-        } else {
-            if (posX < tileBox.getMin().getX())
-                posX = (int) (tileBox.getMin().getX() - body.getWidth());
-            else
-                posX = (int) (tileBox.getMin().getX() + body.getWidth());
+                if (posY < tileBox.getMin().getY())
+                    posY = (int) (tileBox.getMin().getY() - body.getHeight());
+                else
+                    posY = (int) (tileBox.getMin().getY() + body.getHeight());
+            } else {
+                if (posX < tileBox.getMin().getX())
+                    posX = (int) (tileBox.getMin().getX() - body.getWidth());
+                else
+                    posX = (int) (tileBox.getMin().getX() + body.getWidth());
+            }
         }
     }
 

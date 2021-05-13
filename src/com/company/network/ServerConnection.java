@@ -16,7 +16,7 @@ public class ServerConnection implements Runnable {
 
     @Override
     public void run() {
-        //System.out.println("Connected a player...");
+        System.out.println("Connected a player...");
         try {
             objIn = new ObjectInputStream(socket.getInputStream());
             if (socket.isConnected()) {

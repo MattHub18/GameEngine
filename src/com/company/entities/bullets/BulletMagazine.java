@@ -1,6 +1,5 @@
 package com.company.entities.bullets;
 
-import com.company.entities.Entity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
@@ -14,12 +13,10 @@ import java.util.List;
 
 public class BulletMagazine implements Graphic, Serializable {
 
-    private List<Bullet> magazine;
-    private Entity player;
-    private Map map;
+    private final List<Bullet> magazine;
+    private final Map map;
 
-    public BulletMagazine(Entity p, Map m) {
-        player = p;
+    public BulletMagazine(Map m) {
         map = m;
         magazine = new ArrayList<>();
     }

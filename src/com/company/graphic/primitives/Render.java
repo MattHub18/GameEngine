@@ -258,8 +258,4 @@ public class Render {
     public void setDepth(int depth) {
         this.depth = depth;
     }
-
-    public Camera getCamera() {
-        return camera;
-    }
 }

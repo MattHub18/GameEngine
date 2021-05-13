@@ -22,7 +22,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            //System.out.println("Connected to server...");
+            System.out.println("Connected to server...");
             objIn = new ObjectInputStream(socket.getInputStream());
             objOut = new ObjectOutputStream(socket.getOutputStream());
             if (socket.isConnected()) {
