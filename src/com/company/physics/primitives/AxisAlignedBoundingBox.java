@@ -3,7 +3,9 @@ package com.company.physics.primitives;
 import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 
-public class AxisAlignedBoundingBox implements Collider {
+import java.io.Serializable;
+
+public class AxisAlignedBoundingBox implements Collider, Serializable {
     private final Vector halfSize;
     private final RigidBody body;
 
@@ -24,5 +26,13 @@ public class AxisAlignedBoundingBox implements Collider {
     @Override
     public Vector getCenter() {
         return new Vector(this.body.getPosition());
+    }
+
+    public float getWidth() {
+        return getMax().sub(getMin()).getX();
+    }
+
+    public float getHeight() {
+        return getMax().sub(getMin()).getY();
     }
 }

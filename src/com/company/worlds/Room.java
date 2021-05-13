@@ -8,4 +8,8 @@ public class Room implements Serializable {
     public Room(byte[][] tiles) {
         this.tiles = tiles;
     }
+
+    public Tile getTile(int x, int y) {
+        return new Tile(tiles[y][x], x, y);
+    }
 }

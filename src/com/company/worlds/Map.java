@@ -5,8 +5,6 @@ import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
-import com.company.physics.basics.Vector;
-import com.company.physics.primitives.AxisAlignedBoundingBox;
 import com.company.resources.Resources;
 
 import java.io.Serializable;
@@ -51,20 +49,8 @@ public abstract class Map implements Graphic, Serializable {
         }
     }
 
-    public AxisAlignedBoundingBox getTile(int x, int y) {
-        if (rooms[roomId].tiles[y / TILE_HEIGHT][x / TILE_WIDTH] != Resources.FLOOR && rooms[roomId].tiles[(y - 1) / TILE_HEIGHT + 1][(x - 1) / TILE_WIDTH + 1] != Resources.FLOOR) {
-            if (x < y)
-                return new AxisAlignedBoundingBox(new Vector(0, HEIGHT_IN_PIXEL), new Vector(x, y + TILE_HEIGHT));
-            return new AxisAlignedBoundingBox(new Vector(WIDTH_IN_PIXEL, 0), new Vector(x + TILE_WIDTH, y));
-        }
-
-        if (rooms[roomId].tiles[y / TILE_HEIGHT][x / TILE_WIDTH] != Resources.FLOOR)
-            return new AxisAlignedBoundingBox(new Vector(0, 0), new Vector(x, y));
-
-        if (rooms[roomId].tiles[(y - 1) / TILE_HEIGHT + 1][(x - 1) / TILE_WIDTH + 1] != Resources.FLOOR)
-            return new AxisAlignedBoundingBox(new Vector(x + TILE_WIDTH, y + TILE_HEIGHT), new Vector(WIDTH_IN_PIXEL, HEIGHT_IN_PIXEL));
-
-        return null;
+    public Tile getTile(int x, int y) {
+        return rooms[roomId].getTile(x, y);
     }
 
     public int getWidthInPixel() {
@@ -77,5 +63,13 @@ public abstract class Map implements Graphic, Serializable {
 
     public void registerWorldToCamera(Camera camera) {
         camera.setMap(this);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -8,6 +8,8 @@ import com.company.physics.basics.Vector;
 import com.company.physics.collisions.Collider;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
+import com.company.worlds.Map;
+import com.company.worlds.Tile;
 
 import java.io.Serializable;
 
@@ -27,6 +29,8 @@ public abstract class Entity implements Collider, Graphic, Serializable {
     protected float animationDelay;
 
     protected boolean alive;
+
+    protected AxisAlignedBoundingBox body;
 
     private final int TILE_WIDTH = GameLoop.TILE_WIDTH;
     private final int TILE_HEIGHT = GameLoop.TILE_HEIGHT;
@@ -77,31 +81,35 @@ public abstract class Entity implements Collider, Graphic, Serializable {
         }
     }
 
-    public void handleCollisionWith(Collider collider) {
-        AxisAlignedBoundingBox body = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + TILE_WIDTH, posY + TILE_HEIGHT));
+    public void checkCollision(Map map) {
+        for (int y = 0; y < map.getHeight(); y++) {
+            for (int x = 0; x < map.getWidth(); x++) {
+                Tile t = map.getTile(x, y);
+                handleCollisionWith(t);
+            }
+        }
+    }
 
-        if (!CollisionDetector.isCollided(body, collider))
+    private void handleCollisionWith(Tile tile) {
+        body = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT));
+        AxisAlignedBoundingBox tileBox = tile.getBox();
+
+        if (!CollisionDetector.isCollided(tileBox, body) || tile.isFloor())
             return;
 
-        Vector distance = collider.getCenter().sub(body.getCenter());
+        AxisAlignedBoundingBox intersection = CollisionDetector.intersection(body, tileBox);
 
-        if (Math.abs(distance.getY()) < TILE_HEIGHT) {
+        if (intersection.getWidth() > intersection.getHeight()) {
 
-            if (body.getCenter().getY() < collider.getCenter().getY())
-                    posY = (int) (collider.getCenter().getY() - TILE_HEIGHT / 2f - TILE_HEIGHT);
-
-            if (body.getCenter().getY() > collider.getCenter().getY())
-                    posY = (int) (collider.getCenter().getY() + TILE_HEIGHT / 2f) + 1;
-
-        }
-
-        if (Math.abs(distance.getX()) < TILE_WIDTH) {
-
-            if (body.getCenter().getX() < collider.getCenter().getX())
-                    posX = (int) (collider.getCenter().getX() - TILE_WIDTH / 2f - TILE_WIDTH);
-
-            if (body.getCenter().getX() > collider.getCenter().getX())
-                    posX = (int) (collider.getCenter().getX() + TILE_WIDTH / 2f) + 1;
+            if (posY < tileBox.getMin().getY())
+                posY = (int) (tileBox.getMin().getY() - body.getHeight());
+            else
+                posY = (int) (tileBox.getMin().getY() + body.getHeight());
+        } else {
+            if (posX < tileBox.getMin().getX())
+                posX = (int) (tileBox.getMin().getX() - body.getWidth());
+            else
+                posX = (int) (tileBox.getMin().getX() + body.getWidth());
         }
     }
 

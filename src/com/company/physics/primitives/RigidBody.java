@@ -2,7 +2,9 @@ package com.company.physics.primitives;
 
 import com.company.physics.basics.Vector;
 
-public class RigidBody {
+import java.io.Serializable;
+
+public class RigidBody implements Serializable {
     private final Vector position;
     private int mass;
     private final Vector resultantForce;
