@@ -1,6 +1,7 @@
 package com.company.entities;
 
 import com.company.directions.Direction;
+import com.company.entities.bullets.BulletMagazine;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.GameLoop;
@@ -118,8 +119,19 @@ public abstract class Entity implements Collider, Graphic, Serializable {
         return new Vector(posX + TILE_WIDTH / 2f, posY + TILE_HEIGHT / 2f);
     }
 
+    public void shooting(GameLoop gl) {
+        throw new RuntimeException("OPERATION NOT PERMITTED");
+    }
+
+    public void registerBulletMagazine(BulletMagazine m) {
+        throw new RuntimeException("OPERATION NOT PERMITTED");
+    }
+
     public void registerEntityToCamera(Camera camera) {
         camera.setEntity(this);
     }
 
+    public Direction getFacing() {
+        return facing;
+    }
 }
