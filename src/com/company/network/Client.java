@@ -1,45 +1,85 @@
 package com.company.network;
 
 import javax.swing.*;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Client {
+public class Client implements Runnable {
     private final int port;
-    private NetworkObjectWrapper obj;
+    private final ReadWriteThreadSafe helper;
+    private Socket socket;
+    private ObjectOutputStream streamOut;
+    private ObjectInputStream streamIn;
 
-    public Client(int port) {
+    public Client(int port, ReadWriteThreadSafe helper) {
         this.port = port;
-        obj = null;
+        this.helper = helper;
     }
 
     public void start() {
-        String address = JOptionPane.showInputDialog(null, "Enter address:", "Enter address:", JOptionPane.INFORMATION_MESSAGE);
-        if (address != null) {
-            address = decrypt(address);
-            System.out.println("Finding server...\nConnecting ... ");
-            try {
-                Socket socket = new Socket(address, port);
-                System.out.println("Client is connecting...");
-                ServerConnection serverConn = new ServerConnection(socket);
-                System.out.println("Client connected");
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                new Thread(serverConn).start();
+        new Thread(this).start();
+    }
 
-                while (obj != null) {
-                    out.writeObject(obj);
-                    out.reset();
-                }
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Server Not Found! Try again", "ERROR", JOptionPane.INFORMATION_MESSAGE);
+    @Override
+    public void run() {
+        String address = "";
+        while (address.equals("")) {
+            address = JOptionPane.showInputDialog(null, "Enter address:", "Enter address:", JOptionPane.INFORMATION_MESSAGE);
         }
+        address = decrypt(address);
+        System.out.println("Finding server...\nConnecting ... ");
+        try {
+            socket = new Socket(address, port);
+            System.out.println("Client connected");
+
+            streamOut = new ObjectOutputStream(socket.getOutputStream());
+            streamIn = new ObjectInputStream(socket.getInputStream());
+
+            while (true) {
+                if (socket.isConnected()) {
+                    send(streamOut);
+                    if (!receive(streamIn))
+                        break;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Server crashed! Recreate!", "ERROR", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        } catch (ConnectException e) {
+            JOptionPane.showMessageDialog(null, "Server Not Found! Try again", "ERROR", JOptionPane.INFORMATION_MESSAGE);
+            run();
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void send(ObjectOutputStream streamOut) throws InterruptedException, IOException {
+        Object myObject = helper.getMyObject();
+        streamOut.writeObject(myObject);
+        streamOut.flush();
+        streamOut.reset();
+    }
+
+    private boolean receive(ObjectInputStream streamIn) throws IOException, ClassNotFoundException, InterruptedException {
+        Object obj = null;
+        try {
+            obj = streamIn.readObject();
+        } catch (SocketException e) {
+            System.out.println("Close Connection");
+        } catch (EOFException e) {
+            System.out.println("Server close");
+            interrupt();
+        }
+        if (obj == null)
+            return false;
+        helper.setOtherObject(obj);
+        return true;
     }
 
     private String decrypt(String address) {
@@ -66,7 +106,12 @@ public class Client {
         return null;
     }
 
-    public void setObj(NetworkObjectWrapper obj) {
-        this.obj = obj;
+    public void interrupt() throws IOException {
+        System.out.println("Disconnecting...");
+        socket.close();
+        streamIn.close();
+        streamOut.close();
+        System.out.println("Client disconnected");
+        Thread.currentThread().interrupt();
     }
 }

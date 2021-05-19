@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
-    private static final ArrayList<ClientHandler> clients = new ArrayList<>();
     private final int port;
+    private final List<ClientHandler> clients = new ArrayList<>();
+    ServerSocket serverSocket;
 
     public Server(int port) {
         this.port = port;
@@ -17,29 +20,29 @@ public class Server {
 
     public void start() {
         encrypt();
-        ServerSocket serverSocket = null;
-        Socket socket = null;
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Server has started to running.\nWaiting for a player...\nWaiting for connection...");
+            System.out.println("Server has started to running.\nWaiting for connection...");
             do {
-                socket = serverSocket.accept();
-                System.out.println("Player connected");
-                ClientHandler clientThread = new ClientHandler(socket, clients);
-                clients.add(clientThread);
-                new Thread(clientThread).start();
+                Socket socket;
+                System.out.println("Waiting for a player...");
+                try {
+                    socket = serverSocket.accept();
+                    ClientHandler client = new ClientHandler(socket, clients);
+                    client.addClient(client);
+                    System.out.println("Player " + clients.size() + " connected");
+                    new Thread(client).start();
+                } catch (SocketException e) {
+                    System.out.println("Shutdown server");
+                    for (ClientHandler ch : clients) {
+                        ch.interrupt();
+                    }
+                    clients.clear();
+                }
             } while (!clients.isEmpty());
-        } catch (IOException e) {
+
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (socket != null)
-                    socket.close();
-                if (serverSocket != null)
-                    serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -61,5 +64,11 @@ public class Server {
             sb.append(alpha[num % 16]);
         }
         JOptionPane.showMessageDialog(null, sb.toString(), "Address", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    public void interrupt() throws IOException {
+        serverSocket.close();
+        Thread.currentThread().interrupt();
     }
 }
