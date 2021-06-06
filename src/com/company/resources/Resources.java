@@ -9,8 +9,8 @@ public abstract class Resources {
     public static final byte MAP = 1;
     public static final byte BULLET = 2;
     public static final byte MULTIPLAYER = 3;
-    public static final byte FPS = 3;
-    public static final byte CLIENT = 3;
+    public static final byte FPS = 4;
+    public static final byte CLIENT = 5;
 
 
     public static final byte PLAYER_FRONT = 0;
