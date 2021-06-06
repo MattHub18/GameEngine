@@ -1,6 +1,8 @@
 package com.company.graphic.primitives;
 
 import com.company.graphic.Graphic;
+import com.company.graphic.gfx.Font;
+import com.company.resources.Resources;
 
 import java.awt.event.KeyEvent;
 
@@ -27,9 +29,9 @@ public class GameLoop implements Runnable {
 
     private boolean pause = false;
 
-    public GameLoop(Graphic game) {
+    public GameLoop(Graphic game, WindowHandler handler) {
         camera = new Camera(((CameraRegistration) game).registerInitialEntity(), ((CameraRegistration) game).registerInitialMap());
-        window = new Window(this);
+        window = new Window(this, handler);
         controller = new Controller(this);
         render = new Render(this);
         this.game = game;
@@ -84,7 +86,7 @@ public class GameLoop implements Runnable {
                 if (frameTime >= 1.0) {
                     frameTime = 0;
                     fps = frames;
-                    System.out.println("FPS: " + fps);
+                    render.setFpsFont(new Font(Resources.TEXTURES.get(Resources.FPS)), "FPS: " + fps, 0, 0, 0xff0000ff);
                     frames = 0;
                 }
             }

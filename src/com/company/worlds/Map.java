@@ -1,5 +1,7 @@
 package com.company.worlds;
 
+import com.company.entities.Entity;
+import com.company.entities.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.Camera;
@@ -23,7 +25,9 @@ public abstract class Map implements Graphic, Serializable {
     private final int TILE_WIDTH = GameLoop.TILE_WIDTH;
     private final int TILE_HEIGHT = GameLoop.TILE_HEIGHT;
 
-    public Map(byte id, byte startRoom, Room[] r) {
+    protected Entity player;
+
+    public Map(byte id, byte startRoom, Room[] r, Entity player) {
         this.mapId = id;
         this.rooms = r;
         this.roomId = startRoom;
@@ -32,11 +36,13 @@ public abstract class Map implements Graphic, Serializable {
 
         WIDTH_IN_PIXEL = width * TILE_WIDTH;
         HEIGHT_IN_PIXEL = height * TILE_HEIGHT;
+
+        this.player = player;
     }
 
     @Override
     public void update(GameLoop gl, float dt) {
-
+        collisions(player);
     }
 
     @Override
@@ -47,10 +53,6 @@ public abstract class Map implements Graphic, Serializable {
                 r.addImage(tile.getTile(rooms[roomId].tiles[y][x], roomId), x * TILE_WIDTH, y * TILE_HEIGHT);
             }
         }
-    }
-
-    public Tile getTile(int x, int y) {
-        return rooms[roomId].getTile(x, y);
     }
 
     public int getWidthInPixel() {
@@ -65,11 +67,9 @@ public abstract class Map implements Graphic, Serializable {
         camera.setMap(this);
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
+    protected void collisions(GameEntity tmp) {
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+                tmp.handleCollisionWith(rooms[roomId].getTile(x, y));
     }
 }

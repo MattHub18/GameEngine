@@ -13,6 +13,8 @@ public class Render {
 
     private final ArrayList<ImageWrapper> images;
     private final ArrayList<LightWrapper> lights;
+    private final ArrayList<RectangleWrapper> rectangles;
+    private final ArrayList<FontWrapper> fonts;
     private final int[] lightPixels;
     private final boolean[] brightness;
 
@@ -20,6 +22,7 @@ public class Render {
     private final int[] depths;
 
     private final Camera camera;
+    private FontWrapper fps;
 
     public Render(GameLoop gl) {
         WIDTH = GameLoop.WIDTH;
@@ -30,6 +33,8 @@ public class Render {
 
         images = new ArrayList<>();
         lights = new ArrayList<>();
+        rectangles = new ArrayList<>();
+        fonts = new ArrayList<>();
         lightPixels = new int[pixels.length];
         depths = new int[pixels.length];
         brightness = new boolean[pixels.length];
@@ -41,6 +46,20 @@ public class Render {
         for (ImageWrapper img : images) {
             depth = img.getDepth();
             drawImage(img.getImage(), img.getOffX(), img.getOffY());
+        }
+
+        for (RectangleWrapper rec : rectangles) {
+            if (rec.isFull())
+                drawFullRectangle(rec.getRectangle(), rec.getColor());
+            else
+                drawBorderRectangle(rec.getRectangle(), rec.getColor());
+        }
+
+        if (fps != null)
+            drawFont(fps.getFont(), fps.getText(), fps.getX(), fps.getY(), fps.getColor());
+
+        for (FontWrapper font : fonts) {
+            drawFont(font.getFont(), font.getText(), font.getX(), font.getY(), font.getColor());
         }
 
         for (LightWrapper lgh : lights) {
@@ -55,6 +74,8 @@ public class Render {
         }
 
         images.clear();
+        rectangles.clear();
+        fonts.clear();
         lights.clear();
     }
 
@@ -67,20 +88,22 @@ public class Render {
         }
     }
 
-    public void drawBorderRectangle(int offX, int offY, int width, int height, int color) {
+    public void addRectangle(Rectangle rect, int color) {
+        rectangles.add(new RectangleWrapper(rect, color));
+    }
 
-        for (int y = 0; y <= height; y++) {
-            setPixel(offX, y + offY, color);
-            setPixel(offX + width, y + offY, color);
-        }
-
-        for (int x = 0; x <= width; x++) {
-            setPixel(x + offX, offY, color);
-            setPixel(x + offX, offY + height, color);
+    public void addThickRectangle(int smallestOffX, int smallestOffY, int biggestWidth, int biggestHeight, int color, int thickness) {
+        for (int i = 0; i < thickness; i++) {
+            addRectangle(new Rectangle(smallestOffX + i, smallestOffY + i, biggestWidth - (2 * i), biggestHeight - (2 * i), false), color);
         }
     }
 
-    public void drawFullRectangle(int offX, int offY, int width, int height, int color) {
+    private void drawBorderRectangle(Rectangle rect, int color) {
+
+        int offX = rect.getStartX();
+        int offY = rect.getStartY();
+        int width = rect.getWidth();
+        int height = rect.getHeight();
 
         if (outOfBounds(offX, -width, WIDTH, offY, -height, HEIGHT))
             return;
@@ -97,11 +120,30 @@ public class Render {
         if (height + offY >= HEIGHT)
             height -= (height + offY - HEIGHT);
 
-        for (int y = startY; y < height; y++) {
-            for (int x = startX; x < width; x++) {
-                setPixel(x + offX, y + offY, color);
-            }
+        for (int y = startY; y <= height; y++) {
+            setPixel(offX, y + offY, color);
+            setPixel(offX + width, y + offY, color);
         }
+
+        for (int x = startX; x <= width; x++) {
+            setPixel(x + offX, offY, color);
+            setPixel(x + offX, offY + height, color);
+        }
+    }
+
+    private void drawFullRectangle(Rectangle rect, int color) {
+
+        int offX = rect.getStartX();
+        int offY = rect.getStartY();
+        int width = rect.getWidth();
+        int height = rect.getHeight();
+
+        if (width <= 0 || height <= 0)
+            return;
+
+        drawFullRectangle(new Rectangle(offX + 1, offY + 1, width - 1, height - 1, true), color);
+
+        drawBorderRectangle(rect, color);
     }
 
     public void addImage(Image image, int offX, int offY) {
@@ -138,7 +180,11 @@ public class Render {
         }
     }
 
-    public void drawFont(Font font, String text, int offX, int offY, int color) {
+    public void addFont(Font font, String text, int offX, int offY, int color) {
+        fonts.add(new FontWrapper(font, text, offX, offY, color));
+    }
+
+    private void drawFont(Font font, String text, int offX, int offY, int color) {
         int offset = 0;
         for (int i = 0; i < text.length(); i++) {
             int unicode = text.codePointAt(i);
@@ -188,7 +234,7 @@ public class Render {
             if (lightColor == 0)
                 return;
 
-            if (brightness[screenX + screenY * WIDTH])
+            if (brightness[screenX + screenY * camera.getMapWidthInPixel()])
                 return;
 
             setLightPixels(screenX, screenY, lightColor);
@@ -235,20 +281,21 @@ public class Render {
         if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT))
             return;
 
-        int baseColor = lightPixels[x + y * WIDTH];
+        int baseColor = lightPixels[x + y * camera.getMapWidthInPixel()];
         int maxRed = Math.max(((baseColor >> 16) & 0xff), ((value >> 16) & 0xff));
         int maxGreen = Math.max(((baseColor >> 8) & 0xff), ((value >> 8) & 0xff));
         int maxBlue = Math.max(((baseColor) & 0xff), ((value) & 0xff));
-        lightPixels[x + y * WIDTH] = (maxRed << 16 | maxGreen << 8 | maxBlue);
+        lightPixels[x + y * camera.getMapWidthInPixel()] = (maxRed << 16 | maxGreen << 8 | maxBlue);
 
     }
 
     private void setBrightness(int x, int y, boolean value) {
         if (outOfBounds(x, 0, WIDTH, y, 0, HEIGHT))
             return;
-        if (depths[x + y * WIDTH] > depth)
+        int index = x + y * camera.getMapWidthInPixel();
+        if (depths[index] > depth)
             return;
-        brightness[x + y * WIDTH] = value;
+        brightness[index] = value;
     }
 
     private boolean outOfBounds(int width, int lw, int rw, int height, int lh, int rh) {
@@ -257,5 +304,9 @@ public class Render {
 
     public void setDepth(int depth) {
         this.depth = depth;
+    }
+
+    public void setFpsFont(Font font, String text, int offX, int offY, int color) {
+        fps = new FontWrapper(font, text, offX, offY, color);
     }
 }

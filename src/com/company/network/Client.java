@@ -1,117 +1,148 @@
 package com.company.network;
 
-import javax.swing.*;
-import java.io.EOFException;
+
+import com.company.entities.PlayerConnectionWrapper;
+import com.company.graphic.Graphic;
+import com.company.graphic.gfx.Font;
+import com.company.graphic.primitives.GameLoop;
+import com.company.graphic.primitives.Render;
+import com.company.network.packets.Packet;
+import com.company.network.packets.PacketType;
+import com.company.resources.Resources;
+import com.company.resources.Streaming;
+
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.net.*;
 
-public class Client implements Runnable {
+public class Client implements Runnable, Graphic {
     private final int port;
-    private final ReadWriteThreadSafe helper;
-    private Socket socket;
-    private ObjectOutputStream streamOut;
-    private ObjectInputStream streamIn;
+    private static final int MAXTTL = 10;
+    private final EntityList list;
+    private InetAddress ipAddress;
+    private DatagramSocket socket;
+    private Thread thread;
+    private String message;
+    private int messageTimeToLive = MAXTTL;
+    private boolean running;
 
-    public Client(int port, ReadWriteThreadSafe helper) {
+    public Client(EntityList list, int port) {
         this.port = port;
-        this.helper = helper;
-    }
-
-    public void start() {
-        new Thread(this).start();
-    }
-
-    @Override
-    public void run() {
-        String address = "";
-        while (address.equals("")) {
-            address = JOptionPane.showInputDialog(null, "Enter address:", "Enter address:", JOptionPane.INFORMATION_MESSAGE);
-        }
-        address = decrypt(address);
-        System.out.println("Finding server...\nConnecting ... ");
+        this.list = list;
         try {
-            socket = new Socket(address, port);
-            System.out.println("Client connected");
+            this.socket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        running = false;
+    }
 
-            streamOut = new ObjectOutputStream(socket.getOutputStream());
-            streamIn = new ObjectInputStream(socket.getInputStream());
+    public void start(String ipAddress) {
+        try {
+            this.ipAddress = InetAddress.getByName(ipAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        thread = new Thread(this);
+        thread.start();
+        running = true;
+    }
 
-            while (true) {
-                if (socket.isConnected()) {
-                    send(streamOut);
-                    if (!receive(streamIn))
-                        break;
-                } else {
-                    JOptionPane.showMessageDialog(null, "Server crashed! Recreate!", "ERROR", JOptionPane.INFORMATION_MESSAGE);
-                }
+    public void run() {
+        while (true) {
+            byte[] data = new byte[2048];
+            DatagramPacket packet = new DatagramPacket(data, data.length);
+            try {
+                socket.receive(packet);
+            } catch (IOException e) {
+                break;
             }
-        } catch (ConnectException e) {
-            JOptionPane.showMessageDialog(null, "Server Not Found! Try again", "ERROR", JOptionPane.INFORMATION_MESSAGE);
-            run();
-        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            parsePacket(packet.getData());
+        }
+    }
+
+    public void parsePacket(byte[] data) {
+        Packet packet = (Packet) Streaming.deserialize(data);
+        assert packet != null;
+        PacketType type = packet.getPacketId();
+        try {
+            switch (type) {
+                default:
+                case INVALID:
+                    break;
+                case LOGIN:
+                    message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
+                    handleLogin(packet);
+                    break;
+                case DISCONNECT:
+                    message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has left";
+                    handleDisconnect(packet);
+                    break;
+                case MOVE:
+                    handleMove(packet);
+                    break;
+                case SHUTDOWN:
+                    message = "Server has closed";
+                    handleShutdown();
+                    break;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void handleLogin(Packet packet) throws InterruptedException {
+        PlayerConnectionWrapper player = packet.getPlayer();
+        list.add(player);
+    }
+
+    private void handleDisconnect(Packet packet) throws InterruptedException {
+        PlayerConnectionWrapper player = packet.getPlayer();
+        list.remove(player);
+    }
+
+    private void handleMove(Packet packet) throws InterruptedException {
+        PlayerConnectionWrapper player = packet.getPlayer();
+        list.update(player);
+    }
+
+    private void handleShutdown() {
+        interrupt();
+    }
+
+    private void interrupt() {
+        socket.close();
+        thread.interrupt();
+        running = false;
+    }
+
+    public void sendData(byte[] data) {
+        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, port);
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void send(ObjectOutputStream streamOut) throws InterruptedException, IOException {
-        Object myObject = helper.getMyObject();
-        streamOut.writeObject(myObject);
-        streamOut.flush();
-        streamOut.reset();
+    @Override
+    public void update(GameLoop gl, float dt) {
     }
 
-    private boolean receive(ObjectInputStream streamIn) throws IOException, ClassNotFoundException, InterruptedException {
-        Object obj = null;
-        try {
-            obj = streamIn.readObject();
-        } catch (SocketException e) {
-            System.out.println("Close Connection");
-        } catch (EOFException e) {
-            System.out.println("Server close");
-            interrupt();
+    @Override
+    public void render(GameLoop gl, Render r) {
+        if (message != null) {
+            r.addFont(new Font(Resources.TEXTURES.get(Resources.CLIENT)), message, GameLoop.WIDTH / 5, 0, 0xffffffff);
+            --messageTimeToLive;
         }
-        if (obj == null)
-            return false;
-        helper.setOtherObject(obj);
-        return true;
-    }
-
-    private String decrypt(String address) {
-
-        if (address.length() == 8) {
-
-            Character[] hexVal = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-            ArrayList<Character> alpha = new ArrayList<>(Arrays.asList(hexVal));
-
-            StringBuilder sb = new StringBuilder();
-
-            address = address.toUpperCase();
-
-            char[] addressCharArray = address.toCharArray();
-
-            for (int i = 0; i < addressCharArray.length; i += 2) {
-                int value = 16 * alpha.indexOf(addressCharArray[i]) + alpha.indexOf(addressCharArray[i + 1]);
-                sb.append(value);
-                if (i != 6)
-                    sb.append(".");
-            }
-            return sb.toString();
+        if (messageTimeToLive < 0) {
+            message = null;
+            messageTimeToLive = MAXTTL;
         }
-        return null;
+
     }
 
-    public void interrupt() throws IOException {
-        System.out.println("Disconnecting...");
-        socket.close();
-        streamIn.close();
-        streamOut.close();
-        System.out.println("Client disconnected");
-        Thread.currentThread().interrupt();
+    public boolean isRunning() {
+        return running;
     }
 }

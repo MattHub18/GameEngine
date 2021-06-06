@@ -1,11 +1,9 @@
 /.gradle/
 /.idea/
 /out/
+/res/bang.wav
+/res/efx.wav
 /res/
-/src/com/company/FakeGame.java
-/src/com/company/Main.java
-/GameEngine.iml
-/src/com/company/FakeNetwork.java
-/src/com/company/Utils.java
 /src/com/company/zzzfake/
+/GameEngine.iml
 /saves/

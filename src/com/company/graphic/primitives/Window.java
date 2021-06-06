@@ -2,8 +2,6 @@ package com.company.graphic.primitives;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -13,7 +11,7 @@ public class Window {
     private final BufferStrategy bs;
     private final Graphics g;
 
-    public Window(GameLoop gl) {
+    public Window(GameLoop gl, WindowHandler handler) {
         image = new BufferedImage(gl.getCamera().getMapWidthInPixel(), gl.getCamera().getMapHeightInPixel(), BufferedImage.TYPE_INT_RGB);
 
         canvas = new Canvas();
@@ -23,13 +21,9 @@ public class Window {
         canvas.setMinimumSize(dim);
 
         JFrame frame = new JFrame(gl.getTitle());
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                gl.setRunning(false);
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            }
-        });
+        handler.setFrame(frame);
+        handler.setGl(gl);
+        frame.addWindowListener(handler);
         frame.setLayout(new BorderLayout());
         frame.add(canvas, BorderLayout.CENTER);
         frame.pack();

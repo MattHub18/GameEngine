@@ -1,20 +1,18 @@
 package com.company.entities;
 
 import com.company.directions.Direction;
-import com.company.entities.bullets.BulletMagazine;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.GameLoop;
 import com.company.physics.basics.Vector;
-import com.company.physics.collisions.Collider;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.physics.primitives.AxisAlignedBoundingBox;
-import com.company.worlds.Map;
 import com.company.worlds.Tile;
 
 import java.io.Serializable;
+import java.util.Random;
 
-public abstract class Entity implements Collider, Graphic, Serializable {
+public abstract class Entity implements Graphic, Serializable, GameEntity {
     protected byte entityID;
     protected int posX;
     protected int posY;
@@ -33,8 +31,10 @@ public abstract class Entity implements Collider, Graphic, Serializable {
 
     protected AxisAlignedBoundingBox body;
 
-    private final int TILE_WIDTH = GameLoop.TILE_WIDTH;
-    private final int TILE_HEIGHT = GameLoop.TILE_HEIGHT;
+    protected final int TILE_WIDTH = GameLoop.TILE_WIDTH;
+    protected final int TILE_HEIGHT = GameLoop.TILE_HEIGHT;
+
+    private final int uniqueId;
 
     public Entity(byte id, int posX, int posY, float delay) {
         this.entityID = id;
@@ -53,7 +53,32 @@ public abstract class Entity implements Collider, Graphic, Serializable {
         this.animationDelay = delay;
 
         this.alive = true;
+
+        this.uniqueId = new Random().nextInt();
     }
+
+    public Entity(Entity copy) {
+        this.entityID = copy.entityID;
+
+        this.posX = copy.posX;
+        this.posY = copy.posY;
+
+        this.up = copy.up;
+        this.down = copy.down;
+        this.left = copy.left;
+        this.right = copy.right;
+
+        this.facing = copy.facing;
+
+        this.animationFrame = copy.animationFrame;
+        this.animationDelay = copy.animationDelay;
+
+        this.alive = copy.alive;
+
+        this.body = copy.body;
+        this.uniqueId = copy.uniqueId;
+    }
+
 
     public int getPosX() {
         return posX;
@@ -61,6 +86,10 @@ public abstract class Entity implements Collider, Graphic, Serializable {
 
     public int getPosY() {
         return posY;
+    }
+
+    public int getUniqueId() {
+        return uniqueId;
     }
 
     public void move() {
@@ -82,16 +111,7 @@ public abstract class Entity implements Collider, Graphic, Serializable {
         }
     }
 
-    public void checkCollision(Map map) {
-        for (int y = 0; y < map.getHeight(); y++) {
-            for (int x = 0; x < map.getWidth(); x++) {
-                Tile t = map.getTile(x, y);
-                handleCollisionWith(t);
-            }
-        }
-    }
-
-    private void handleCollisionWith(Tile tile) {
+    public void handleCollisionWith(Tile tile) {
         body = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT));
         AxisAlignedBoundingBox tileBox = tile.getBox();
 
@@ -114,19 +134,6 @@ public abstract class Entity implements Collider, Graphic, Serializable {
                     posX = (int) (tileBox.getMin().getX() + body.getWidth());
             }
         }
-    }
-
-    @Override
-    public Vector getCenter() {
-        return new Vector(posX + TILE_WIDTH / 2f, posY + TILE_HEIGHT / 2f);
-    }
-
-    public void shooting(GameLoop gl) {
-        throw new RuntimeException("OPERATION NOT PERMITTED");
-    }
-
-    public void registerBulletMagazine(BulletMagazine m) {
-        throw new RuntimeException("OPERATION NOT PERMITTED");
     }
 
     public void registerEntityToCamera(Camera camera) {

@@ -2,6 +2,7 @@ package com.company.entities.bullets;
 
 import com.company.directions.Direction;
 import com.company.entities.Entity;
+import com.company.entities.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.physics.basics.Vector;
@@ -11,7 +12,7 @@ import com.company.worlds.Tile;
 
 import java.io.Serializable;
 
-public abstract class Bullet implements Graphic, Serializable {
+public abstract class Bullet implements Graphic, Serializable, GameEntity {
     protected int posX;
     protected int posY;
     protected Direction facing;
@@ -28,11 +29,16 @@ public abstract class Bullet implements Graphic, Serializable {
         box = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT));
     }
 
-    public boolean handleCollisionWith(Tile tile) {
+    @Override
+    public void handleCollisionWith(Tile tile) {
         box = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT));
         AxisAlignedBoundingBox tileBox = tile.getBox();
 
-        return !(!CollisionDetector.isCollided(tileBox, box) || tile.isFloor());
+        if (!CollisionDetector.isCollided(tileBox, box) || tile.isFloor())
+            return;
+
+        posX = -GameLoop.TILE_WIDTH;
+        posY = -GameLoop.TILE_HEIGHT;
     }
 
     public int getMaxRange() {
