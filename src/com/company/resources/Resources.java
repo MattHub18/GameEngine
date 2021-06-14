@@ -6,12 +6,12 @@ public abstract class Resources {
     public static final ArrayList<String> TEXTURES = new ArrayList<>();
 
     public static final byte PLAYER = 0;
-    public static final byte MAP = 1;
+    public static final byte TRAVERSE_TOWN = 1;
     public static final byte BULLET = 2;
     public static final byte MULTIPLAYER = 3;
     public static final byte FPS = 4;
     public static final byte CLIENT = 5;
-
+    public static final byte ENEMY = 6;
 
     public static final byte PLAYER_FRONT = 0;
     public static final byte PLAYER_LEFT = 1;
@@ -25,4 +25,5 @@ public abstract class Resources {
 
     public static final byte BORDER = 0;
     public static final byte FLOOR = 1;
+    public static final byte WALL = 2;
 }

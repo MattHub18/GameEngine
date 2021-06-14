@@ -1,7 +1,7 @@
 package com.company.network;
 
 
-import com.company.entities.PlayerConnectionWrapper;
+import com.company.entities.human.Player;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.primitives.GameLoop;
@@ -16,6 +16,7 @@ import java.net.*;
 
 public class Client implements Runnable, Graphic {
     private final int port;
+    private final int bufferSize;
     private static final int MAXTTL = 10;
     private final EntityList list;
     private InetAddress ipAddress;
@@ -25,9 +26,10 @@ public class Client implements Runnable, Graphic {
     private int messageTimeToLive = MAXTTL;
     private boolean running;
 
-    public Client(EntityList list, int port) {
-        this.port = port;
+    public Client(EntityList list, int port, int bufferSize) {
         this.list = list;
+        this.port = port;
+        this.bufferSize = bufferSize;
         try {
             this.socket = new DatagramSocket();
         } catch (SocketException e) {
@@ -49,7 +51,7 @@ public class Client implements Runnable, Graphic {
 
     public void run() {
         while (true) {
-            byte[] data = new byte[2048];
+            byte[] data = new byte[bufferSize];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
                 socket.receive(packet);
@@ -70,7 +72,8 @@ public class Client implements Runnable, Graphic {
                 case INVALID:
                     break;
                 case LOGIN:
-                    message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
+                    if (packet.getPlayer().getEntity() instanceof Player)
+                        message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
                     handleLogin(packet);
                     break;
                 case DISCONNECT:
@@ -92,17 +95,17 @@ public class Client implements Runnable, Graphic {
     }
 
     private void handleLogin(Packet packet) throws InterruptedException {
-        PlayerConnectionWrapper player = packet.getPlayer();
+        EntityConnectionWrapper player = packet.getPlayer();
         list.add(player);
     }
 
     private void handleDisconnect(Packet packet) throws InterruptedException {
-        PlayerConnectionWrapper player = packet.getPlayer();
+        EntityConnectionWrapper player = packet.getPlayer();
         list.remove(player);
     }
 
     private void handleMove(Packet packet) throws InterruptedException {
-        PlayerConnectionWrapper player = packet.getPlayer();
+        EntityConnectionWrapper player = packet.getPlayer();
         list.update(player);
     }
 
@@ -120,8 +123,7 @@ public class Client implements Runnable, Graphic {
         DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, port);
         try {
             socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 

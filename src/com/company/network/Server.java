@@ -1,6 +1,8 @@
 package com.company.network;
 
-import com.company.entities.PlayerConnectionWrapper;
+import com.company.entities.human.Enemy;
+import com.company.entities.human.Entity;
+import com.company.entities.human.Player;
 import com.company.network.logs.LogScreen;
 import com.company.network.logs.LogType;
 import com.company.network.packets.Packet;
@@ -13,15 +15,20 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Server implements Runnable {
-    private final List<PlayerConnectionWrapper> connectedPlayers = new ArrayList<>();
+    private final List<EntityConnectionWrapper> connectedPlayers = new ArrayList<>();
+    private final Map<Integer, List<EntityConnectionWrapper>> enemies = new HashMap<>();
     private DatagramSocket socket;
     private Thread thread;
     private LogScreen screen;
+    private final int bufferSize;
 
-    public Server(int port) {
+    public Server(int port, int bufferSize) {
+        this.bufferSize = bufferSize;
         try {
             this.socket = new DatagramSocket(port);
         } catch (SocketException e) {
@@ -39,7 +46,7 @@ public class Server implements Runnable {
 
     public void run() {
         while (true) {
-            byte[] data = new byte[2048];
+            byte[] data = new byte[bufferSize];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
                 socket.receive(packet);
@@ -61,10 +68,8 @@ public class Server implements Runnable {
 
             case LOGIN:
                 screen.appendToPane("Client [" + address + " : " + port + "] has connected", LogType.PLAYER);
-                PlayerConnectionWrapper player = packet.getPlayer();
-                player.setIpAddress(address);
-                player.setPort(port);
-                addConnection(packet);
+                addConnection(packet, address, port);
+                sendEnemy(packet);
                 break;
 
             case DISCONNECT:
@@ -78,17 +83,14 @@ public class Server implements Runnable {
         }
     }
 
-    public void addConnection(Packet packet) {
+    public void addConnection(Packet packet, InetAddress address, int port) {
         boolean alreadyConnected = false;
-        PlayerConnectionWrapper player = packet.getPlayer();
+        EntityConnectionWrapper player = packet.getPlayer();
+        player.setIpAddress(address);
+        player.setPort(port);
 
-        for (PlayerConnectionWrapper e : connectedPlayers) {
+        for (EntityConnectionWrapper e : connectedPlayers) {
             if (e.getUniqueId() == player.getUniqueId()) {
-                if (e.getIpAddress() == null)
-                    e.setIpAddress(player.getIpAddress());
-                if (e.getPort() == -1)
-                    e.setPort(player.getPort());
-
                 alreadyConnected = true;
             } else {
                 sendData(packet.getData(), e.getIpAddress(), e.getPort());
@@ -101,21 +103,43 @@ public class Server implements Runnable {
         }
     }
 
+    private void sendEnemy(Packet packet) {
+        int currentRoomId = packet.getPlayer().getCurrentRoomId();
+
+        for (EntityConnectionWrapper e : enemies.get(currentRoomId)) {
+            Packet sendEnemy = new Packet(PacketType.LOGIN, e);
+            sendData(sendEnemy.getData(), packet.getAddress(), packet.getPort());
+        }
+    }
+
     public void removeConnection(Packet packet) {
         connectedPlayers.remove(getPlayer(packet.getPlayer()));
         packet.writeData(this);
     }
 
     private void handleMove(Packet packet) {
-        PlayerConnectionWrapper player = getPlayer(packet.getPlayer());
+        EntityConnectionWrapper player = getPlayer(packet.getPlayer());
         if (player != null) {
+            int oldRoomId = player.getCurrentRoomId();
             player.update(packet.getPlayer());
             packet.writeData(this);
+            if (player.getEntity() instanceof Player) {
+                if (player.getCurrentRoomId() != oldRoomId)
+                    sendEnemy(new Packet(PacketType.INVALID, player));
+            }
         }
     }
 
-    private PlayerConnectionWrapper getPlayer(PlayerConnectionWrapper player) {
-        for (PlayerConnectionWrapper pl : connectedPlayers) {
+    private EntityConnectionWrapper getPlayer(EntityConnectionWrapper player) {
+        if (player.getEntity() instanceof Player)
+            return search(connectedPlayers, player);
+        else if (player.getEntity() instanceof Enemy)
+            return search(enemies.get(player.getCurrentRoomId()), player);
+        return null;
+    }
+
+    private EntityConnectionWrapper search(List<EntityConnectionWrapper> list, EntityConnectionWrapper player) {
+        for (EntityConnectionWrapper pl : list) {
             if (pl.getUniqueId() == player.getUniqueId()) {
                 return pl;
             }
@@ -124,7 +148,7 @@ public class Server implements Runnable {
     }
 
     public void sendDataToAllClients(byte[] data) {
-        for (PlayerConnectionWrapper pl : connectedPlayers)
+        for (EntityConnectionWrapper pl : connectedPlayers)
             sendData(data, pl.getIpAddress(), pl.getPort());
     }
 
@@ -146,5 +170,15 @@ public class Server implements Runnable {
             e.printStackTrace();
         }
         thread.interrupt();
+    }
+
+    public void insertEnemy(int i, List<Entity> entities) {
+        List<EntityConnectionWrapper> pcwEntities = null;
+        if (entities != null) {
+            pcwEntities = new ArrayList<>();
+            for (Entity e : entities)
+                pcwEntities.add(new EntityConnectionWrapper(e, i));
+        }
+        enemies.put(i, pcwEntities);
     }
 }

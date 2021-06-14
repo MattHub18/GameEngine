@@ -1,8 +1,8 @@
 package com.company.graphic.primitives;
 
-import com.company.entities.Entity;
-import com.company.entities.PlayerConnectionWrapper;
+import com.company.entities.human.Entity;
 import com.company.network.Client;
+import com.company.network.EntityConnectionWrapper;
 import com.company.network.Server;
 import com.company.network.packets.Packet;
 import com.company.network.packets.PacketType;
@@ -21,12 +21,12 @@ public class WindowHandler extends WindowAdapter {
     @Override
     public void windowClosing(WindowEvent e) {
         if (client != null) {
-            Packet packet = new Packet(PacketType.DISCONNECT, new PlayerConnectionWrapper(player));
+            Packet packet = new Packet(PacketType.DISCONNECT, new EntityConnectionWrapper(player, (byte) -1));
             packet.writeData(client);
         }
 
         if (server != null) {
-            Packet packet = new Packet(PacketType.SHUTDOWN, new PlayerConnectionWrapper(player));
+            Packet packet = new Packet(PacketType.SHUTDOWN, new EntityConnectionWrapper(player, (byte) -1));
             packet.writeData(server);
             server.interrupt();
         }

@@ -1,21 +1,26 @@
-package com.company.entities;
+package com.company.network;
 
+import com.company.entities.human.Enemy;
+import com.company.entities.human.Entity;
+import com.company.entities.human.Player;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
-import com.company.zzzfake.fakeobjects.FakePlayer;
 
 import java.io.Serializable;
 import java.net.InetAddress;
 
-public class PlayerConnectionWrapper implements Serializable, Graphic {
+public class EntityConnectionWrapper implements Serializable, Graphic {
 
     private Entity entity;
     private InetAddress ipAddress;
     private int port;
 
-    public PlayerConnectionWrapper(Entity entity) {
+    private int currentRoomId;
+
+    public EntityConnectionWrapper(Entity entity, int currentRoomId) {
         this.entity = entity;
+        this.currentRoomId = currentRoomId;
         this.ipAddress = null;
         this.port = -1;
     }
@@ -40,14 +45,20 @@ public class PlayerConnectionWrapper implements Serializable, Graphic {
         this.port = port;
     }
 
-
     public int getUniqueId() {
         return entity.getUniqueId();
     }
 
-    public void update(PlayerConnectionWrapper player) {
-        if (player.entity instanceof FakePlayer)
-            entity = new FakePlayer((FakePlayer) player.entity);//todo try to abstract
+    public void update(EntityConnectionWrapper player) {
+        currentRoomId = player.currentRoomId;
+        if (player.entity instanceof Player)
+            entity = new Player((Player) player.entity);
+        else if (player.entity instanceof Enemy)
+            entity = new Enemy((Enemy) player.entity);
+    }
+
+    public int getCurrentRoomId() {
+        return currentRoomId;
     }
 
     @Override

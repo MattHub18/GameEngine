@@ -1,28 +1,26 @@
 package com.company.network;
 
-import com.company.entities.PlayerConnectionWrapper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class EntityList {
-    private final List<PlayerConnectionWrapper> entities = new ArrayList<>();
+    private final List<EntityConnectionWrapper> entities = new ArrayList<>();
     private final Semaphore mutex = new Semaphore(1);
 
-    public void add(PlayerConnectionWrapper player) throws InterruptedException {
+    public void add(EntityConnectionWrapper player) throws InterruptedException {
         start();
         entities.add(player);
         finish();
     }
 
-    public void remove(PlayerConnectionWrapper player) throws InterruptedException {
+    public void remove(EntityConnectionWrapper player) throws InterruptedException {
         start();
         entities.remove(indexOf(player));
         finish();
     }
 
-    public void update(PlayerConnectionWrapper player) throws InterruptedException {
+    public void update(EntityConnectionWrapper player) throws InterruptedException {
         start();
         int index = indexOf(player);
         if (index != -1)
@@ -30,9 +28,9 @@ public class EntityList {
         finish();
     }
 
-    public List<PlayerConnectionWrapper> get() throws InterruptedException {
+    public List<EntityConnectionWrapper> get() throws InterruptedException {
         start();
-        List<PlayerConnectionWrapper> eList = new ArrayList<>(entities);
+        List<EntityConnectionWrapper> eList = new ArrayList<>(entities);
         finish();
         return eList;
     }
@@ -45,9 +43,9 @@ public class EntityList {
         mutex.release();
     }
 
-    private int indexOf(PlayerConnectionWrapper player) {
+    private int indexOf(EntityConnectionWrapper player) {
         int index = -1;
-        for (PlayerConnectionWrapper p : entities) {
+        for (EntityConnectionWrapper p : entities) {
             ++index;
             if (p.getUniqueId() == player.getUniqueId())
                 return index;

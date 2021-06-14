@@ -1,6 +1,7 @@
-package com.company.entities;
+package com.company.entities.human;
 
 import com.company.directions.Direction;
+import com.company.entities.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.GameLoop;
@@ -84,8 +85,16 @@ public abstract class Entity implements Graphic, Serializable, GameEntity {
         return posX;
     }
 
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
     public int getPosY() {
         return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
     }
 
     public int getUniqueId() {

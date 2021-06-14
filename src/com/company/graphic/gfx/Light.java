@@ -4,10 +4,12 @@ public class Light {
     private final int radius;
     private final int[] lightPixels;
     private final boolean fullPower;
+    private final int color;
 
     public Light(int radius, int color, boolean fullPower) {
         this.radius = radius;
         int diameter = radius * 2;
+        this.color = color;
         lightPixels = new int[diameter * diameter];
         this.fullPower = fullPower;
 
@@ -42,5 +44,9 @@ public class Light {
 
     public boolean isFullPower() {
         return fullPower;
+    }
+
+    public int getColor() {
+        return color;
     }
 }

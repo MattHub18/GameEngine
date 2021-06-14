@@ -1,7 +1,7 @@
 package com.company.network.packets;
 
-import com.company.entities.PlayerConnectionWrapper;
 import com.company.network.Client;
+import com.company.network.EntityConnectionWrapper;
 import com.company.network.Server;
 import com.company.resources.Streaming;
 
@@ -11,9 +11,9 @@ import java.net.InetAddress;
 public class Packet implements Serializable {
 
     private final PacketType packetId;
-    private final PlayerConnectionWrapper player;
+    private final EntityConnectionWrapper player;
 
-    public Packet(PacketType packetId, PlayerConnectionWrapper player) {
+    public Packet(PacketType packetId, EntityConnectionWrapper player) {
         this.packetId = packetId;
         this.player = player;
     }
@@ -22,7 +22,7 @@ public class Packet implements Serializable {
         return packetId;
     }
 
-    public PlayerConnectionWrapper getPlayer() {
+    public EntityConnectionWrapper getPlayer() {
         return player;
     }
 

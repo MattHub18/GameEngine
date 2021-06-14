@@ -1,7 +1,7 @@
 package com.company.worlds;
 
-import com.company.entities.Entity;
 import com.company.entities.GameEntity;
+import com.company.entities.human.Entity;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.Camera;
@@ -10,6 +10,8 @@ import com.company.graphic.primitives.Render;
 import com.company.resources.Resources;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class Map implements Graphic, Serializable {
     protected final int width;
@@ -27,6 +29,8 @@ public abstract class Map implements Graphic, Serializable {
 
     protected Entity player;
 
+    protected java.util.Map<Byte, List<Entity>> enemies = new HashMap<>();
+
     public Map(byte id, byte startRoom, Room[] r, Entity player) {
         this.mapId = id;
         this.rooms = r;
@@ -42,7 +46,7 @@ public abstract class Map implements Graphic, Serializable {
 
     @Override
     public void update(GameLoop gl, float dt) {
-        collisions(player);
+        checkPlayerPosition();
     }
 
     @Override
@@ -67,9 +71,27 @@ public abstract class Map implements Graphic, Serializable {
         camera.setMap(this);
     }
 
-    protected void collisions(GameEntity tmp) {
+    public void collisions(GameEntity tmp) {
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
                 tmp.handleCollisionWith(rooms[roomId].getTile(x, y));
+    }
+
+    public Tile getTile(int x, int y) {
+        return rooms[roomId].getTile(x, y);
+    }
+
+    protected abstract void checkPlayerPosition();
+
+    public byte getCurrentRoomId() {
+        return roomId;
+    }
+
+    public List<Entity> getEnemies(byte id) {
+        return enemies.get(id);
+    }
+
+    public int getNumberOfRooms() {
+        return rooms.length;
     }
 }
