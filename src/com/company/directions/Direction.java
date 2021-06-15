@@ -1,5 +1,7 @@
 package com.company.directions;
 
+import java.util.Random;
+
 public enum Direction {
     NORTH(0, -1),
     SOUTH(0, 1),
@@ -20,5 +22,19 @@ public enum Direction {
     Direction(int dirX, int dirY) {
         this.dirX = dirX;
         this.dirY = dirY;
+    }
+
+    public static Direction randomDirection() {
+        int dir = new Random().nextInt(4);
+        switch (dir) {
+            default:
+                return NORTH;
+            case 1:
+                return SOUTH;
+            case 2:
+                return EAST;
+            case 3:
+                return WEST;
+        }
     }
 }

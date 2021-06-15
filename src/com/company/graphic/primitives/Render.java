@@ -15,6 +15,7 @@ public class Render {
     private final ArrayList<LightWrapper> lights;
     private final ArrayList<RectangleWrapper> rectangles;
     private final ArrayList<FontWrapper> fonts;
+    private final ArrayList<ParticleWrapper> explosions;
     private final int[] lightPixels;
     private final boolean[] brightness;
 
@@ -35,6 +36,7 @@ public class Render {
         lights = new ArrayList<>();
         rectangles = new ArrayList<>();
         fonts = new ArrayList<>();
+        explosions = new ArrayList<>();
         lightPixels = new int[pixels.length];
         depths = new int[pixels.length];
         brightness = new boolean[pixels.length];
@@ -66,6 +68,10 @@ public class Render {
             drawLight(lgh.getLight(), lgh.getX(), lgh.getY());
         }
 
+        for (ParticleWrapper pw : explosions) {
+            drawParticle(pw.getParticle(), pw.getOffX(), pw.getOffY(), pw.getWidth(), pw.getHeight());
+        }
+
         for (int i = 0; i < pixels.length; i++) {
             float red = ((lightPixels[i] >> 16) & 0xff) / 255f;
             float green = ((lightPixels[i] >> 8) & 0xff) / 255f;
@@ -77,6 +83,7 @@ public class Render {
         rectangles.clear();
         fonts.clear();
         lights.clear();
+        explosions.clear();
     }
 
     public void clear() {
@@ -253,6 +260,18 @@ public class Render {
         }
     }
 
+    public void addParticle(Particle particle, int offX, int offY, int width, int height) {
+        explosions.add(new ParticleWrapper(particle, offX, offY, width, height));
+    }
+
+    private void drawParticle(Particle particle, int offX, int offY, int width, int height) {
+        if (particle.getType() == Particle.Type.RECTANGLE)
+            drawFullRectangle(new Rectangle(offX, offY, width, height, true), particle.getColor());
+        else if (particle.getType() == Particle.Type.IMAGE)
+            drawImage(new Image(particle.getPixels(), width, height), offX, offY);
+    }
+
+
     private void setPixel(int x, int y, int value) {
         int alpha = (value >> 24) & 0xff;
 
@@ -300,10 +319,6 @@ public class Render {
 
     private boolean outOfBounds(int width, int lw, int rw, int height, int lh, int rh) {
         return width < lw || width >= rw || height < lh || height >= rh;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
     }
 
     public void setFpsFont(Font font, String text, int offX, int offY, int color) {
