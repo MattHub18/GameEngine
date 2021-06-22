@@ -10,6 +10,7 @@ public class Image {
     private int height;
     private int[] pixels;
     private boolean opaque = false;
+    private boolean movable = false;
 
     public Image(String path) {
         BufferedImage image = null;
@@ -51,5 +52,13 @@ public class Image {
 
     public void setOpaque(boolean opaque) {
         this.opaque = opaque;
+    }
+
+    public boolean isMovable() {
+        return movable;
+    }
+
+    public void setMovable(boolean movable) {
+        this.movable = movable;
     }
 }

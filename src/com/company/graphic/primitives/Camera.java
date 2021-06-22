@@ -6,19 +6,19 @@ import com.company.worlds.Map;
 public class Camera {
     private Entity entityRegistered;
     private Map mapRegistered;
-    private final int viewportSizeX;
-    private final int viewportSizeY;
+    private int viewportSizeX;
+    private int viewportSizeY;
     private int camX;
     private int camY;
 
     public Camera(Entity entity, Map map) {
         this.entityRegistered = entity;
         this.mapRegistered = map;
-        viewportSizeX = GameLoop.WIDTH;
-        viewportSizeY = GameLoop.HEIGHT;
     }
 
     public void centerCamera() {
+        viewportSizeX = GameLoop.WIDTH;
+        viewportSizeY = GameLoop.HEIGHT;
         int offsetMaxX = mapRegistered.getWidthInPixel() - viewportSizeX;
         int offsetMaxY = mapRegistered.getHeightInPixel() - viewportSizeY;
         int offsetMinX = 0;

@@ -77,7 +77,6 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        buttons[e.getButton()] = true;
     }
 
     @Override

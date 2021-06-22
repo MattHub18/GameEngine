@@ -30,6 +30,7 @@ public class TileImage extends Image {
         }
         Image img = new Image(pixels, tileWidth, tileHeight);
         img.setOpaque(isOpaque());
+        img.setMovable(isMovable());
         return img;
     }
 }

@@ -4,11 +4,12 @@ import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.resources.Resources;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class GameLoop implements Runnable {
-    public static final int WIDTH = 320;
-    public static final int HEIGHT = 180;
+    public static int WIDTH;
+    public static int HEIGHT;
     public static final float SCALE = 2f;
 
     public static final int TILE_WIDTH = 64;
@@ -28,8 +29,12 @@ public class GameLoop implements Runnable {
     private final Camera camera;
 
     private boolean pause = false;
+    private boolean fullScreen = true;
 
     public GameLoop(Graphic game, WindowHandler handler) {
+        Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
+        GameLoop.WIDTH = (int) (fullDim.width / SCALE);
+        GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
         camera = new Camera(((CameraRegistration) game).registerInitialEntity(), ((CameraRegistration) game).registerInitialMap());
         window = new Window(this, handler);
         controller = new Controller(this);
@@ -65,6 +70,19 @@ public class GameLoop implements Runnable {
         int fps;
 
         while (running) {
+            if (controller.isKeyDown(KeyEvent.VK_F11)) {
+                if (!fullScreen) {
+                    Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
+                    GameLoop.WIDTH = (int) (fullDim.width / SCALE);
+                    GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
+                    fullScreen = true;
+                } else {
+                    WIDTH = 320;
+                    HEIGHT = 180;
+                    fullScreen = false;
+                }
+                window.changeWindowSize(this);
+            }
             rendering = true;
 
             startTime = System.nanoTime() / 1000000000.0;
@@ -125,5 +143,9 @@ public class GameLoop implements Runnable {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public boolean isFullScreen() {
+        return fullScreen;
     }
 }

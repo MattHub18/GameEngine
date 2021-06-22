@@ -170,6 +170,13 @@ public class Render {
         int width = image.getWidth();
         int height = image.getHeight();
 
+        if (image.isMovable()) {
+            camX = 0;
+            camY = 0;
+            maxViewX = camera.getMapWidthInPixel();
+            maxViewY = camera.getMapHeightInPixel();
+        }
+
         if (offX < camX)
             startX -= (offX - camX);
         if (offY < camY)
@@ -200,7 +207,6 @@ public class Render {
                     if (font.getFontImage().getPixels()[(x + font.getOffsets()[unicode]) + y * font.getFontImage().getWidth()] == 0xffffffff) {
                         setPixel(x + offset + offX, y + offY, color);
                     }
-
                 }
             }
             offset += font.getWidths()[unicode];
