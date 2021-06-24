@@ -1,6 +1,7 @@
 package com.company.graphic.primitives;
 
 import com.company.graphic.gfx.*;
+import com.company.physics.primitives.Circle;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class Render {
     private final ArrayList<RectangleWrapper> rectangles;
     private final ArrayList<FontWrapper> fonts;
     private final ArrayList<ParticleWrapper> explosions;
+    private final ArrayList<CircleWrapper> circles;
+
     private final int[] lightPixels;
     private final boolean[] brightness;
 
@@ -37,6 +40,8 @@ public class Render {
         rectangles = new ArrayList<>();
         fonts = new ArrayList<>();
         explosions = new ArrayList<>();
+        circles = new ArrayList<>();
+
         lightPixels = new int[pixels.length];
         depths = new int[pixels.length];
         brightness = new boolean[pixels.length];
@@ -55,6 +60,10 @@ public class Render {
                 drawFullRectangle(rec.getRectangle(), rec.getColor());
             else
                 drawBorderRectangle(rec.getRectangle(), rec.getColor());
+        }
+
+        for (CircleWrapper cir : circles) {
+            drawCircumference(cir.getCircle(), cir.getColor(), cir.isFull());
         }
 
         if (fps != null)
@@ -84,6 +93,7 @@ public class Render {
         fonts.clear();
         lights.clear();
         explosions.clear();
+        circles.clear();
     }
 
     public void clear() {
@@ -151,6 +161,77 @@ public class Render {
         drawFullRectangle(new Rectangle(offX + 1, offY + 1, width - 1, height - 1, true), color);
 
         drawBorderRectangle(rect, color);
+    }
+
+    public void addCircle(Circle circle, int color, boolean isFull) {
+        circles.add(new CircleWrapper(circle, color, isFull));
+    }
+
+    private void drawCircumference(Circle circle, int color, boolean isFull) {
+        int xc = (int) circle.getCenter().getX();
+        int yc = (int) circle.getCenter().getY();
+        int r = circle.getRadius();
+
+        int x = 0;
+        int y = r;
+        int d = 3 - 2 * r;
+
+        if (!isFull)
+            drawCircumferencePixel(xc, yc, x, y, color);
+        else
+            drawCircleLine(xc, yc, x, y, color);
+        while (y >= x) {
+            x++;
+            if (d > 0) {
+                y--;
+                d = d + 4 * (x - y) + 10;
+            } else
+                d = d + 4 * x + 6;
+
+            if (!isFull)
+                drawCircumferencePixel(xc, yc, x, y, color);
+            else
+                drawCircleLine(xc, yc, x, y, color);
+        }
+    }
+
+    private void drawCircumferencePixel(int xc, int yc, int x, int y, int color) {
+        setPixel(xc + x, yc + y, color);
+        setPixel(xc - x, yc + y, color);
+        setPixel(xc + x, yc - y, color);
+        setPixel(xc - x, yc - y, color);
+        setPixel(xc + y, yc + x, color);
+        setPixel(xc - y, yc + x, color);
+        setPixel(xc + y, yc - x, color);
+        setPixel(xc - y, yc - x, color);
+    }
+
+    private void drawCircleLine(int xc, int yc, int x, int y, int color) {
+        drawLine(xc - x, yc + y, xc + x, yc + y, color);
+        drawLine(xc - x, yc - y, xc + x, yc - y, color);
+        drawLine(xc - y, yc + x, xc + y, yc + x, color);
+        drawLine(xc - y, yc - x, xc + y, yc - x, color);
+    }
+
+    private void drawLine(int x0, int y0, int xf, int yf, int color) {
+
+        if (y0 > yf) {
+            y0 = y0 + yf;
+            yf = y0 - yf;
+            y0 = y0 - yf;
+        }
+
+        if (x0 > xf) {
+            x0 = x0 + xf;
+            xf = x0 - xf;
+            x0 = x0 - xf;
+        }
+
+        for (int y = y0; y <= yf; y++) {
+            for (int x = x0; x <= xf; x++) {
+                setPixel(x, y, color);
+            }
+        }
     }
 
     public void addImage(Image image, int offX, int offY) {
