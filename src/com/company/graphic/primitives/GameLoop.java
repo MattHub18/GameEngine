@@ -10,7 +10,8 @@ import java.awt.event.KeyEvent;
 public class GameLoop implements Runnable {
     public static int WIDTH;
     public static int HEIGHT;
-    public static final float SCALE = 2f;
+    public static final int RATIO = 2;
+    public static float SCALE = 2f;
 
     public static final int TILE_WIDTH = 64;
     public static final int TILE_HEIGHT = 64;
@@ -35,6 +36,7 @@ public class GameLoop implements Runnable {
         Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
         GameLoop.WIDTH = (int) (fullDim.width / SCALE);
         GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
+
         camera = new Camera(((CameraRegistration) game).registerInitialEntity(), ((CameraRegistration) game).registerInitialMap());
         window = new Window(this, handler);
         controller = new Controller(this);
@@ -72,13 +74,15 @@ public class GameLoop implements Runnable {
         while (running) {
             if (controller.isKeyDown(KeyEvent.VK_F11)) {
                 if (!fullScreen) {
+                    SCALE *= RATIO;
                     Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
                     GameLoop.WIDTH = (int) (fullDim.width / SCALE);
                     GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
                     fullScreen = true;
                 } else {
-                    WIDTH = 320;
-                    HEIGHT = 180;
+                    SCALE /= RATIO;
+                    WIDTH = 640;
+                    HEIGHT = 360;
                     fullScreen = false;
                 }
                 window.changeWindowSize(this);

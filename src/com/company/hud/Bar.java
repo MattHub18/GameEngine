@@ -6,11 +6,13 @@ import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 
+import java.awt.*;
+
 public class Bar implements Graphic {
 
     protected static final int borderSize = 2;
-    private final int offX;
-    private final int offY;
+    private final DrawableComponent component;
+    private int offX;
     private final int width;
     private final int height;
     private final int color;
@@ -20,6 +22,7 @@ public class Bar implements Graphic {
     private Rectangle darkBar;
     private int lineSeparator;
     private int currentValue;
+    private int offY;
 
     public Bar(int offX, int offY, int width, int height, int color, int maxValue, String text) {
         this.color = color;
@@ -33,10 +36,16 @@ public class Bar implements Graphic {
         this.darkBar = new Rectangle(offX, offY, 0, height, true);
         lineSeparator = offX;
         currentValue = maxValue;
+        component = new DrawableComponent(offX, offY);
     }
 
     @Override
     public void update(GameLoop gl, float dt) {
+        Point p = component.updatePosition();
+        offX = p.x;
+        offY = p.y;
+
+
         float damagePercent = 1 - (float) currentValue / (float) maxValue;
         float damage = damagePercent * width;
         lineSeparator = offX + (int) damage;
