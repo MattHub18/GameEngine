@@ -37,7 +37,7 @@ public class GameLoop implements Runnable {
         GameLoop.WIDTH = (int) (fullDim.width / SCALE);
         GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
 
-        camera = new Camera(((CameraRegistration) game).registerInitialEntity(), ((CameraRegistration) game).registerInitialMap());
+        camera = new Camera(((Registration) game).registerEntityToCamera(), ((Registration) game).registerMapToCamera());
         window = new Window(this, handler);
         controller = new Controller(this);
         render = new Render(this);

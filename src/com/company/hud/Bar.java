@@ -13,16 +13,16 @@ public class Bar implements Graphic {
     protected static final int borderSize = 2;
     private final DrawableComponent component;
     private int offX;
+    private int offY;
     private final int width;
     private final int height;
     private final int color;
-    private final int maxValue;
     private final String text;
     private Rectangle bar;
     private Rectangle darkBar;
     private int lineSeparator;
     private int currentValue;
-    private int offY;
+    private int maxValue;
 
     public Bar(int offX, int offY, int width, int height, int color, int maxValue, String text) {
         this.color = color;
@@ -74,6 +74,10 @@ public class Bar implements Graphic {
 
     public void setCurrentValue(int currentValue) {
         this.currentValue = currentValue;
+    }
+
+    public void setMaxValue(int maxValue) {
+        this.maxValue = maxValue;
     }
 
     public int getWidth() {

@@ -167,6 +167,10 @@ public class Enemy extends Entity implements Serializable {
         this.target = target;
     }
 
+    public int manhattanDistance(Entity player) {
+        return Node.manhattanDistance(new Node(posX, posY), new Node(player.posX, player.posY));
+    }
+
     static class Node {
         protected static final int INFINITY = 1000000000;
         protected final int x;
