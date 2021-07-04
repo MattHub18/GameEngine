@@ -16,15 +16,15 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
     private int mouseY;
     private int scroll;
 
-    public Controller(GameLoop gl) {
+    public Controller(Window window) {
         mouseX = 0;
         mouseY = 0;
         scroll = 0;
 
-        gl.getWindow().getCanvas().addKeyListener(this);
-        gl.getWindow().getCanvas().addMouseListener(this);
-        gl.getWindow().getCanvas().addMouseMotionListener(this);
-        gl.getWindow().getCanvas().addMouseWheelListener(this);
+        window.getCanvas().addKeyListener(this);
+        window.getCanvas().addMouseListener(this);
+        window.getCanvas().addMouseMotionListener(this);
+        window.getCanvas().addMouseWheelListener(this);
     }
 
     public void update() {

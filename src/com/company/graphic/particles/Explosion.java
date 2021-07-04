@@ -1,4 +1,4 @@
-package com.company.graphic.gfx;
+package com.company.graphic.particles;
 
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;

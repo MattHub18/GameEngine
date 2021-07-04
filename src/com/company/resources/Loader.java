@@ -1,13 +1,31 @@
 package com.company.resources;
 
-public class Loader {
+import java.io.File;
+
+public abstract class Loader {
     public static void load() {
-        Resources.TEXTURES.add(Resources.PLAYER, "res/entity/player.png");
-        Resources.TEXTURES.add(Resources.TRAVERSE_TOWN, "res/map/traversetown.png");
-        Resources.TEXTURES.add(Resources.BULLET, "res/entity/bullet.png");
-        Resources.TEXTURES.add(Resources.MULTIPLAYER, "res/menu/multiplayer.png");
-        Resources.TEXTURES.add(Resources.FPS, "res/font/fps.png");
-        Resources.TEXTURES.add(Resources.CLIENT, "res/font/client.png");
-        Resources.TEXTURES.add(Resources.ENEMY, "res/entity/enemy.png");
+        File mainDir = new File("res");
+
+        if (mainDir.exists() && mainDir.isDirectory()) {
+            File[] arr = mainDir.listFiles();
+            if (arr != null)
+                extractResources(arr, 0);
+        }
+    }
+
+    private static void extractResources(File[] arr, int index) {
+        if (index == arr.length)
+            return;
+
+        if (arr[index].isFile())
+            Resources.TEXTURES.add(arr[index].getAbsolutePath());
+        else if (arr[index].isDirectory()) {
+            if (!arr[index].getName().contains("font")) {
+                File[] files = arr[index].listFiles();
+                if (files != null)
+                    extractResources(files, 0);
+            }
+        }
+        extractResources(arr, ++index);
     }
 }

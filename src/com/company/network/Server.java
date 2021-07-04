@@ -2,7 +2,6 @@ package com.company.network;
 
 import com.company.entities.human.Enemy;
 import com.company.entities.human.Entity;
-import com.company.entities.human.Player;
 import com.company.network.logs.LogScreen;
 import com.company.network.logs.LogType;
 import com.company.network.packets.Packet;
@@ -60,7 +59,7 @@ public class Server implements Runnable {
     public void parsePacket(byte[] data, InetAddress address, int port) {
         Packet packet = (Packet) Streaming.deserialize(data);
         assert packet != null;
-        PacketType type = packet.getPacketId();
+        PacketType type = packet.getPacketType();
         switch (type) {
             default:
             case INVALID:
@@ -83,7 +82,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void addConnection(Packet packet, InetAddress address, int port) {
+    private void addConnection(Packet packet, InetAddress address, int port) {
         boolean alreadyConnected = false;
         EntityConnectionWrapper player = packet.getPlayer();
         player.setIpAddress(address);
@@ -123,7 +122,7 @@ public class Server implements Runnable {
             int oldRoomId = player.getCurrentRoomId();
             player.update(packet.getPlayer());
             packet.writeData(this);
-            if (player.getEntity() instanceof Player) {
+            if (!(player.getEntity() instanceof Enemy)) {
                 if (player.getCurrentRoomId() != oldRoomId)
                     sendEnemy(new Packet(PacketType.INVALID, player));
             }
@@ -131,11 +130,10 @@ public class Server implements Runnable {
     }
 
     private EntityConnectionWrapper getPlayer(EntityConnectionWrapper player) {
-        if (player.getEntity() instanceof Player)
-            return search(connectedPlayers, player);
-        else if (player.getEntity() instanceof Enemy)
+        if (player.getEntity() instanceof Enemy)
             return search(enemies.get(player.getCurrentRoomId()), player);
-        return null;
+        else
+            return search(connectedPlayers, player);
     }
 
     private EntityConnectionWrapper search(List<EntityConnectionWrapper> list, EntityConnectionWrapper player) {
@@ -163,7 +161,7 @@ public class Server implements Runnable {
 
     public void interrupt() {
         socket.close();
-        screen.interrupt();
+        screen.close();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

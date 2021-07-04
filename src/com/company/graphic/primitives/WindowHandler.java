@@ -14,7 +14,6 @@ import java.awt.event.WindowEvent;
 public class WindowHandler extends WindowAdapter {
     private Entity player;
     private Client client;
-    private GameLoop gl;
     private JFrame frame;
     private Server server;
 
@@ -31,16 +30,12 @@ public class WindowHandler extends WindowAdapter {
             server.interrupt();
         }
 
-        gl.setRunning(false);
+        GameLoop.running = false;
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public void setGl(GameLoop gl) {
-        this.gl = gl;
     }
 
     public void setFrame(JFrame frame) {

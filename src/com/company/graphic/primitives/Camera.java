@@ -1,26 +1,26 @@
 package com.company.graphic.primitives;
 
 import com.company.entities.human.Entity;
-import com.company.worlds.Map;
+import com.company.world.World;
 
 public class Camera {
-    private Entity entityRegistered;
-    private Map mapRegistered;
+    private final Entity entityRegistered;
+    private final World worldRegistered;
     private int viewportSizeX;
     private int viewportSizeY;
     private int camX;
     private int camY;
 
-    public Camera(Entity entity, Map map) {
+    public Camera(Entity entity, World world) {
         this.entityRegistered = entity;
-        this.mapRegistered = map;
+        this.worldRegistered = world;
     }
 
     public void centerCamera() {
-        viewportSizeX = GameLoop.WIDTH;
-        viewportSizeY = GameLoop.HEIGHT;
-        int offsetMaxX = mapRegistered.getWidthInPixel() - viewportSizeX;
-        int offsetMaxY = mapRegistered.getHeightInPixel() - viewportSizeY;
+        viewportSizeX = Window.WIDTH;
+        viewportSizeY = Window.HEIGHT;
+        int offsetMaxX = worldRegistered.getWidthInPixel() - viewportSizeX;
+        int offsetMaxY = worldRegistered.getHeightInPixel() - viewportSizeY;
         int offsetMinX = 0;
         int offsetMinY = 0;
 
@@ -53,19 +53,11 @@ public class Camera {
         return viewportSizeY + camY;
     }
 
-    public void setEntity(Entity entity) {
-        this.entityRegistered = entity;
-    }
-
-    public void setMap(Map map) {
-        this.mapRegistered = map;
-    }
-
     public int getMapWidthInPixel() {
-        return mapRegistered.getWidthInPixel();
+        return worldRegistered.getWidthInPixel();
     }
 
     public int getMapHeightInPixel() {
-        return mapRegistered.getHeightInPixel();
+        return worldRegistered.getHeightInPixel();
     }
 }

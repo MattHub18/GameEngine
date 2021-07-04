@@ -1,6 +1,4 @@
-package com.company.physics.primitives;
-
-import com.company.physics.basics.Vector;
+package com.company.physics.basics;
 
 import java.io.Serializable;
 
@@ -29,10 +27,6 @@ public class RigidBody implements Serializable {
 
     public void addForce(Vector force) {
         this.resultantForce.add(force);
-    }
-
-    public void zeroForces() {
-        this.resultantForce.zero();
     }
 
     public void update(float dt) {

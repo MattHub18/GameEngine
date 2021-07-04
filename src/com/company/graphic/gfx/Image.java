@@ -9,10 +9,15 @@ public class Image {
     private int width;
     private int height;
     private int[] pixels;
-    private boolean opaque = false;
+    protected int offX;
     private boolean movable = false;
+    protected int offY;
+    private boolean opaque = true;
 
-    public Image(String path) {
+
+    public Image(String path, int offX, int offY) {
+        this.offX = offX;
+        this.offY = offY;
         BufferedImage image = null;
         try {
             image = ImageIO.read(new File(path));
@@ -27,11 +32,12 @@ public class Image {
         }
     }
 
-    public Image(int[] pixels, int width, int height) {
+    public Image(int[] pixels, int offX, int offY, int width, int height) {
         this.pixels = pixels;
         this.width = width;
         this.height = height;
-
+        this.offX = offX;
+        this.offY = offY;
     }
 
     public int[] getPixels() {
@@ -60,5 +66,21 @@ public class Image {
 
     public void setMovable(boolean movable) {
         this.movable = movable;
+    }
+
+    public int getOffX() {
+        return offX;
+    }
+
+    public void setOffX(int offX) {
+        this.offX = offX;
+    }
+
+    public int getOffY() {
+        return offY;
+    }
+
+    public void setOffY(int offY) {
+        this.offY = offY;
     }
 }

@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Streaming {
+public abstract class Streaming {
     public static void writeToFile(String filename, Object obj) {
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename));

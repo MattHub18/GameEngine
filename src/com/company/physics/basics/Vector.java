@@ -50,11 +50,6 @@ public class Vector implements Serializable {
         return this;
     }
 
-    public void zero() {
-        this.x = 0;
-        this.y = 0;
-    }
-
     public float lengthSquared() {
         return x * x + y * y;
     }

@@ -1,36 +1,39 @@
 package com.company.physics.forces;
 
-import com.company.physics.primitives.RigidBody;
+import com.company.physics.basics.RigidBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ForceRegistry {
-    private final List<ForceWrapper> registry;
+    private final Map<RigidBody, List<Force>> registry;
 
     public ForceRegistry() {
-        registry = new ArrayList<>();
+        registry = new HashMap<>();
     }
 
-    public void add(Force f, RigidBody body) {
-        registry.add(new ForceWrapper(f, body));
+    public void add(RigidBody body, Force f) {
+        if (registry.containsKey(body))
+            registry.get(body).add(f);
+        else
+            registry.put(body, new ArrayList<>(Collections.singletonList(f)));
     }
 
-    public void remove(Force f, RigidBody body) {
-        registry.remove(new ForceWrapper(f, body));
+    public void remove(RigidBody body, Force f) {
+        if (registry.containsKey(body))
+            registry.get(body).remove(f);
     }
 
     public void clear() {
-        for (ForceWrapper fr : registry) {
-            fr.getBody().zeroForces();
-        }
+        for (List<Force> forces : registry.values())
+            forces.clear();
         registry.clear();
     }
 
     public void update(float dt) {
-        for (ForceWrapper fr : registry) {
-            RigidBody body = fr.getBody();
-            fr.getForce().addForce(body);
+        for (Map.Entry<RigidBody, List<Force>> entry : registry.entrySet()) {
+            RigidBody body = entry.getKey();
+            for (Force f : entry.getValue())
+                f.addForce(body);
             body.update(dt);
         }
     }

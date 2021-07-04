@@ -1,56 +1,59 @@
-package com.company.graphic.gfx;
+package com.company.graphic.particles;
 
 import com.company.directions.Direction;
 import com.company.graphic.Graphic;
+import com.company.graphic.gfx.Image;
+import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.physics.basics.Vector;
 
 public class Particle implements Graphic {
 
-    private static final int MAXTTL = 100;
+    private int[] pixels;
+
     private final int width;
     private final int height;
-    private final int[] pixels;
-    private final Type type;
+    private Type type;
+    private int ttl;
     private boolean alive = true;
     private int x;
     private int y;
-    private int ttl = MAXTTL;
+
+    private Particle(int x, int y, int w, int h, int ttl) {
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.ttl = ttl;
+        Direction dir = Direction.randomDirection();
+        direction = new Vector(dir.dirX, dir.dirY);
+    }
+
     private Vector direction;
     private int color = -1;
 
-    public Particle(Rectangle r, int color) {
-        type = Type.RECTANGLE;
-
+    public Particle(Rectangle r, int color, int ttl) {
+        this((int) r.getStartX(), (int) r.getStartY(), (int) r.getWidth(), (int) r.getHeight(), ttl);
+        this.type = Type.RECTANGLE;
         this.color = color;
-
-        this.x = r.getStartX();
-        this.y = r.getStartY();
-        this.width = r.getWidth();
-        this.height = r.getHeight();
-
-        Direction dir = Direction.randomDirection();
-        direction = new Vector(dir.dirX, dir.dirY);
-
         pixels = new int[width * height];
         for (int i = 0; i < width * height; i++)
             pixels[i] = color;
     }
 
-
-    public Particle(Image i, int x, int y) {
+    public Particle(Image i, int x, int y, int ttl) {
+        this(x, y, i.getWidth(), i.getHeight(), ttl);
         type = Type.IMAGE;
-
-        this.x = x;
-        this.y = y;
-        this.width = i.getWidth();
-        this.height = i.getHeight();
-
-        Direction dir = Direction.randomDirection();
-        direction = new Vector(dir.dirX, dir.dirY);
-
         pixels = i.getPixels();
+    }
+
+    @Override
+    public void render(GameLoop gl, Render r) {
+        if (type == Type.RECTANGLE)
+            r.addRectangle(new Rectangle(new Vector(x, y), new Vector(width, height), color, true));
+        else if (type == Type.IMAGE)
+            r.addImage(new Image(pixels, x, y, width, height));
     }
 
     @Override
@@ -76,26 +79,9 @@ public class Particle implements Graphic {
         }
     }
 
-    @Override
-    public void render(GameLoop gl, Render r) {
-        r.addParticle(this, x, y, width, height);
-    }
+    public enum Type {RECTANGLE, IMAGE}
 
     public boolean isAlive() {
         return alive;
     }
-
-    public int[] getPixels() {
-        return pixels;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public enum Type {RECTANGLE, IMAGE}
 }

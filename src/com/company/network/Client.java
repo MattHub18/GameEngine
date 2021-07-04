@@ -1,14 +1,14 @@
 package com.company.network;
 
 
-import com.company.entities.human.Player;
+import com.company.entities.human.Enemy;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.graphic.primitives.Window;
 import com.company.network.packets.Packet;
 import com.company.network.packets.PacketType;
-import com.company.resources.Resources;
 import com.company.resources.Streaming;
 
 import java.io.IOException;
@@ -17,19 +17,23 @@ import java.net.*;
 public class Client implements Runnable, Graphic {
     private final int port;
     private final int bufferSize;
-    private static final int MAXTTL = 10;
+    private final int maxTimeToLive;
+    private final int color;
     private final EntityList list;
     private InetAddress ipAddress;
     private DatagramSocket socket;
     private Thread thread;
     private String message;
-    private int messageTimeToLive = MAXTTL;
     private boolean running;
+    private int messageTimeToLive;
 
-    public Client(EntityList list, int port, int bufferSize) {
+    public Client(EntityList list, int port, int bufferSize, int ttl, int color) {
         this.list = list;
         this.port = port;
         this.bufferSize = bufferSize;
+        this.messageTimeToLive = ttl;
+        this.maxTimeToLive = ttl;
+        this.color = color;
         try {
             this.socket = new DatagramSocket();
         } catch (SocketException e) {
@@ -65,14 +69,14 @@ public class Client implements Runnable, Graphic {
     public void parsePacket(byte[] data) {
         Packet packet = (Packet) Streaming.deserialize(data);
         assert packet != null;
-        PacketType type = packet.getPacketId();
+        PacketType type = packet.getPacketType();
         try {
             switch (type) {
                 default:
                 case INVALID:
                     break;
                 case LOGIN:
-                    if (packet.getPlayer().getEntity() instanceof Player)
+                    if (!(packet.getPlayer().getEntity() instanceof Enemy))
                         message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
                     handleLogin(packet);
                     break;
@@ -129,18 +133,18 @@ public class Client implements Runnable, Graphic {
 
     @Override
     public void update(GameLoop gl, float dt) {
+
+        if (messageTimeToLive <= 0) {
+            message = null;
+            messageTimeToLive = maxTimeToLive;
+        } else
+            --messageTimeToLive;
     }
 
     @Override
     public void render(GameLoop gl, Render r) {
-        if (message != null) {
-            r.addFont(new Font(Resources.TEXTURES.get(Resources.CLIENT)), message, GameLoop.WIDTH / 5, 0, 0xffffffff);
-            --messageTimeToLive;
-        }
-        if (messageTimeToLive < 0) {
-            message = null;
-            messageTimeToLive = MAXTTL;
-        }
+        if (message != null)
+            r.addFont(new Font("res/font/client.png", message, Window.WIDTH / 5, 0, color));
 
     }
 

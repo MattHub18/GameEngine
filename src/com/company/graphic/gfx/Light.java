@@ -2,14 +2,18 @@ package com.company.graphic.gfx;
 
 public class Light {
     private final int radius;
+    private final int color;
     private final int[] lightPixels;
     private final boolean fullPower;
-    private final int color;
+    private final int offX;
+    private final int offY;
 
-    public Light(int radius, int color, boolean fullPower) {
+    public Light(int offX, int offY, int radius, int color, boolean fullPower) {
+        this.offX = offX;
+        this.offY = offY;
         this.radius = radius;
-        int diameter = radius * 2;
         this.color = color;
+        int diameter = radius * 2;
         lightPixels = new int[diameter * diameter];
         this.fullPower = fullPower;
 
@@ -48,5 +52,13 @@ public class Light {
 
     public int getColor() {
         return color;
+    }
+
+    public int getOffX() {
+        return offX;
+    }
+
+    public int getOffY() {
+        return offY;
     }
 }

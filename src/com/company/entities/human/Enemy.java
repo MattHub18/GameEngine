@@ -1,31 +1,27 @@
 package com.company.entities.human;
 
-import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
-import com.company.resources.Resources;
+import com.company.world.World;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class Enemy extends Entity implements Serializable {
+public abstract class Enemy extends Entity implements Serializable {
 
-    public static String filename = "saves/enemy.data";
-    private final int maxFrames;
-    private final com.company.worlds.Map map;
+    private World world;
     private Entity target;
 
-    public Enemy(com.company.worlds.Map map, int maxFrames) {
-        super(Resources.ENEMY, 3, 1, 16);
-        this.maxFrames = maxFrames;
-        this.map = map;
+    public Enemy(int tileWidth, int tileHeight, World world, byte tfn, int posX, int posY, int maxFrames, int delay) {
+        super(tfn, tileWidth, tileHeight, posX, posY, maxFrames, delay);
+        this.world = world;
     }
 
-    public Enemy(Enemy copy) {
-        super(copy);
-        this.maxFrames = copy.maxFrames;
-        this.map = copy.map;
-        this.target = copy.target;
+    public Enemy copy(Enemy copy) {
+        Enemy e = (Enemy) super.copy(copy);
+        e.world = copy.world;
+        e.target = copy.target;
+        return e;
     }
 
     @Override
@@ -38,17 +34,17 @@ public class Enemy extends Entity implements Serializable {
             } catch (IndexOutOfBoundsException ignored) {
             }
             if (move != null) {
-                if (Math.abs(posX - target.posX) < TILE_WIDTH && Math.abs(posY - target.posY) < TILE_HEIGHT)
+                if (Math.abs(posX - target.posX) < GameLoop.TILE_WIDTH && Math.abs(posY - target.posY) < GameLoop.TILE_HEIGHT)
                     return;
 
-                if (move.x != posX / TILE_WIDTH) {
-                    if (move.x > posX / TILE_WIDTH)
+                if (move.x != posX / GameLoop.TILE_WIDTH) {
+                    if (move.x > posX / GameLoop.TILE_WIDTH)
                         right = true;
                     else
                         left = true;
                 }
-                if (move.y != posY / TILE_HEIGHT) {
-                    if (move.y > posY / TILE_HEIGHT)
+                if (move.y != posY / GameLoop.TILE_HEIGHT) {
+                    if (move.y > posY / GameLoop.TILE_HEIGHT)
                         down = true;
                     else
                         up = true;
@@ -56,20 +52,15 @@ public class Enemy extends Entity implements Serializable {
                 super.move();
             }
         }
-        switch (super.facing) {
-            case NORTH:
-                super.entityID = Resources.PLAYER_BACK;
-                break;
-            case SOUTH:
-                super.entityID = Resources.PLAYER_FRONT;
-                break;
-            case WEST:
-                super.entityID = Resources.PLAYER_LEFT;
-                break;
-            case EAST:
-                super.entityID = Resources.PLAYER_RIGHT;
-                break;
-        }
+    }
+
+    @Override
+    public void render(GameLoop gl, Render r) {
+        super.render(gl, r);
+        clearMove();
+    }
+
+    private void clearMove() {
         right = false;
         left = false;
         down = false;
@@ -93,12 +84,12 @@ public class Enemy extends Entity implements Serializable {
 
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingInt(o -> o.fScore));
 
-        Node start = new Node(posX / TILE_WIDTH, posY / TILE_HEIGHT);
+        Node start = new Node(posX / GameLoop.TILE_WIDTH, posY / GameLoop.TILE_HEIGHT);
         openSet.add(start);
 
         Map<Node, Integer> gScore = new HashMap<>();
-        for (int y = 0; y < map.getHeightInPixel() / TILE_HEIGHT; y++) {
-            for (int x = 0; x < map.getWidthInPixel() / TILE_WIDTH; x++) {
+        for (int y = 0; y < world.getHeightInPixel() / GameLoop.TILE_HEIGHT; y++) {
+            for (int x = 0; x < world.getWidthInPixel() / GameLoop.TILE_WIDTH; x++) {
                 if (x == start.x && y == start.y)
                     gScore.put(start, 0);
                 else
@@ -114,7 +105,7 @@ public class Enemy extends Entity implements Serializable {
 
         while (!openSet.isEmpty()) {
             Node current = openSet.peek();
-            if (current.equals(new Node(target.posX / TILE_WIDTH, target.posY / TILE_HEIGHT)))
+            if (current.equals(new Node(target.posX / GameLoop.TILE_WIDTH, target.posY / GameLoop.TILE_HEIGHT)))
                 return makePath(cameFrom, current);
             openSet.remove(current);
             List<Node> neighborhood = new ArrayList<>();
@@ -123,14 +114,14 @@ public class Enemy extends Entity implements Serializable {
                 neighborhood.add(Node.getNode(gScore, current.x - 1, current.y));
             if (current.y != 0)
                 neighborhood.add(Node.getNode(gScore, current.x, current.y - 1));
-            if (current.y != map.getWidthInPixel() / TILE_WIDTH - 1)
+            if (current.y != world.getWidthInPixel() / GameLoop.TILE_WIDTH - 1)
                 neighborhood.add(Node.getNode(gScore, current.x + 1, current.y));
-            if (current.y != map.getHeightInPixel() / TILE_HEIGHT - 1)
+            if (current.y != world.getHeightInPixel() / GameLoop.TILE_HEIGHT - 1)
                 neighborhood.add(Node.getNode(gScore, current.x, current.y + 1));
 
             for (Node neighbor : neighborhood) {
                 if (neighbor != null) {
-                    int tentative_gScore = gScore.get(current) + Node.typeOf(map, neighbor);
+                    int tentative_gScore = gScore.get(current) + Node.typeOf(world, neighbor);
                     if (tentative_gScore < gScore.get(neighbor)) {
                         cameFrom.replace(neighbor, current);
                         gScore.replace(neighbor, tentative_gScore);
@@ -142,25 +133,6 @@ public class Enemy extends Entity implements Serializable {
             }
         }
         return null;
-    }
-
-    @Override
-    public void update(GameLoop gl, float dt) {
-        if (up || down || left || right) {
-            animationFrame += dt * animationDelay;
-            if (animationFrame > maxFrames)
-                animationFrame = 1;
-        }
-    }
-
-    @Override
-    public void render(GameLoop gl, Render r) {
-        TileImage player = new TileImage(Resources.TEXTURES.get(Resources.ENEMY), GameLoop.TILE_WIDTH, GameLoop.TILE_HEIGHT);
-        if (up || down || left || right) {
-            r.addImage(player.getTile((int) animationFrame, entityID), super.posX, super.posY);
-        } else {
-            r.addImage(player.getTile(0, entityID), super.posX, super.posY);
-        }
     }
 
     public void setTarget(Entity target) {
@@ -194,10 +166,10 @@ public class Enemy extends Entity implements Serializable {
             return null;
         }
 
-        protected static int typeOf(com.company.worlds.Map map, Node neighbor) {
+        protected static int typeOf(World world, Node neighbor) {
             int x = neighbor.x;
             int y = neighbor.y;
-            if (map.getTile(x, y).isFloor())
+            if (world.getTile(x, y).isFloor())
                 return 1;
             return INFINITY;
         }

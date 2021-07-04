@@ -1,10 +1,11 @@
-package com.company.worlds;
+package com.company.world;
 
 import com.company.entities.GameEntity;
+import com.company.entities.bullets.BulletMagazine;
+import com.company.entities.human.Enemy;
 import com.company.entities.human.Entity;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.TileImage;
-import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.resources.Resources;
@@ -13,50 +14,67 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class Map implements Graphic, Serializable {
+public abstract class World implements Graphic, Serializable {
+    public static String filename = "saves/world.data";
     protected final int width;
     protected final int height;
-
+    protected final Room[] rooms;
     private final int WIDTH_IN_PIXEL;
     private final int HEIGHT_IN_PIXEL;
-
-    private final byte mapId;
-    private final Room[] rooms;
     protected byte roomId;
-
-    private final int TILE_WIDTH = GameLoop.TILE_WIDTH;
-    private final int TILE_HEIGHT = GameLoop.TILE_HEIGHT;
+    protected byte textureFileName;
 
     protected Entity player;
-
+    protected BulletMagazine magazine;
     protected java.util.Map<Byte, List<Entity>> enemies = new HashMap<>();
 
-    public Map(byte id, byte startRoom, Room[] r, Entity player) {
-        this.mapId = id;
+    public World(byte tfn, byte startRoom, Room[] r, Entity player, int tileWidth, int tileHeight) {
+        this.textureFileName = tfn;
         this.rooms = r;
         this.roomId = startRoom;
+        this.player = player;
         this.width = r[startRoom].tiles[0].length;
         this.height = r[startRoom].tiles.length;
 
-        WIDTH_IN_PIXEL = width * TILE_WIDTH;
-        HEIGHT_IN_PIXEL = height * TILE_HEIGHT;
+        WIDTH_IN_PIXEL = width * tileWidth;
+        HEIGHT_IN_PIXEL = height * tileHeight;
 
-        this.player = player;
+        magazine = new BulletMagazine();
     }
 
     @Override
     public void update(GameLoop gl, float dt) {
         checkPlayerPosition();
+        magazine.update(gl, dt);
+    }
+
+    public void collisions(GameEntity tmp) {
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+                tmp.handleCollisionWith(rooms[roomId].getTile(x, y));
+
+        if (!(tmp instanceof Enemy)) {
+            for (List<Entity> enemy : enemies.values())
+                for (Entity e : enemy)
+                    tmp.handleCollisionWith(e);
+        } else {
+            magazine.handleCollisionWith(tmp);
+            tmp.handleCollisionWith(player);
+        }
+
     }
 
     @Override
     public void render(GameLoop gl, Render r) {
-        TileImage tile = new TileImage(Resources.TEXTURES.get(mapId), TILE_WIDTH, TILE_HEIGHT);
+        TileImage tile = new TileImage(Resources.TEXTURES.get(textureFileName), -1, -1, GameLoop.TILE_WIDTH, GameLoop.TILE_HEIGHT);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                r.addImage(tile.getTile(rooms[roomId].tiles[y][x], roomId), x * TILE_WIDTH, y * TILE_HEIGHT);
+                tile.setOffX(x * GameLoop.TILE_WIDTH);
+                tile.setOffY(y * GameLoop.TILE_HEIGHT);
+                r.addImage(tile.getTile(roomId, rooms[roomId].tiles[y][x]));
             }
         }
+        magazine.render(gl, r);
     }
 
     public int getWidthInPixel() {
@@ -65,16 +83,6 @@ public abstract class Map implements Graphic, Serializable {
 
     public int getHeightInPixel() {
         return HEIGHT_IN_PIXEL;
-    }
-
-    public void registerWorldToCamera(Camera camera) {
-        camera.setMap(this);
-    }
-
-    public void collisions(GameEntity tmp) {
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
-                tmp.handleCollisionWith(rooms[roomId].getTile(x, y));
     }
 
     public Tile getTile(int x, int y) {

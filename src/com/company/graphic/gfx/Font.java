@@ -2,11 +2,19 @@ package com.company.graphic.gfx;
 
 public class Font {
     private final Image fontImage;
+    private final String text;
+    private final int offX;
+    private final int offY;
+    private final int color;
     private final int[] offsets;
     private final int[] widths;
 
-    public Font(String path) {
-        fontImage = new Image(path);
+    public Font(String path, String text, int offX, int offY, int color) {
+        fontImage = new Image(path, offX, offY);
+        this.text = text;
+        this.offX = offX;
+        this.offY = offY;
+        this.color = color;
         offsets = new int[256];
         widths = new int[256];
 
@@ -31,5 +39,21 @@ public class Font {
 
     public int[] getWidths() {
         return widths;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public int getOffX() {
+        return offX;
+    }
+
+    public int getOffY() {
+        return offY;
+    }
+
+    public int getColor() {
+        return color;
     }
 }

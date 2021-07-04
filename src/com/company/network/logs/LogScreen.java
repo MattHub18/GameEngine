@@ -66,7 +66,7 @@ public class LogScreen extends JFrame {
         tPane.setEditable(false);
     }
 
-    public void interrupt() {
+    public void close() {
         if (instance != null)
             instance = null;
         setVisible(false);

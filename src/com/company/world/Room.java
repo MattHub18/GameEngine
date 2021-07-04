@@ -1,4 +1,4 @@
-package com.company.worlds;
+package com.company.world;
 
 import java.io.Serializable;
 

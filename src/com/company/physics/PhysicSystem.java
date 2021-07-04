@@ -1,30 +1,26 @@
 package com.company.physics;
 
+import com.company.physics.basics.RigidBody;
 import com.company.physics.forces.Force;
 import com.company.physics.forces.ForceRegistry;
-import com.company.physics.primitives.RigidBody;
 
-public class PhysicSystem {
+public interface PhysicSystem {
 
-    private final ForceRegistry registry;
+    ForceRegistry registry = new ForceRegistry();
 
-    public PhysicSystem() {
-        registry = new ForceRegistry();
+    default void addForce(RigidBody body, Force f) {
+        registry.add(body, f);
     }
 
-    public void addForce(Force f, RigidBody body) {
-        registry.add(f, body);
+    default void removeForce(RigidBody body, Force f) {
+        registry.remove(body, f);
     }
 
-    public void removeForce(Force f, RigidBody body) {
-        registry.remove(f, body);
-    }
-
-    public void clearSystem() {
+    default void clearSystem() {
         registry.clear();
     }
 
-    public void updateSystem(float dt) {
+    default void updateSystem(float dt) {
         registry.update(dt);
     }
 

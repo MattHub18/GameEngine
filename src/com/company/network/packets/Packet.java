@@ -10,16 +10,16 @@ import java.net.InetAddress;
 
 public class Packet implements Serializable {
 
-    private final PacketType packetId;
+    private final PacketType packetType;
     private final EntityConnectionWrapper player;
 
-    public Packet(PacketType packetId, EntityConnectionWrapper player) {
-        this.packetId = packetId;
+    public Packet(PacketType packetType, EntityConnectionWrapper player) {
+        this.packetType = packetType;
         this.player = player;
     }
 
-    public PacketType getPacketId() {
-        return packetId;
+    public PacketType getPacketType() {
+        return packetType;
     }
 
     public EntityConnectionWrapper getPlayer() {

@@ -1,7 +1,7 @@
 package com.company.physics.forces;
 
+import com.company.physics.basics.RigidBody;
 import com.company.physics.basics.Vector;
-import com.company.physics.primitives.RigidBody;
 
 public class Gravity implements Force {
     private static final int G = 10;

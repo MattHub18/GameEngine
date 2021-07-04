@@ -1,23 +1,19 @@
 package com.company.graphic.primitives;
 
+import com.company.entities.human.Entity;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
-import com.company.resources.Resources;
+import com.company.world.World;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class GameLoop implements Runnable {
-    public static int WIDTH;
-    public static int HEIGHT;
-    public static final int RATIO = 2;
     public static float SCALE = 2f;
 
-    public static final int TILE_WIDTH = 64;
-    public static final int TILE_HEIGHT = 64;
+    public static int TILE_WIDTH;
+    public static int TILE_HEIGHT;
 
-    private String title = "GameEngine2D v0.0";
-    private boolean running = false;
+    protected static boolean running = false;
 
     private Thread gameThread;
 
@@ -27,20 +23,17 @@ public class GameLoop implements Runnable {
     private final Controller controller;
     private final Render render;
 
-    private final Camera camera;
-
     private boolean pause = false;
     private boolean fullScreen = true;
 
-    public GameLoop(Graphic game, WindowHandler handler) {
-        Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
-        GameLoop.WIDTH = (int) (fullDim.width / SCALE);
-        GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
+    public GameLoop(Graphic game, WindowHandler handler, Entity player, World world, int tileWidth, int tileHeight, String title) {
+        TILE_WIDTH = tileWidth;
+        TILE_HEIGHT = tileHeight;
 
-        camera = new Camera(((Registration) game).registerEntityToCamera(), ((Registration) game).registerMapToCamera());
-        window = new Window(this, handler);
-        controller = new Controller(this);
-        render = new Render(this);
+        Camera camera = new Camera(player, world);
+        window = new Window(camera, handler, title);
+        controller = new Controller(window);
+        render = new Render(camera, window);
         this.game = game;
     }
 
@@ -73,20 +66,10 @@ public class GameLoop implements Runnable {
 
         while (running) {
             if (controller.isKeyDown(KeyEvent.VK_F11)) {
-                if (!fullScreen) {
-                    SCALE *= RATIO;
-                    Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
-                    GameLoop.WIDTH = (int) (fullDim.width / SCALE);
-                    GameLoop.HEIGHT = (int) (fullDim.height / SCALE);
-                    fullScreen = true;
-                } else {
-                    SCALE /= RATIO;
-                    WIDTH = 640;
-                    HEIGHT = 360;
-                    fullScreen = false;
-                }
-                window.changeWindowSize(this);
+                fullScreen = !fullScreen;
+                window.changeWindowSize(fullScreen);
             }
+
             rendering = true;
 
             startTime = System.nanoTime() / 1000000000.0;
@@ -108,7 +91,7 @@ public class GameLoop implements Runnable {
                 if (frameTime >= 1.0) {
                     frameTime = 0;
                     fps = frames;
-                    render.setFpsFont(new Font(Resources.TEXTURES.get(Resources.FPS)), "FPS: " + fps, 0, 0, 0xff0000ff);
+                    render.setFpsFont(new Font("res/font/fps.png", "FPS: " + fps, 0, 0, 0xff0000ff));
                     frames = 0;
                 }
             }
@@ -124,32 +107,7 @@ public class GameLoop implements Runnable {
         }
         stop();
     }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Window getWindow() {
-        return window;
-    }
-
     public Controller getController() {
         return controller;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public Camera getCamera() {
-        return camera;
-    }
-
-    public boolean isFullScreen() {
-        return fullScreen;
     }
 }
