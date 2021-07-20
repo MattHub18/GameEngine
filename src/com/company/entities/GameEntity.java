@@ -1,9 +1,11 @@
 package com.company.entities;
 
-import com.company.world.Tile;
+import com.company.graphic.gfx.Rectangle;
 
 public interface GameEntity {
-    void handleCollisionWith(Tile t);
+    default Rectangle getBox() {
+        return null;
+    }
 
     void handleCollisionWith(GameEntity e);
 }

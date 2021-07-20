@@ -34,7 +34,7 @@ public abstract class Enemy extends Entity implements Serializable {
             } catch (IndexOutOfBoundsException ignored) {
             }
             if (move != null) {
-                if (Math.abs(posX - target.posX) < GameLoop.TILE_WIDTH && Math.abs(posY - target.posY) < GameLoop.TILE_HEIGHT)
+                if (Math.abs(posX - target.posX) <= GameLoop.TILE_WIDTH && Math.abs(posY - target.posY) < GameLoop.TILE_HEIGHT)
                     return;
 
                 if (move.x != posX / GameLoop.TILE_WIDTH) {

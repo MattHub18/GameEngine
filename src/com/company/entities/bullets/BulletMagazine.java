@@ -4,7 +4,6 @@ import com.company.entities.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
-import com.company.world.Tile;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,13 +39,6 @@ public class BulletMagazine implements Graphic, Serializable, GameEntity {
 
     public void add(Bullet bullet) {
         magazine.add(bullet);
-    }
-
-    @Override
-    public void handleCollisionWith(Tile t) {
-        for (Bullet b : magazine) {
-            b.handleCollisionWith(t);
-        }
     }
 
     @Override

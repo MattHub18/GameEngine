@@ -78,23 +78,26 @@ public abstract class Bullet implements Graphic, Serializable, GameEntity {
     }
 
     @Override
-    public void handleCollisionWith(Tile tile) {
+    public void handleCollisionWith(GameEntity e) {
         box = new Rectangle(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT), 0xff000000, false);
-        Rectangle tileBox = tile.getBox();
+        Rectangle entityBox = e.getBox();
 
-        if (CollisionDetector.isCollided(tileBox, box) || tile.isFloor())
+        if (CollisionDetector.isCollided(entityBox, box))
             return;
 
-        posX = -GameLoop.TILE_WIDTH;
-        posY = -GameLoop.TILE_HEIGHT;
-    }
+        if (e instanceof Tile)
+            if (((Tile) e).isFloor())
+                return;
 
-    @Override
-    public void handleCollisionWith(GameEntity e) {
-        //TODO IMPLEMENT ME
+        maxRange = 0;
     }
 
     public int getMaxRange() {
         return maxRange;
+    }
+
+    @Override
+    public Rectangle getBox() {
+        return box;
     }
 }

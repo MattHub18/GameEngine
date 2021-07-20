@@ -1,5 +1,7 @@
 package com.company.entities.human.combat;
 
+import com.company.entities.human.Entity;
+
 public interface CombatInterface {
     int getLifePoints();
 
@@ -7,15 +9,7 @@ public interface CombatInterface {
 
     int getMaxLifePoints();
 
-    boolean isAlive();
-
-    void setAlive(boolean alive);
-
-    void meleeAttack(CombatEntity entity);
-
-    void basicAttack(CombatEntity entity, int damage);
-
-    boolean handleAttackCollision(CombatEntity entity);
+    void meleeAttack(Entity entity);
 
     void receiveDamage(int damage);
 }

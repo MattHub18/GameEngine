@@ -56,6 +56,8 @@ public abstract class Entity implements Graphic, Serializable, GameEntity {
         this.maxFrames = maxF;
 
         uniqueId = new Random().nextInt();
+
+        box = new Rectangle(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT), 0xff000000, false);
     }
 
     public Entity copy(Entity copy) {
@@ -144,12 +146,16 @@ public abstract class Entity implements Graphic, Serializable, GameEntity {
         }
     }
 
-    public void handleCollisionWith(Tile tile) {
+    public void handleCollisionWith(GameEntity e) {
         box = new Rectangle(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT), 0xff000000, false);
-        Rectangle tileBox = tile.getBox();
+        Rectangle tileBox = e.getBox();
 
-        if (CollisionDetector.isCollided(tileBox, box) || tile.isFloor())
+        if (CollisionDetector.isCollided(tileBox, box))
             return;
+
+        if (e instanceof Tile)
+            if (((Tile) e).isFloor())
+                return;
 
         Rectangle intersection = CollisionDetector.intersection(box, tileBox);
 
@@ -173,8 +179,7 @@ public abstract class Entity implements Graphic, Serializable, GameEntity {
         return facing;
     }
 
-    @Override
-    public void handleCollisionWith(GameEntity e) {
-        //TODO IMPLEMENT ME
+    public void receiveDamage(int damage) {
+        throw new RuntimeException("OVERRIDE IT");
     }
 }

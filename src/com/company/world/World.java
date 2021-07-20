@@ -1,6 +1,5 @@
 package com.company.world;
 
-import com.company.entities.GameEntity;
 import com.company.entities.bullets.BulletMagazine;
 import com.company.entities.human.Enemy;
 import com.company.entities.human.Entity;
@@ -48,7 +47,7 @@ public abstract class World implements Graphic, Serializable {
         magazine.update(gl, dt);
     }
 
-    public void collisions(GameEntity tmp) {
+    public void collisions(Entity tmp) {
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
                 tmp.handleCollisionWith(rooms[roomId].getTile(x, y));
