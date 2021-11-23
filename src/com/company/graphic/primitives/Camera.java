@@ -1,19 +1,19 @@
 package com.company.graphic.primitives;
 
-import com.company.entities.human.Entity;
+import com.company.entities.human.GameEntity;
 import com.company.world.World;
 
 public class Camera {
-    private final Entity entityRegistered;
+    private final GameEntity entityRegistered;
     private final World worldRegistered;
     private int viewportSizeX;
     private int viewportSizeY;
     private int camX;
     private int camY;
 
-    public Camera(Entity entity, World world) {
-        this.entityRegistered = entity;
+    public Camera(World world) {
         this.worldRegistered = world;
+        this.entityRegistered = worldRegistered.getPlayer();
     }
 
     public void centerCamera() {

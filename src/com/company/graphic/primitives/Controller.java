@@ -1,8 +1,9 @@
 package com.company.graphic.primitives;
 
 import java.awt.event.*;
+import java.io.Serializable;
 
-public class Controller implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class Controller implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, Serializable {
 
     private final int NUM_KEYS = 256;
     private final boolean[] keys = new boolean[NUM_KEYS];

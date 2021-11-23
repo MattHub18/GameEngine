@@ -10,7 +10,7 @@ public class Font {
     private final int[] widths;
 
     public Font(String path, String text, int offX, int offY, int color) {
-        fontImage = new Image(path, offX, offY);
+        fontImage = new Image(path);
         this.text = text;
         this.offX = offX;
         this.offY = offY;

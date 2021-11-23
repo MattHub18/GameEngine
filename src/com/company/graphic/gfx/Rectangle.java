@@ -20,6 +20,14 @@ public class Rectangle implements Collider, Serializable {
         this.color = color;
     }
 
+    public Rectangle(Vector min, Vector max) {
+        Vector size = new Vector(max).sub(min);
+        this.halfSize = new Vector(size).mul(0.5f);
+        this.body = new RigidBody(new Vector(halfSize).add(min));
+        this.isFull = false;
+        this.color = 0;
+    }
+
     public Vector getMin() {
         return new Vector(this.body.getPosition()).sub(this.halfSize);
     }

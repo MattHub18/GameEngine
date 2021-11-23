@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 public class Window {
     public static int WIDTH;
     public static int HEIGHT;
+
     private final BufferedImage image;
     private final Canvas canvas;
     private final JFrame frame;
@@ -15,7 +16,13 @@ public class Window {
     private BufferStrategy bs;
     private Graphics g;
 
+    private boolean fullScreen = true;
+
     public Window(Camera camera, WindowHandler handler, String title) {
+        Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
+        WIDTH = (int) (fullDim.width / GameLoop.SCALE);
+        HEIGHT = (int) (fullDim.height / GameLoop.SCALE);
+
         image = new BufferedImage(camera.getMapWidthInPixel(), camera.getMapHeightInPixel(), BufferedImage.TYPE_INT_RGB);
 
         canvas = new Canvas();
@@ -24,7 +31,7 @@ public class Window {
         this.handler = handler;
         handler.setFrame(frame);
 
-        changeWindowSize(true);
+        changeWindowSize();
     }
 
     public void update() {
@@ -40,25 +47,26 @@ public class Window {
         return canvas;
     }
 
-    public void changeWindowSize(boolean isFullScreen) {
+    public void changeWindowSize() {
+
+        fullScreen = !fullScreen;
+
         frame.dispose();
 
         GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
-        if (isFullScreen) {
+        Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) (fullDim.width / GameLoop.SCALE);
+        int height = (int) (fullDim.height / GameLoop.SCALE);
+        if (fullScreen) {
             frame.setUndecorated(true);
             device.setFullScreenWindow(frame);
             GameLoop.SCALE = 2f;
-            Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
-            WIDTH = (int) (fullDim.width / GameLoop.SCALE);
-            HEIGHT = (int) (fullDim.height / GameLoop.SCALE);
         } else {
             frame.setUndecorated(false);
             device.setFullScreenWindow(null);
             GameLoop.SCALE = 1f;
-            WIDTH = 640;
-            HEIGHT = 360;
         }
-        Dimension dim = new Dimension((int) (WIDTH * GameLoop.SCALE), (int) (HEIGHT * GameLoop.SCALE));
+        Dimension dim = new Dimension((int) (width * GameLoop.SCALE), (int) (height * GameLoop.SCALE));
         canvas.setPreferredSize(dim);
         canvas.setMaximumSize(dim);
         canvas.setMinimumSize(dim);

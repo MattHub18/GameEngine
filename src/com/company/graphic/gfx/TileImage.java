@@ -5,8 +5,8 @@ public class TileImage extends Image {
     private final int tileWidth;
     private final int tileHeight;
 
-    public TileImage(String path, int posX, int posY, int tileW, int tileH) {
-        super(path, posX, posY);
+    public TileImage(String path, int tileW, int tileH) {
+        super(path);
         this.tileWidth = tileW;
         this.tileHeight = tileH;
     }
@@ -28,7 +28,7 @@ public class TileImage extends Image {
                 pixels[x + y * tileWidth] = this.getPixels()[(x + column * tileWidth) + (y + row * tileHeight) * super.getWidth()];
             }
         }
-        Image img = new Image(pixels, offX, offY, tileWidth, tileHeight);
+        Image img = new Image(pixels, tileWidth, tileHeight);
         img.setOpaque(isOpaque());
         img.setMovable(isMovable());
         return img;

@@ -1,12 +1,13 @@
 package com.company.graphic.particles;
 
-import com.company.directions.Direction;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Image;
 import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.physics.basics.Vector;
+
+import java.util.Random;
 
 public class Particle implements Graphic {
 
@@ -19,6 +20,8 @@ public class Particle implements Graphic {
     private boolean alive = true;
     private int x;
     private int y;
+    private Vector direction;
+    private int color = -1;
 
     private Particle(int x, int y, int w, int h, int ttl) {
         this.x = x;
@@ -26,12 +29,8 @@ public class Particle implements Graphic {
         this.width = w;
         this.height = h;
         this.ttl = ttl;
-        Direction dir = Direction.randomDirection();
-        direction = new Vector(dir.dirX, dir.dirY);
+        direction = randomDirection();
     }
-
-    private Vector direction;
-    private int color = -1;
 
     public Particle(Rectangle r, int color, int ttl) {
         this((int) r.getStartX(), (int) r.getStartY(), (int) r.getWidth(), (int) r.getHeight(), ttl);
@@ -53,7 +52,7 @@ public class Particle implements Graphic {
         if (type == Type.RECTANGLE)
             r.addRectangle(new Rectangle(new Vector(x, y), new Vector(width, height), color, true));
         else if (type == Type.IMAGE)
-            r.addImage(new Image(pixels, x, y, width, height));
+            r.addImage(new Image(pixels, width, height), x, y);
     }
 
     @Override
@@ -74,8 +73,7 @@ public class Particle implements Graphic {
             if (ttl <= 0)
                 alive = false;
 
-            Direction dir = Direction.randomDirection();
-            direction = new Vector(dir.dirX, dir.dirY);
+            direction = randomDirection();
         }
     }
 
@@ -83,5 +81,17 @@ public class Particle implements Graphic {
 
     public boolean isAlive() {
         return alive;
+    }
+
+    private Vector randomDirection() {
+        float r = new Random().nextFloat();
+        if (r < 0.25)
+            return new Vector(0, 1);
+        else if (r >= 0.25 && r < 0.5)
+            return new Vector(0, -1);
+        else if (r >= 0.5 && r < 0.75)
+            return new Vector(1, 0);
+        else
+            return new Vector(-1, 0);
     }
 }
