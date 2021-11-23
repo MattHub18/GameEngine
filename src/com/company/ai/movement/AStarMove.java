@@ -1,70 +1,27 @@
-package com.company.entities.human;
+package com.company.ai.movement;
 
-import com.company.graphic.primitives.GameLoop;
-import com.company.graphic.primitives.Render;
-import com.company.world.World;
+import com.company.entities.human.GameEntity;
+import com.company.world.Room;
 
-import java.io.Serializable;
 import java.util.*;
 
-public abstract class Enemy extends Entity implements Serializable {
+import static com.company.resources.AbstractConstants.TILE_HEIGHT;
+import static com.company.resources.AbstractConstants.TILE_WIDTH;
 
-    private World world;
-    private Entity target;
+public class AStarMove implements MovementComponent {
 
-    public Enemy(int tileWidth, int tileHeight, World world, byte tfn, int posX, int posY, int maxFrames, int delay) {
-        super(tfn, tileWidth, tileHeight, posX, posY, maxFrames, delay);
-        this.world = world;
-    }
+    public Point move(GameEntity aiEntity, int targetX, int targetY) {
 
-    public Enemy copy(Enemy copy) {
-        Enemy e = (Enemy) super.copy(copy);
-        e.world = copy.world;
-        e.target = copy.target;
-        return e;
-    }
+        if (Math.abs(aiEntity.getPosX() - targetX) <= TILE_WIDTH() && Math.abs(aiEntity.getPosY() - targetY) <= TILE_HEIGHT())
+            return null;
 
-    @Override
-    public void move() {
-        ArrayList<Node> path = AStar();
-        if (path != null) {
-            Node move = null;
-            try {
-                move = path.get(0);
-            } catch (IndexOutOfBoundsException ignored) {
-            }
-            if (move != null) {
-                if (Math.abs(posX - target.posX) <= GameLoop.TILE_WIDTH && Math.abs(posY - target.posY) < GameLoop.TILE_HEIGHT)
-                    return;
+        ArrayList<Node> path = AStar(aiEntity, aiEntity.getRoom(), targetX, targetY);
 
-                if (move.x != posX / GameLoop.TILE_WIDTH) {
-                    if (move.x > posX / GameLoop.TILE_WIDTH)
-                        right = true;
-                    else
-                        left = true;
-                }
-                if (move.y != posY / GameLoop.TILE_HEIGHT) {
-                    if (move.y > posY / GameLoop.TILE_HEIGHT)
-                        down = true;
-                    else
-                        up = true;
-                }
-                super.move();
-            }
+        if (path.size() > 0) {
+            Node move = path.get(0);
+            return new Point(move.x, move.y);
         }
-    }
-
-    @Override
-    public void render(GameLoop gl, Render r) {
-        super.render(gl, r);
-        clearMove();
-    }
-
-    private void clearMove() {
-        right = false;
-        left = false;
-        down = false;
-        up = false;
+        return null;
     }
 
     private ArrayList<Node> makePath(Map<Node, Node> map, Node current) {
@@ -80,16 +37,16 @@ public abstract class Enemy extends Entity implements Serializable {
         return path;
     }
 
-    private ArrayList<Node> AStar() {
+    private ArrayList<Node> AStar(GameEntity aiEntity, Room room, int targetX, int targetY) {
 
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingInt(o -> o.fScore));
 
-        Node start = new Node(posX / GameLoop.TILE_WIDTH, posY / GameLoop.TILE_HEIGHT);
+        Node start = new Node(aiEntity.getPosX() / TILE_WIDTH(), aiEntity.getPosY() / TILE_HEIGHT());
         openSet.add(start);
 
         Map<Node, Integer> gScore = new HashMap<>();
-        for (int y = 0; y < world.getHeightInPixel() / GameLoop.TILE_HEIGHT; y++) {
-            for (int x = 0; x < world.getWidthInPixel() / GameLoop.TILE_WIDTH; x++) {
+        for (int y = 0; y < room.getHeightInPixel() / TILE_HEIGHT(); y++) {
+            for (int x = 0; x < room.getWidthInPixel() / TILE_WIDTH(); x++) {
                 if (x == start.x && y == start.y)
                     gScore.put(start, 0);
                 else
@@ -105,7 +62,7 @@ public abstract class Enemy extends Entity implements Serializable {
 
         while (!openSet.isEmpty()) {
             Node current = openSet.peek();
-            if (current.equals(new Node(target.posX / GameLoop.TILE_WIDTH, target.posY / GameLoop.TILE_HEIGHT)))
+            if (current.equals(new Node(targetX / TILE_WIDTH(), targetY / TILE_HEIGHT())))
                 return makePath(cameFrom, current);
             openSet.remove(current);
             List<Node> neighborhood = new ArrayList<>();
@@ -114,14 +71,14 @@ public abstract class Enemy extends Entity implements Serializable {
                 neighborhood.add(Node.getNode(gScore, current.x - 1, current.y));
             if (current.y != 0)
                 neighborhood.add(Node.getNode(gScore, current.x, current.y - 1));
-            if (current.y != world.getWidthInPixel() / GameLoop.TILE_WIDTH - 1)
+            if (current.y != room.getWidthInPixel() / TILE_WIDTH() - 1)
                 neighborhood.add(Node.getNode(gScore, current.x + 1, current.y));
-            if (current.y != world.getHeightInPixel() / GameLoop.TILE_HEIGHT - 1)
+            if (current.y != room.getHeightInPixel() / TILE_HEIGHT() - 1)
                 neighborhood.add(Node.getNode(gScore, current.x, current.y + 1));
 
             for (Node neighbor : neighborhood) {
                 if (neighbor != null) {
-                    int tentative_gScore = gScore.get(current) + Node.typeOf(world, neighbor);
+                    int tentative_gScore = gScore.get(current) + Node.typeOf(room, neighbor);
                     if (tentative_gScore < gScore.get(neighbor)) {
                         cameFrom.replace(neighbor, current);
                         gScore.replace(neighbor, tentative_gScore);
@@ -132,15 +89,7 @@ public abstract class Enemy extends Entity implements Serializable {
                 }
             }
         }
-        return null;
-    }
-
-    public void setTarget(Entity target) {
-        this.target = target;
-    }
-
-    public int manhattanDistance(Entity player) {
-        return Node.manhattanDistance(new Node(posX, posY), new Node(player.posX, player.posY));
+        return new ArrayList<>();
     }
 
     static class Node {
@@ -166,10 +115,10 @@ public abstract class Enemy extends Entity implements Serializable {
             return null;
         }
 
-        protected static int typeOf(World world, Node neighbor) {
+        protected static int typeOf(Room room, Node neighbor) {
             int x = neighbor.x;
             int y = neighbor.y;
-            if (world.getTile(x, y).isFloor())
+            if (room.getTile(x, y).isFloor())
                 return 1;
             return INFINITY;
         }
@@ -187,4 +136,5 @@ public abstract class Enemy extends Entity implements Serializable {
             return Objects.hash(x, y);
         }
     }
+
 }
