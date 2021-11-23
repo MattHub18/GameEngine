@@ -5,47 +5,56 @@ import com.company.graphic.gfx.Font;
 import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.observer.Observer;
+import com.company.observer.Subject;
 import com.company.physics.basics.Vector;
 
-import java.awt.*;
+import java.io.Serializable;
 
-public class Bar implements Graphic {
+public class Bar implements Graphic, Observer, Serializable {
 
-    protected static final int borderSize = 2;
-    private final DrawableComponent component;
-    private int offX;
-    private int offY;
+    private final int offX;
+    private final int offY;
     private final int width;
     private final int height;
-    private final int color;
+    private final int borderSize;
+    private final int maxValue;
+    private int color;
     private final String text;
+
     private Rectangle bar;
     private Rectangle darkBar;
+    private int darkColor;
+    private int borderColor;
+    private int fontColor;
     private int lineSeparator;
-    private final int darkColor = 0xff555555;
-    private int maxValue;
     private int currentValue;
 
-    public Bar(int offX, int offY, int width, int height, int color, int maxValue, String text) {
-        this.color = color;
+
+    public Bar(int offX, int offY, int width, int height, int color, int borderSize, int maxValue, String text, Subject subject) {
         this.offX = offX;
         this.offY = offY;
         this.width = width;
         this.height = height;
+        this.color = color;
+        this.borderSize = borderSize;
         this.maxValue = maxValue;
         this.text = text;
+
+        darkColor = 0xff555555;
+        borderColor = 0xff000000;
+        fontColor = 0xffffffff;
+
         this.bar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), color, true);
         this.darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX, offY + height), darkColor, true);
+
         lineSeparator = offX;
         currentValue = maxValue;
-        component = new DrawableComponent(offX, offY);
+        registerEntityToObserver(subject);
     }
 
     @Override
     public void update(GameLoop gl, float dt) {
-        Point p = component.updatePosition();
-        offX = p.x;
-        offY = p.y;
 
         float damagePercent = 1 - (float) currentValue / (float) maxValue;
         float damage = damagePercent * width;
@@ -69,23 +78,30 @@ public class Bar implements Graphic {
     public void render(GameLoop gl, Render r) {
         r.addRectangle(darkBar);
         r.addRectangle(bar);
-        r.addThickRectangle(offX - borderSize, offY - borderSize, width + 2 * borderSize, height + 2 * borderSize, 0xff000000, borderSize);
-        r.addFont(new Font("res/font/fps.png", text, offX + width + 4, offY + 3, 0xffffffff));
+        r.addThickRectangle(offX - borderSize, offY - borderSize, width + 2 * borderSize, height + 2 * borderSize, borderColor, borderSize);
+        r.addFont(new Font("res/font/fps.png", text, offX + width + 4, offY + 3, fontColor));
     }
 
-    public void setCurrentValue(int currentValue) {
-        this.currentValue = currentValue;
+    @Override
+    public void registerEntityToObserver(Subject subject) {
+        subject.addObserver(text, this);
     }
 
-    public int getWidth() {
-        return width;
+    @Override
+    public void unregisterEntityToObserver(Subject subject) {
+        subject.removeObserver(text);
+        zeroBar();
     }
 
-    public int getHeight() {
-        return height;
+    @Override
+    public <T> void updateValue(T value) {
+        currentValue = (int) value;
     }
 
-    public void setMaxValue(int maxValue) {
-        this.maxValue = maxValue;
+    private void zeroBar() {
+        color = 0x00000000;
+        darkColor = 0x00000000;
+        borderColor = 0x00000000;
+        fontColor = 0x00000000;
     }
 }
