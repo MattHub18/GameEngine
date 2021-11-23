@@ -1,161 +1,131 @@
 package com.company.entities.human;
 
-import com.company.directions.Direction;
-import com.company.directions.FacingDirections;
-import com.company.entities.GameEntity;
-import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.physics.basics.Vector;
 import com.company.physics.collisions.CollisionDetector;
-import com.company.resources.Resources;
-import com.company.world.Tile;
+import com.company.resources.file_system.Archive;
+import com.company.world.Room;
 
 import java.io.Serializable;
 import java.util.Random;
 
-public abstract class Entity implements Graphic, Serializable, GameEntity {
-    public static String filename = "saves/player.data";
+import static com.company.resources.AbstractConstants.TILE_HEIGHT;
+import static com.company.resources.AbstractConstants.TILE_WIDTH;
 
-    protected int posX;
-    protected int posY;
+public class Entity implements GameEntity, Serializable {
+    private final float animationDelay;
+    private final byte textureFilename;
+    private final TileImage tileImage;
+    private final int uniqueId;
+    private int posX;
+    private int posY;
+    private byte facingDirection;
+    private float animationFrame;
+    private int maxFrames;
+    private Rectangle box;
 
-    protected boolean up;
-    protected boolean down;
-    protected boolean left;
-    protected boolean right;
+    private Room room;
 
-    protected Direction facing;
-
-    protected float animationFrame;
-    protected float animationDelay;
-    protected byte facingDirection;
-    protected Rectangle box;
-    protected int maxFrames;
-    protected byte textureFilename;
-    private int uniqueId;
-
-    public Entity(byte textureFilename, int tileWidth, int tileHeight, int posX, int posY, int maxF, float delay) {
+    public Entity(byte textureFilename, int posX, int posY, int maxFrames, Room room, byte facingDirection) {
         this.textureFilename = textureFilename;
 
-        this.posX = posX * tileWidth;
-        this.posY = posY * tileHeight;
+        this.posX = posX;
+        this.posY = posY;
 
-        this.up = false;
-        this.down = false;
-        this.left = false;
-        this.right = false;
-
-        this.facing = Direction.SOUTH;
+        this.facingDirection = facingDirection;
 
         this.animationFrame = 0;
-        this.animationDelay = delay;
+        this.animationDelay = 15;
+        this.maxFrames = maxFrames;
 
-        this.maxFrames = maxF;
+        this.tileImage = new TileImage(Archive.TEXTURES.get(this.textureFilename), TILE_WIDTH(), TILE_HEIGHT());
 
-        uniqueId = new Random().nextInt();
+        this.uniqueId = new Random().nextInt();
 
-        box = new Rectangle(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT), 0xff000000, false);
+        this.box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
+
+        this.room = room;
     }
 
-    public Entity copy(Entity copy) {
-        this.facingDirection = copy.facingDirection;
-
-        this.posX = copy.posX;
-        this.posY = copy.posY;
-
-        this.up = copy.up;
-        this.down = copy.down;
-        this.left = copy.left;
-        this.right = copy.right;
-
-        this.facing = copy.facing;
-
-        this.animationFrame = copy.animationFrame;
-        this.animationDelay = copy.animationDelay;
-
-        this.box = copy.box;
-        this.maxFrames = copy.maxFrames;
-        this.textureFilename = copy.textureFilename;
-        this.uniqueId = copy.uniqueId;
-        return this;
+    @Override
+    public GameEntity copy() {
+        return new Entity(textureFilename, posX, posY, maxFrames, room, facingDirection);
     }
 
-
+    @Override
     public int getPosX() {
         return posX;
     }
 
+    @Override
     public void setPosX(int posX) {
         this.posX = posX;
     }
 
+    @Override
     public int getPosY() {
         return posY;
     }
 
+    @Override
     public void setPosY(int posY) {
         this.posY = posY;
     }
 
-    public int getUniqueId() {
-        return uniqueId;
-    }
-
-    public void move() {
-        if (up) {
-            posY--;
-            this.facing = Direction.NORTH;
-            facingDirection = FacingDirections.BACK.value;
-        }
-        if (down) {
-            posY++;
-            this.facing = Direction.SOUTH;
-            facingDirection = FacingDirections.FRONT.value;
-        }
-        if (left) {
-            posX--;
-            this.facing = Direction.WEST;
-            facingDirection = FacingDirections.LEFT.value;
-        }
-        if (right) {
-            posX++;
-            this.facing = Direction.EAST;
-            facingDirection = FacingDirections.RIGHT.value;
-        }
-    }
-
     @Override
     public void update(GameLoop gl, float dt) {
-        if (up || down || left || right) {
-            animationFrame += dt * animationDelay;
-            if (animationFrame > maxFrames)
-                animationFrame = 1;
-        }
+        animationFrame += dt * animationDelay;
+        if (animationFrame >= maxFrames)
+            animationFrame = 0;
     }
 
     @Override
     public void render(GameLoop gl, Render r) {
-        TileImage player = new TileImage(Resources.TEXTURES.get(textureFilename), posX, posY, GameLoop.TILE_WIDTH, GameLoop.TILE_HEIGHT);
-        if (up || down || left || right) {
-            r.addImage(player.getTile(facingDirection, (int) animationFrame));
-        } else {
-            r.addImage(player.getTile(facingDirection, 0));
-        }
+        r.addImage(tileImage.getTile(facingDirection, (int) animationFrame), posX, posY);
     }
 
-    public void handleCollisionWith(GameEntity e) {
-        box = new Rectangle(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT), 0xff000000, false);
-        Rectangle tileBox = e.getBox();
+    @Override
+    public int getUniqueId() {
+        return uniqueId;
+    }
+
+    @Override
+    public Rectangle getBox() {
+        return box;
+    }
+
+    @Override
+    public Room getRoom() {
+        return room;
+    }
+
+    @Override
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public void updateBox() {
+        box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
+    }
+
+    @Override
+    public byte getFacingDirection() {
+        return facingDirection;
+    }
+
+    public void setFacingDirection(byte facingDirection) {
+        this.facingDirection = facingDirection;
+    }
+
+    @Override
+    public void handleCollisionWith(Rectangle tileBox) {
+        updateBox();
 
         if (CollisionDetector.isCollided(tileBox, box))
             return;
-
-        if (e instanceof Tile)
-            if (((Tile) e).isFloor())
-                return;
 
         Rectangle intersection = CollisionDetector.intersection(box, tileBox);
 
@@ -163,23 +133,55 @@ public abstract class Entity implements Graphic, Serializable, GameEntity {
             if (intersection.getWidth() > intersection.getHeight()) {
 
                 if (posY < tileBox.getMin().getY())
-                    posY = (int) (tileBox.getMin().getY() - box.getHeight());
+                    posY = ((int) (tileBox.getMin().getY() - box.getHeight()));
                 else
-                    posY = (int) (tileBox.getMin().getY() + box.getHeight());
+                    posY = ((int) (tileBox.getMin().getY() + box.getHeight()));
             } else {
                 if (posX < tileBox.getMin().getX())
-                    posX = (int) (tileBox.getMin().getX() - box.getWidth());
+                    posX = ((int) (tileBox.getMin().getX() - box.getWidth()));
                 else
-                    posX = (int) (tileBox.getMin().getX() + box.getWidth());
+                    posX = ((int) (tileBox.getMin().getX() + box.getWidth()));
             }
         }
     }
 
-    public Direction getFacing() {
-        return facing;
+    public float getAnimationFrame() {
+        return animationFrame;
     }
 
-    public void receiveDamage(int damage) {
-        throw new RuntimeException("OVERRIDE IT");
+    public void setAnimationFrame(float animationFrame) {
+        this.animationFrame = animationFrame;
+    }
+
+    public void incrementFacingDirection(byte amount) {
+        facingDirection += amount;
+    }
+
+    public void decrementFacingDirection(byte amount) {
+        facingDirection -= amount;
+    }
+
+    public void incrementPosX(int amount) {
+        posX += amount;
+    }
+
+    public void decrementPosX(int amount) {
+        posX -= amount;
+    }
+
+    public void incrementPosY(int amount) {
+        posY += amount;
+    }
+
+    public void decrementPosY(int amount) {
+        posY -= amount;
+    }
+
+    public int getMaxFrames() {
+        return maxFrames;
+    }
+
+    public void setMaxFrames(int maxFrames) {
+        this.maxFrames = maxFrames;
     }
 }
