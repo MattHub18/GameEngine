@@ -1,7 +1,6 @@
 package com.company.network;
 
-
-import com.company.entities.human.Enemy;
+import com.company.ai.AiInterface;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.primitives.GameLoop;
@@ -76,7 +75,7 @@ public class Client implements Runnable, Graphic {
                 case INVALID:
                     break;
                 case LOGIN:
-                    if (!(packet.getPlayer().getEntity() instanceof Enemy))
+                    if (!(packet.getPlayer().getEntity() instanceof AiInterface))
                         message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
                     handleLogin(packet);
                     break;

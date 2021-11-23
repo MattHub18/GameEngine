@@ -1,6 +1,6 @@
 package com.company.network;
 
-import com.company.entities.human.Enemy;
+import com.company.ai.AiInterface;
 import com.company.entities.human.Entity;
 import com.company.network.logs.LogScreen;
 import com.company.network.logs.LogType;
@@ -122,7 +122,7 @@ public class Server implements Runnable {
             int oldRoomId = player.getCurrentRoomId();
             player.update(packet.getPlayer());
             packet.writeData(this);
-            if (!(player.getEntity() instanceof Enemy)) {
+            if (!(player.getEntity() instanceof AiInterface)) {
                 if (player.getCurrentRoomId() != oldRoomId)
                     sendEnemy(new Packet(PacketType.INVALID, player));
             }
@@ -130,7 +130,7 @@ public class Server implements Runnable {
     }
 
     private EntityConnectionWrapper getPlayer(EntityConnectionWrapper player) {
-        if (player.getEntity() instanceof Enemy)
+        if (player.getEntity() instanceof AiInterface)
             return search(enemies.get(player.getCurrentRoomId()), player);
         else
             return search(connectedPlayers, player);
