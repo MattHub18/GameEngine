@@ -1,11 +1,10 @@
 package com.company.directions;
 
-public enum FacingDirections {
-    FRONT((byte) 0), LEFT((byte) 1), BACK((byte) 2), RIGHT((byte) 3);
+public class FacingDirections {
+    public static final byte SOUTH = 0;
+    public static final byte WEST = 1;
+    public static final byte NORTH = 2;
+    public static final byte EAST = 3;
 
-    public byte value;
-
-    FacingDirections(byte value) {
-        this.value = value;
-    }
+    public static final byte TOTAL_DIRECTION = 4;
 }

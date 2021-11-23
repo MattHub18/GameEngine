@@ -1,31 +1,28 @@
 package com.company.world;
 
-import com.company.entities.GameEntity;
 import com.company.graphic.gfx.Rectangle;
-import com.company.graphic.primitives.GameLoop;
 import com.company.physics.basics.Vector;
-import com.company.resources.Resources;
 
-public class Tile implements GameEntity {
+import static com.company.resources.AbstractConstants.TILE_HEIGHT;
+import static com.company.resources.AbstractConstants.TILE_WIDTH;
+
+public class Tile {
+    public static final byte FLOOR = 0;
     private final byte tileId;
     private final Rectangle box;
 
     public Tile(byte tileId, int x, int y) {
         this.tileId = tileId;
-        int posX = x * GameLoop.TILE_WIDTH;
-        int posY = y * GameLoop.TILE_HEIGHT;
-        box = new Rectangle(new Vector(posX, posY), new Vector(posX + GameLoop.TILE_WIDTH, posY + GameLoop.TILE_HEIGHT), 0xff000000, false);
+        int posX = x * TILE_WIDTH();
+        int posY = y * TILE_HEIGHT();
+        box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
     }
 
     public Rectangle getBox() {
         return box;
     }
 
-    @Override
-    public void handleCollisionWith(GameEntity e) {
-    }
-
     public boolean isFloor() {
-        return tileId == Resources.FLOOR;
+        return tileId == FLOOR;
     }
 }
