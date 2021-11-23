@@ -3,8 +3,9 @@ package com.company.audio;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class Sound {
+public class Sound implements Serializable {
     private Clip clip;
     private FloatControl gainControl;
 
