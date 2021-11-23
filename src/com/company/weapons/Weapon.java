@@ -2,10 +2,13 @@ package com.company.weapons;
 
 import com.company.entities.human.Entity;
 import com.company.graphic.gfx.Rectangle;
-import com.company.graphic.primitives.GameLoop;
 import com.company.physics.basics.Vector;
 
 import java.io.Serializable;
+
+import static com.company.directions.FacingDirections.*;
+import static com.company.resources.AbstractConstants.TILE_HEIGHT;
+import static com.company.resources.AbstractConstants.TILE_WIDTH;
 
 public abstract class Weapon implements Serializable {
     private final int damage;
@@ -22,18 +25,16 @@ public abstract class Weapon implements Serializable {
         return damage;
     }
 
-    public abstract void effect();
-
-    public Rectangle getRectangleAttack(Entity entity) {
-        switch (entity.getFacing()) {
+    public Rectangle getBox(Entity entity) {
+        switch (entity.getFacingDirection()) {
             case NORTH:
-                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() + lengthWidth, entity.getPosY() - lengthHeight), 0xff000000, false);
+                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() + lengthWidth, entity.getPosY() - lengthHeight));
             case EAST:
-                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() - lengthWidth, entity.getPosY() + lengthHeight), 0xff000000, false);
+                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() - lengthWidth, entity.getPosY() + lengthHeight));
             case WEST:
-                return new Rectangle(new Vector(entity.getPosX() + GameLoop.TILE_WIDTH, entity.getPosY()), new Vector(entity.getPosX() + GameLoop.TILE_WIDTH + lengthWidth, entity.getPosY() + lengthHeight), 0xff000000, false);
+                return new Rectangle(new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH() + lengthWidth, entity.getPosY() + lengthHeight));
             default:
-                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY() + GameLoop.TILE_HEIGHT), new Vector(entity.getPosX() + lengthWidth, entity.getPosY() + GameLoop.TILE_HEIGHT + lengthHeight), 0xff000000, false);
+                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY() + TILE_HEIGHT()), new Vector(entity.getPosX() + lengthWidth, entity.getPosY() + TILE_HEIGHT() + lengthHeight));
         }
     }
 }
