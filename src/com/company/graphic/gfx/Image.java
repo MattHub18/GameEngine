@@ -9,13 +9,11 @@ public class Image {
     private int width;
     private int height;
     private int[] pixels;
-    protected int offX;
-    private boolean movable = false;
-    protected int offY;
-    private boolean opaque = true;
+    private final boolean movable;
+    private final boolean opaque;
 
 
-    public Image(String path) {
+    public Image(String path, boolean movable, boolean opaque) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(new File(path));
@@ -28,12 +26,17 @@ public class Image {
             pixels = image.getRGB(0, 0, width, height, null, 0, width);
             image.flush();
         }
+
+        this.movable = movable;
+        this.opaque = opaque;
     }
 
-    public Image(int[] pixels, int width, int height) {
+    public Image(int[] pixels, int width, int height, boolean movable, boolean opaque) {
         this.pixels = pixels;
         this.width = width;
         this.height = height;
+        this.movable = movable;
+        this.opaque = opaque;
     }
 
     public int[] getPixels() {
@@ -52,15 +55,7 @@ public class Image {
         return opaque;
     }
 
-    public void setOpaque(boolean opaque) {
-        this.opaque = opaque;
-    }
-
     public boolean isMovable() {
         return movable;
-    }
-
-    public void setMovable(boolean movable) {
-        this.movable = movable;
     }
 }

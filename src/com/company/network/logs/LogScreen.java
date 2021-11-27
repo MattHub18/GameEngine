@@ -1,17 +1,22 @@
 package com.company.network.logs;
 
+import com.company.network.Server;
+import com.company.network.packets.Packet;
+import com.company.network.packets.PacketType;
+
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
 
 public class LogScreen extends JFrame {
     private static JTextPane tPane;
     private static LogScreen instance = null;
 
-    private LogScreen() {
+    private LogScreen(Server server) {
         setMinimumSize(new Dimension(500, 500));
         setMaximumSize(new Dimension(500, 500));
         setResizable(false);
@@ -31,6 +36,19 @@ public class LogScreen extends JFrame {
         pack();
         setVisible(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(LogScreen.this, "Are you sure you want to close the server?", "Close Window?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                    appendToPane("Server has closed", LogType.SERVER);
+                    Packet packet = new Packet(PacketType.SHUTDOWN, null);
+                    packet.writeData(server);
+                    server.interrupt();
+                    close();
+                }
+            }
+        });
     }
 
     private static int getColor(LogType type) {
@@ -47,9 +65,9 @@ public class LogScreen extends JFrame {
         return -1;
     }
 
-    public static LogScreen getInstance() {
+    public static LogScreen getInstance(Server server) {
         if (instance == null)
-            instance = new LogScreen();
+            instance = new LogScreen(server);
         return instance;
     }
 
@@ -66,7 +84,7 @@ public class LogScreen extends JFrame {
         tPane.setEditable(false);
     }
 
-    public void close() {
+    private void close() {
         if (instance != null)
             instance = null;
         setVisible(false);

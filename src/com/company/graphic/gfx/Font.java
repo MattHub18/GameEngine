@@ -9,8 +9,8 @@ public class Font {
     private final int[] offsets;
     private final int[] widths;
 
-    public Font(String path, String text, int offX, int offY, int color) {
-        fontImage = new Image(path);
+    public Font(String path, String text, int offX, int offY, int color, boolean movable) {
+        fontImage = new Image(path, movable, true);
         this.text = text;
         this.offX = offX;
         this.offY = offY;
@@ -55,5 +55,9 @@ public class Font {
 
     public int getColor() {
         return color;
+    }
+
+    public boolean isMovable() {
+        return fontImage.isMovable();
     }
 }

@@ -1,4 +1,4 @@
-package com.company.resources;
+package com.company.network;
 
 import javax.swing.*;
 import java.io.*;

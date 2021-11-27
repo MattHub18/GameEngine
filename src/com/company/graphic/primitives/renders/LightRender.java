@@ -1,6 +1,7 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Light;
+import com.company.graphic.primitives.CameraShift;
 import com.company.graphic.primitives.Window;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class LightRender implements RenderInterface {
             if (basicRender.getBrightness(screenX, screenY))
                 return;
 
-            setLightPixels(screenX, screenY, lightColor);
+            setLightPixels(screenX, screenY, lightColor, light.isMovable());
 
             if (x0 == x1 && y0 == y1)
                 break;
@@ -79,14 +80,20 @@ public class LightRender implements RenderInterface {
         }
     }
 
-    private void setLightPixels(int x, int y, int value) {
-        if (basicRender.outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT))
+    private void setLightPixels(int x, int y, int value, boolean movable) {
+
+        CameraShift structure = basicRender.cameraShift(x, y, x, y, movable);
+
+        int camX = structure.getCamX();
+        int camY = structure.getCamY();
+
+        if (basicRender.outOfBounds(x, camX, Window.WIDTH, y, camY, Window.HEIGHT))
             return;
 
         int baseColor = basicRender.getLightPixels(x, y);
         int maxRed = Math.max(((baseColor >> 16) & 0xff), ((value >> 16) & 0xff));
         int maxGreen = Math.max(((baseColor >> 8) & 0xff), ((value >> 8) & 0xff));
         int maxBlue = Math.max(((baseColor) & 0xff), ((value) & 0xff));
-        basicRender.setLightPixel(x, y, (maxRed << 16 | maxGreen << 8 | maxBlue));
+        basicRender.setLightPixel(x - camX, y - camY, (maxRed << 16 | maxGreen << 8 | maxBlue));
     }
 }

@@ -1,6 +1,8 @@
 package com.company.entities.bullet;
 
-public class Magic implements MagicBullet {
+import java.io.Serializable;
+
+public class Magic implements MagicBullet, Serializable {
     private final int cost;
 
     public Magic(int cost) {

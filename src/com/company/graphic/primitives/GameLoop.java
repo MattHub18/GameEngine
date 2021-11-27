@@ -21,10 +21,10 @@ public class GameLoop implements Runnable {
 
     private boolean pause = false;
 
-    public GameLoop(StateManager manager, InputHandler systemInputHandler, WindowHandler handler, World world, String title) {
+    public GameLoop(StateManager manager, InputHandler systemInputHandler, World world, String title) {
 
         Camera camera = new Camera(world);
-        window = new Window(camera, handler, title);
+        window = new Window(camera, title);
         controller = new Controller(window);
         render = new Render(camera, window);
         this.systemInputHandler = systemInputHandler;
@@ -44,8 +44,12 @@ public class GameLoop implements Runnable {
     public synchronized void stop() {
         if (!running)
             return;
+        running = false;
+        stateManager.clear();
+        render.clear();
         gameThread.interrupt();
     }
+
     @Override
     public void run() {
         running = true;
@@ -86,15 +90,13 @@ public class GameLoop implements Runnable {
 
             if (rendering) {
                 render.clear();
-                render.addFont(new Font("res/font/fps.png", "FPS: " + fps, 0, 0, 0xff0000ff));
+                render.addFont(new Font("res/font/fps.png", "FPS: " + fps, 0, 0, 0xff0000ff, true));
                 stateManager.head().render(this, render);
                 render.process();
-                window.update();
+                window.update(this);
                 frames++;
             }
-
         }
-        stop();
     }
 
     public Controller getController() {

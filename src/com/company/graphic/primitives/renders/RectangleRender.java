@@ -1,7 +1,7 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Rectangle;
-import com.company.graphic.primitives.Window;
+import com.company.graphic.primitives.CameraShift;
 import com.company.physics.basics.Vector;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ public class RectangleRender implements RenderInterface {
 
     @Override
     public void process() {
-        for (Rectangle rec : rectangles) {
-            if (rec.isFull())
-                drawFullRectangle(rec);
+        for (Rectangle rect : rectangles) {
+            if (rect.isFull())
+                drawFullRectangle(rect);
             else
-                drawBorderRectangle(rec, rec.getColor());
+                drawBorderRectangle(rect, (int) rect.getStartX(), (int) rect.getStartY(), rect.getColor());
         }
     }
 
@@ -34,42 +34,31 @@ public class RectangleRender implements RenderInterface {
         rectangles.add(rect);
     }
 
-    public void addThickRectangle(int smallestOffX, int smallestOffY, int biggestWidth, int biggestHeight, int color, int thickness) {
+    public void addThickRectangle(int smallestOffX, int smallestOffY, int biggestWidth, int biggestHeight, int color, int thickness, boolean movable) {
         for (int i = 0; i < thickness; i++) {
-            addRectangle(new Rectangle(new Vector(smallestOffX + i, smallestOffY + i), new Vector(smallestOffX + biggestWidth - i, smallestOffY + biggestHeight - i), color, false));
+            addRectangle(new Rectangle(new Vector(smallestOffX + i, smallestOffY + i), new Vector(smallestOffX + biggestWidth - i, smallestOffY + biggestHeight - i), color, false, movable));
         }
     }
 
-    private void drawBorderRectangle(Rectangle rect, int color) {
+    private void drawBorderRectangle(Rectangle rect, int offX, int offY, int color) {
 
-        int offX = (int) rect.getStartX();
-        int offY = (int) rect.getStartY();
-        int width = (int) rect.getWidth();
-        int height = (int) rect.getHeight();
+        CameraShift structure = basicRender.cameraShift(offX, offY, (int) rect.getWidth(), (int) rect.getHeight(), rect.isMovable());
 
-        if (basicRender.outOfBounds(offX, -width, Window.WIDTH, offY, -height, Window.HEIGHT))
-            return;
-
-        int startX = 0;
-        int startY = 0;
-
-        if (offX < 0)
-            startX -= offX;
-        if (offY < 0)
-            startY -= offY;
-        if (width + offX >= Window.WIDTH)
-            width -= (width + offX - Window.WIDTH);
-        if (height + offY >= Window.HEIGHT)
-            height -= (height + offY - Window.HEIGHT);
+        int startX = structure.getStartX();
+        int startY = structure.getStartY();
+        int width = structure.getWidth();
+        int height = structure.getHeight();
+        int camX = structure.getCamX();
+        int camY = structure.getCamY();
 
         for (int y = startY; y <= height; y++) {
-            basicRender.setPixel(offX, y + offY, color);
-            basicRender.setPixel(offX + width, y + offY, color);
+            basicRender.setPixel(offX - camX, y + offY - camY, color);
+            basicRender.setPixel(offX - camX + width, y + offY - camY, color);
         }
 
         for (int x = startX; x <= width; x++) {
-            basicRender.setPixel(x + offX, offY, color);
-            basicRender.setPixel(x + offX, offY + height, color);
+            basicRender.setPixel(x + offX - camX, offY - camY, color);
+            basicRender.setPixel(x + offX - camX, offY + height - camY, color);
         }
     }
 
@@ -83,8 +72,8 @@ public class RectangleRender implements RenderInterface {
         if (width < 0 || height < 0)
             return;
 
-        drawFullRectangle(new Rectangle(new Vector(offX + 1, offY + 1), new Vector(offX + width - 1, offY + height - 1), rect.getColor(), true));
+        drawFullRectangle(new Rectangle(new Vector(offX + 1, offY + 1), new Vector(offX + width - 1, offY + height - 1), rect.getColor(), rect.isFull(), rect.isMovable()));
 
-        drawBorderRectangle(rect, rect.getColor());
+        drawBorderRectangle(rect, offX, offY, rect.getColor());
     }
 }

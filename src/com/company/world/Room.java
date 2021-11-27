@@ -14,7 +14,6 @@ import static com.company.resources.AbstractConstants.TILE_HEIGHT;
 import static com.company.resources.AbstractConstants.TILE_WIDTH;
 
 public abstract class Room implements Graphic, Serializable {
-    private final TileImage roomTextures;
     private final int roomId;
     public int LEFT;
     public int RIGHT;
@@ -27,10 +26,11 @@ public abstract class Room implements Graphic, Serializable {
     private byte[][] tiles;
     private int withInPixel;
     private int heightInPixel;
+    private final byte textureFilename;
 
-    public Room(byte tfn, int roomId, EntityManager entityManager) {
+    public Room(byte textureFilename, int roomId, EntityManager entityManager) {
         this.roomId = roomId;
-        roomTextures = new TileImage(Archive.TEXTURES.get(tfn), TILE_WIDTH(), TILE_HEIGHT());
+        this.textureFilename = textureFilename;
         this.entityManager = entityManager;
         visited = false;
     }
@@ -54,6 +54,7 @@ public abstract class Room implements Graphic, Serializable {
 
     @Override
     public void render(GameLoop gl, Render r) {
+        TileImage roomTextures = new TileImage(Archive.TEXTURES.get(textureFilename), TILE_WIDTH(), TILE_HEIGHT(), false, true);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 r.addImage(roomTextures.getTile(roomId, tiles[y][x]), x * TILE_WIDTH(), y * TILE_HEIGHT());
@@ -70,6 +71,11 @@ public abstract class Room implements Graphic, Serializable {
     }
 
     public void collisions(GameEntity e) {
+        tileCollision(e);
+        entityManager.entityCollision(e);
+    }
+
+    private void tileCollision(GameEntity e) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Tile t = getTile(x, y);
@@ -91,5 +97,9 @@ public abstract class Room implements Graphic, Serializable {
 
     public EntityManager getEntityManager() {
         return entityManager;
+    }
+
+    public int getRoomId() {
+        return roomId;
     }
 }

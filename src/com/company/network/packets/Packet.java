@@ -3,7 +3,7 @@ package com.company.network.packets;
 import com.company.network.Client;
 import com.company.network.EntityConnectionWrapper;
 import com.company.network.Server;
-import com.company.resources.Streaming;
+import com.company.network.Streaming;
 
 import java.io.Serializable;
 import java.net.InetAddress;

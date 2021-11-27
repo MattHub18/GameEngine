@@ -39,17 +39,22 @@ public class EntityConnectionWrapper implements Serializable {
         this.port = port;
     }
 
-    public int getUniqueId() {
-        return entity.getUniqueId();
-    }
-
     public void update(EntityConnectionWrapper player) {
         currentRoomId = player.currentRoomId;
         entity = player.entity.copy();
     }
 
     public int getCurrentRoomId() {
-        return currentRoomId;
+        return entity.getRoom().getRoomId();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EntityConnectionWrapper) {
+            EntityConnectionWrapper e = (EntityConnectionWrapper) obj;
+            return (this.ipAddress.equals(e.ipAddress) && this.port == e.port);
+        }
+        return false;
     }
 }
 

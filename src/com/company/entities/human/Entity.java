@@ -10,7 +10,6 @@ import com.company.resources.file_system.Archive;
 import com.company.world.Room;
 
 import java.io.Serializable;
-import java.util.Random;
 
 import static com.company.resources.AbstractConstants.TILE_HEIGHT;
 import static com.company.resources.AbstractConstants.TILE_WIDTH;
@@ -18,8 +17,6 @@ import static com.company.resources.AbstractConstants.TILE_WIDTH;
 public class Entity implements GameEntity, Serializable {
     private final float animationDelay;
     private final byte textureFilename;
-    private final TileImage tileImage;
-    private final int uniqueId;
     private int posX;
     private int posY;
     private byte facingDirection;
@@ -41,18 +38,26 @@ public class Entity implements GameEntity, Serializable {
         this.animationDelay = 15;
         this.maxFrames = maxFrames;
 
-        this.tileImage = new TileImage(Archive.TEXTURES.get(this.textureFilename), TILE_WIDTH(), TILE_HEIGHT());
-
-        this.uniqueId = new Random().nextInt();
-
         this.box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
 
         this.room = room;
     }
 
+    private Entity(float animationDelay, byte textureFilename, int posX, int posY, byte facingDirection, float animationFrame, int maxFrames, Rectangle box, Room room) {
+        this.animationDelay = animationDelay;
+        this.textureFilename = textureFilename;
+        this.posX = posX;
+        this.posY = posY;
+        this.facingDirection = facingDirection;
+        this.animationFrame = animationFrame;
+        this.maxFrames = maxFrames;
+        this.box = box;
+        this.room = room;
+    }
+
     @Override
     public GameEntity copy() {
-        return new Entity(textureFilename, posX, posY, maxFrames, room, facingDirection);
+        return new Entity(animationDelay, textureFilename, posX, posY, facingDirection, animationFrame, maxFrames, box, room);
     }
 
     @Override
@@ -84,12 +89,8 @@ public class Entity implements GameEntity, Serializable {
 
     @Override
     public void render(GameLoop gl, Render r) {
+        TileImage tileImage = new TileImage(Archive.TEXTURES.get(this.textureFilename), TILE_WIDTH(), TILE_HEIGHT(), false, true);
         r.addImage(tileImage.getTile(facingDirection, (int) animationFrame), posX, posY);
-    }
-
-    @Override
-    public int getUniqueId() {
-        return uniqueId;
     }
 
     @Override

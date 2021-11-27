@@ -8,11 +8,13 @@ import com.company.graphic.primitives.Render;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.world.Room;
 
+import java.io.Serializable;
+
 import static com.company.directions.FacingDirections.*;
 import static com.company.resources.AbstractConstants.TILE_HEIGHT;
 import static com.company.resources.AbstractConstants.TILE_WIDTH;
 
-public abstract class StaticBullet implements GameEntity {
+public abstract class StaticBullet implements GameEntity, Serializable {
     protected final byte facingDirection;
     private final int damage;
     private final float animationDelay;
@@ -64,11 +66,6 @@ public abstract class StaticBullet implements GameEntity {
     @Override
     public void setPosY(int posY) {
         entity.setPosY(posY);
-    }
-
-    @Override
-    public int getUniqueId() {
-        return entity.getUniqueId();
     }
 
     @Override

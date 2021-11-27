@@ -42,8 +42,7 @@ public class EntityManager implements Graphic, Serializable {
         if (e instanceof MovableInterface)
             ((MovableInterface) e).clearMove();
         e.update(gl, dt);
-        if (e instanceof MovableInterface)
-            world.collisions(e);
+        world.collisions(e);
     }
 
     @Override
@@ -64,5 +63,11 @@ public class EntityManager implements Graphic, Serializable {
 
     public void init() {
         entities = new ArrayList<>();
+    }
+
+    public void entityCollision(GameEntity e) {
+        for (GameEntity o : entities)
+            if (!e.equals(o))
+                e.handleCollisionWith(o.getBox());
     }
 }

@@ -1,6 +1,7 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.primitives.Camera;
+import com.company.graphic.primitives.CameraShift;
 import com.company.graphic.primitives.Window;
 
 import java.awt.image.DataBufferInt;
@@ -46,12 +47,7 @@ public class BasicRender implements RenderInterface {
         int index = x + y * camera.getMapWidthInPixel();
 
         if (alpha == 255)
-            try {
-                pixels[index] = value;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-
+            pixels[index] = value;
         else {
             int pixelColor = pixels[index];
             int red = ((pixelColor >> 16) & 0xff) - (int) ((((pixelColor >> 16) & 0xff) - ((value >> 16) & 0xff)) * (alpha / 255f));
@@ -83,5 +79,37 @@ public class BasicRender implements RenderInterface {
 
     public void setLightPixel(int x, int y, int value) {
         lightPixels[x + y * camera.getMapWidthInPixel()] = value;
+    }
+
+    public CameraShift cameraShift(int offX, int offY, int w, int h, boolean movable) {
+        int startX = 0;
+        int startY = 0;
+        int width = w;
+        int height = h;
+
+        camera.centerCamera();
+
+        int camX = camera.getCamX();
+        int camY = camera.getCamY();
+        int maxViewX = camera.getMaxViewX();
+        int maxViewY = camera.getMaxViewY();
+
+        if (movable) {
+            camX = 0;
+            camY = 0;
+            maxViewX = camera.getMapWidthInPixel();
+            maxViewY = camera.getMapHeightInPixel();
+        }
+
+        if (offX < camX)
+            startX -= (offX - camX);
+        if (offY < camY)
+            startY -= (offY - camY);
+        if (offX + width >= maxViewX)
+            width -= (width + offX - maxViewX);
+        if (offY + height >= maxViewY)
+            height -= (height + offY - maxViewY);
+
+        return new CameraShift(startX, startY, width, height, camX, camY);
     }
 }

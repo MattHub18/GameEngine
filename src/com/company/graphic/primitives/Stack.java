@@ -26,4 +26,8 @@ public class Stack {
     public State getTop() {
         return gameStack.get(tos);
     }
+
+    public void clear() {
+        gameStack.clear();
+    }
 }

@@ -7,8 +7,9 @@ public class Light {
     private final boolean fullPower;
     private final int offX;
     private final int offY;
+    private final boolean movable;
 
-    public Light(int offX, int offY, int radius, int color, boolean fullPower) {
+    public Light(int offX, int offY, int radius, int color, boolean fullPower, boolean movable) {
         this.offX = offX;
         this.offY = offY;
         this.radius = radius;
@@ -16,6 +17,7 @@ public class Light {
         int diameter = radius * 2;
         lightPixels = new int[diameter * diameter];
         this.fullPower = fullPower;
+        this.movable = movable;
 
         for (int y = 0; y < diameter; y++) {
             for (int x = 0; x < diameter; x++) {
@@ -60,5 +62,9 @@ public class Light {
 
     public int getOffY() {
         return offY;
+    }
+
+    public boolean isMovable() {
+        return movable;
     }
 }

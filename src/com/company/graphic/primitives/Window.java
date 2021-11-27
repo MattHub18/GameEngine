@@ -2,6 +2,7 @@ package com.company.graphic.primitives;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -12,13 +13,14 @@ public class Window {
     private final BufferedImage image;
     private final Canvas canvas;
     private final JFrame frame;
-    private final WindowHandler handler;
     private BufferStrategy bs;
     private Graphics g;
 
     private boolean fullScreen = true;
 
-    public Window(Camera camera, WindowHandler handler, String title) {
+    private GameLoop gl = null;
+
+    public Window(Camera camera, String title) {
         Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
         WIDTH = (int) (fullDim.width / GameLoop.SCALE);
         HEIGHT = (int) (fullDim.height / GameLoop.SCALE);
@@ -28,13 +30,21 @@ public class Window {
         canvas = new Canvas();
 
         frame = new JFrame(title);
-        this.handler = handler;
-        handler.setFrame(frame);
 
         changeWindowSize();
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                frame.dispose();
+                gl.stop();
+            }
+        });
     }
 
-    public void update() {
+    public void update(GameLoop gl) {
+        if (this.gl == null)
+            this.gl = gl;
         g.drawImage(image, 0, 0, (int) (image.getWidth() * GameLoop.SCALE), (int) (image.getHeight() * GameLoop.SCALE), null);
         bs.show();
     }
@@ -71,7 +81,6 @@ public class Window {
         canvas.setMaximumSize(dim);
         canvas.setMinimumSize(dim);
 
-        frame.addWindowListener(handler);
         frame.setLayout(new BorderLayout());
 
         frame.add(canvas, BorderLayout.CENTER);

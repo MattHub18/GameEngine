@@ -44,11 +44,9 @@ public class EntityList {
     }
 
     private int indexOf(EntityConnectionWrapper player) {
-        int index = -1;
         for (EntityConnectionWrapper p : entities) {
-            ++index;
-            if (p.getUniqueId() == player.getUniqueId())
-                return index;
+            if (p.equals(player))
+                return entities.indexOf(p);
         }
         return -1;
     }

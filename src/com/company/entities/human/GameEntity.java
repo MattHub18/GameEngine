@@ -16,8 +16,6 @@ public interface GameEntity extends Graphic {
 
     GameEntity copy();
 
-    int getUniqueId();
-
     Room getRoom();
 
     void setRoom(Room room);

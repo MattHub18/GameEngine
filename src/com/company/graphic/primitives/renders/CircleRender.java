@@ -1,6 +1,7 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Circle;
+import com.company.graphic.primitives.CameraShift;
 
 import java.util.ArrayList;
 
@@ -40,9 +41,9 @@ public class CircleRender implements RenderInterface {
         int d = 3 - 2 * r;
 
         if (!isFull)
-            drawCircumferencePixel(xc, yc, x, y, color);
+            drawCircumferencePixel(xc, yc, x, y, color, circle.isMovable());
         else
-            drawCircleLine(xc, yc, x, y, color);
+            drawCircleLine(xc, yc, x, y, color, circle.isMovable());
         while (y >= x) {
             x++;
             if (d > 0) {
@@ -52,31 +53,39 @@ public class CircleRender implements RenderInterface {
                 d = d + 4 * x + 6;
 
             if (!isFull)
-                drawCircumferencePixel(xc, yc, x, y, color);
+                drawCircumferencePixel(xc, yc, x, y, color, circle.isMovable());
             else
-                drawCircleLine(xc, yc, x, y, color);
+                drawCircleLine(xc, yc, x, y, color, circle.isMovable());
         }
     }
 
-    private void drawCircumferencePixel(int xc, int yc, int x, int y, int color) {
-        basicRender.setPixel(xc + x, yc + y, color);
-        basicRender.setPixel(xc - x, yc + y, color);
-        basicRender.setPixel(xc + x, yc - y, color);
-        basicRender.setPixel(xc - x, yc - y, color);
-        basicRender.setPixel(xc + y, yc + x, color);
-        basicRender.setPixel(xc - y, yc + x, color);
-        basicRender.setPixel(xc + y, yc - x, color);
-        basicRender.setPixel(xc - y, yc - x, color);
+    private void drawCircumferencePixel(int xc, int yc, int x, int y, int color, boolean movable) {
+        CameraShift structure = basicRender.cameraShift(xc - x, yc - y, xc + x, yc + y, movable);
+
+        if (structure == null)
+            return;
+
+        int camX = structure.getCamX();
+        int camY = structure.getCamY();
+
+        basicRender.setPixel(xc + x - camX, yc + y - camY, color);
+        basicRender.setPixel(xc - x - camX, yc + y - camY, color);
+        basicRender.setPixel(xc + x - camX, yc - y - camY, color);
+        basicRender.setPixel(xc - x - camX, yc - y - camY, color);
+        basicRender.setPixel(xc + y - camX, yc + x - camY, color);
+        basicRender.setPixel(xc - y - camX, yc + x - camY, color);
+        basicRender.setPixel(xc + y - camX, yc - x - camY, color);
+        basicRender.setPixel(xc - y - camX, yc - x - camY, color);
     }
 
-    private void drawCircleLine(int xc, int yc, int x, int y, int color) {
-        drawLine(xc - x, yc + y, xc + x, yc + y, color);
-        drawLine(xc - x, yc - y, xc + x, yc - y, color);
-        drawLine(xc - y, yc + x, xc + y, yc + x, color);
-        drawLine(xc - y, yc - x, xc + y, yc - x, color);
+    private void drawCircleLine(int xc, int yc, int x, int y, int color, boolean movable) {
+        drawLine(xc - x, yc + y, xc + x, yc + y, color, movable);
+        drawLine(xc - x, yc - y, xc + x, yc - y, color, movable);
+        drawLine(xc - y, yc + x, xc + y, yc + x, color, movable);
+        drawLine(xc - y, yc - x, xc + y, yc - x, color, movable);
     }
 
-    private void drawLine(int x0, int y0, int xf, int yf, int color) {
+    private void drawLine(int x0, int y0, int xf, int yf, int color, boolean movable) {
 
         if (y0 > yf) {
             y0 = y0 + yf;
@@ -90,9 +99,18 @@ public class CircleRender implements RenderInterface {
             x0 = x0 - xf;
         }
 
-        for (int y = y0; y <= yf; y++) {
-            for (int x = x0; x <= xf; x++) {
-                basicRender.setPixel(x, y, color);
+        CameraShift structure = basicRender.cameraShift(x0, y0, xf, yf, movable);
+
+        int startX = structure.getStartX();
+        int startY = structure.getStartY();
+        int width = structure.getWidth();
+        int height = structure.getHeight();
+        int camX = structure.getCamX();
+        int camY = structure.getCamY();
+
+        for (int y = startY; y <= height; y++) {
+            for (int x = startX; x <= width; x++) {
+                basicRender.setPixel(x - camX, y - camY, color);
             }
         }
     }

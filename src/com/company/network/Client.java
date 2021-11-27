@@ -1,44 +1,28 @@
 package com.company.network;
 
-import com.company.ai.AiInterface;
-import com.company.graphic.Graphic;
-import com.company.graphic.gfx.Font;
-import com.company.graphic.primitives.GameLoop;
-import com.company.graphic.primitives.Render;
-import com.company.graphic.primitives.Window;
 import com.company.network.packets.Packet;
 import com.company.network.packets.PacketType;
-import com.company.resources.Streaming;
 
 import java.io.IOException;
 import java.net.*;
 
-public class Client implements Runnable, Graphic {
+public class Client implements Runnable {
     private final int port;
     private final int bufferSize;
-    private final int maxTimeToLive;
-    private final int color;
     private final EntityList list;
     private InetAddress ipAddress;
     private DatagramSocket socket;
     private Thread thread;
-    private String message;
-    private boolean running;
-    private int messageTimeToLive;
 
-    public Client(EntityList list, int port, int bufferSize, int ttl, int color) {
+    public Client(EntityList list, int port, int bufferSize) {
         this.list = list;
         this.port = port;
         this.bufferSize = bufferSize;
-        this.messageTimeToLive = ttl;
-        this.maxTimeToLive = ttl;
-        this.color = color;
         try {
             this.socket = new DatagramSocket();
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        running = false;
     }
 
     public void start(String ipAddress) {
@@ -49,7 +33,6 @@ public class Client implements Runnable, Graphic {
         }
         thread = new Thread(this);
         thread.start();
-        running = true;
     }
 
     public void run() {
@@ -75,19 +58,18 @@ public class Client implements Runnable, Graphic {
                 case INVALID:
                     break;
                 case LOGIN:
-                    if (!(packet.getPlayer().getEntity() instanceof AiInterface))
-                        message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
+                    //"Client [" + packet.getAddress() + " : " + packet.getPort() + "] has joined";
                     handleLogin(packet);
                     break;
                 case DISCONNECT:
-                    message = "Client [" + packet.getAddress() + " : " + packet.getPort() + "] has left";
+                    //"Client [" + packet.getAddress() + " : " + packet.getPort() + "] has left";
                     handleDisconnect(packet);
                     break;
                 case MOVE:
                     handleMove(packet);
                     break;
                 case SHUTDOWN:
-                    message = "Server has closed";
+                    //"Server has closed";
                     handleShutdown();
                     break;
             }
@@ -119,7 +101,6 @@ public class Client implements Runnable, Graphic {
     private void interrupt() {
         socket.close();
         thread.interrupt();
-        running = false;
     }
 
     public void sendData(byte[] data) {
@@ -128,26 +109,5 @@ public class Client implements Runnable, Graphic {
             socket.send(packet);
         } catch (IOException ignored) {
         }
-    }
-
-    @Override
-    public void update(GameLoop gl, float dt) {
-
-        if (messageTimeToLive <= 0) {
-            message = null;
-            messageTimeToLive = maxTimeToLive;
-        } else
-            --messageTimeToLive;
-    }
-
-    @Override
-    public void render(GameLoop gl, Render r) {
-        if (message != null)
-            r.addFont(new Font("res/font/client.png", message, Window.WIDTH / 5, 0, color));
-
-    }
-
-    public boolean isRunning() {
-        return running;
     }
 }

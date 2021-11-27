@@ -30,8 +30,13 @@ public class Bar implements Graphic, Observer, Serializable {
     private int lineSeparator;
     private int currentValue;
 
-
     public Bar(int offX, int offY, int width, int height, int color, int borderSize, int maxValue, String text, Subject subject) {
+        this(offX, offY, width, height, color, borderSize, maxValue, text);
+        registerEntityToObserver(subject);
+    }
+
+
+    public Bar(int offX, int offY, int width, int height, int color, int borderSize, int maxValue, String text) {
         this.offX = offX;
         this.offY = offY;
         this.width = width;
@@ -45,12 +50,11 @@ public class Bar implements Graphic, Observer, Serializable {
         borderColor = 0xff000000;
         fontColor = 0xffffffff;
 
-        this.bar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), color, true);
-        this.darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX, offY + height), darkColor, true);
+        this.bar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), color, true, true);
+        this.darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX, offY + height), darkColor, true, true);
 
         lineSeparator = offX;
         currentValue = maxValue;
-        registerEntityToObserver(subject);
     }
 
     @Override
@@ -70,16 +74,16 @@ public class Bar implements Graphic, Observer, Serializable {
             blackWidth = width;
 
         int barWidth = width - blackWidth;
-        darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), darkColor, true);
-        bar = new Rectangle(new Vector(lineSeparator, offY), new Vector(lineSeparator + barWidth, offY + height), color, true);
+        darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), darkColor, true, true);
+        bar = new Rectangle(new Vector(lineSeparator, offY), new Vector(lineSeparator + barWidth, offY + height), color, true, true);
     }
 
     @Override
     public void render(GameLoop gl, Render r) {
         r.addRectangle(darkBar);
         r.addRectangle(bar);
-        r.addThickRectangle(offX - borderSize, offY - borderSize, width + 2 * borderSize, height + 2 * borderSize, borderColor, borderSize);
-        r.addFont(new Font("res/font/fps.png", text, offX + width + 4, offY + 3, fontColor));
+        r.addThickRectangle(offX - borderSize, offY - borderSize, width + 2 * borderSize, height + 2 * borderSize, borderColor, borderSize, true);
+        r.addFont(new Font("res/font/fps.png", text, offX + width + 4, offY + 3, fontColor, true));
     }
 
     @Override

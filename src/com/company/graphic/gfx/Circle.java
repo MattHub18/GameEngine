@@ -9,12 +9,14 @@ public class Circle implements Collider {
     private final int color;
     private final boolean isFull;
     private final RigidBody body;
+    private final boolean movable;
 
-    public Circle(Vector center, int radius, int color, boolean isFull) {
+    public Circle(Vector center, int radius, int color, boolean isFull, boolean movable) {
         this.body = new RigidBody(center);
         this.radius = radius;
         this.color = color;
         this.isFull = isFull;
+        this.movable = movable;
     }
 
     public int getRadius() {
@@ -85,5 +87,9 @@ public class Circle implements Collider {
 
     public boolean isFull() {
         return isFull;
+    }
+
+    public boolean isMovable() {
+        return movable;
     }
 }

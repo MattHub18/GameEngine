@@ -6,9 +6,11 @@ import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.world.Room;
 
+import java.io.Serializable;
+
 import static com.company.directions.FacingDirections.*;
 
-public abstract class Bullet extends StaticBullet implements MovableInterface {
+public abstract class Bullet extends StaticBullet implements MovableInterface, Serializable {
     private final MovableEntity movableEntity;
 
     public Bullet(byte textureFilename, int posX, int posY, int maxFrames, Room room, int maxTime, int damage, byte facingDirection, float animationDelay) {

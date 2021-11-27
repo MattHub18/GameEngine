@@ -21,7 +21,7 @@ public class Render implements RenderInterface {
         this.lightRender = new LightRender(basicRender);
         this.rectangleRender = new RectangleRender(basicRender);
         this.fontRender = new FontRender(basicRender);
-        this.imageRender = new ImageRender(camera, basicRender);
+        this.imageRender = new ImageRender(basicRender);
         this.circleRender = new CircleRender(basicRender);
     }
 
@@ -55,8 +55,8 @@ public class Render implements RenderInterface {
         rectangleRender.addRectangle(rect);
     }
 
-    public void addThickRectangle(int smallestOffX, int smallestOffY, int biggestWidth, int biggestHeight, int color, int thickness) {
-        rectangleRender.addThickRectangle(smallestOffX, smallestOffY, biggestWidth, biggestHeight, color, thickness);
+    public void addThickRectangle(int smallestOffX, int smallestOffY, int biggestWidth, int biggestHeight, int color, int thickness, boolean movable) {
+        rectangleRender.addThickRectangle(smallestOffX, smallestOffY, biggestWidth, biggestHeight, color, thickness, movable);
     }
 
     public void addCircle(Circle circle) {

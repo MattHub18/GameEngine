@@ -35,4 +35,8 @@ public abstract class StateManager {
     }
 
     public abstract void init();
+
+    public void clear() {
+        gameStack.clear();
+    }
 }

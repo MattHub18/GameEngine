@@ -11,13 +11,15 @@ public class Rectangle implements Collider, Serializable {
     private final RigidBody body;
     private final boolean isFull;
     private final int color;
+    private final boolean movable;
 
-    public Rectangle(Vector min, Vector max, int color, boolean isFull) {
+    public Rectangle(Vector min, Vector max, int color, boolean isFull, boolean movable) {
         Vector size = new Vector(max).sub(min);
         this.halfSize = new Vector(size).mul(0.5f);
         this.body = new RigidBody(new Vector(halfSize).add(min));
         this.isFull = isFull;
         this.color = color;
+        this.movable = movable;
     }
 
     public Rectangle(Vector min, Vector max) {
@@ -26,6 +28,7 @@ public class Rectangle implements Collider, Serializable {
         this.body = new RigidBody(new Vector(halfSize).add(min));
         this.isFull = false;
         this.color = 0;
+        this.movable = false;
     }
 
     public Vector getMin() {
@@ -95,7 +98,7 @@ public class Rectangle implements Collider, Serializable {
         if (body.getMax().getY() > tile.getMax().getY())
             maxY = tile.getMax().getY();
 
-        return new Rectangle(new Vector(minX, minY), new Vector(maxX, maxY), color, false);
+        return new Rectangle(new Vector(minX, minY), new Vector(maxX, maxY));
     }
 
     public float getStartX() {
@@ -112,5 +115,9 @@ public class Rectangle implements Collider, Serializable {
 
     public int getColor() {
         return color;
+    }
+
+    public boolean isMovable() {
+        return movable;
     }
 }

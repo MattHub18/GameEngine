@@ -23,17 +23,23 @@ public class Particle implements Graphic {
     private Vector direction;
     private int color = -1;
 
-    private Particle(int x, int y, int w, int h, int ttl) {
+    private final boolean movable;
+    private final boolean opaque;
+
+    private Particle(int x, int y, int w, int h, int ttl, boolean movable, boolean opaque) {
         this.x = x;
         this.y = y;
         this.width = w;
         this.height = h;
         this.ttl = ttl;
         direction = randomDirection();
+
+        this.movable = movable;
+        this.opaque = opaque;
     }
 
-    public Particle(Rectangle r, int color, int ttl) {
-        this((int) r.getStartX(), (int) r.getStartY(), (int) r.getWidth(), (int) r.getHeight(), ttl);
+    public Particle(Rectangle r, int color, int ttl, boolean movable, boolean opaque) {
+        this((int) r.getStartX(), (int) r.getStartY(), (int) r.getWidth(), (int) r.getHeight(), ttl, movable, opaque);
         this.type = Type.RECTANGLE;
         this.color = color;
         pixels = new int[width * height];
@@ -41,8 +47,8 @@ public class Particle implements Graphic {
             pixels[i] = color;
     }
 
-    public Particle(Image i, int x, int y, int ttl) {
-        this(x, y, i.getWidth(), i.getHeight(), ttl);
+    public Particle(Image i, int x, int y, int ttl, boolean movable, boolean opaque) {
+        this(x, y, i.getWidth(), i.getHeight(), ttl, movable, opaque);
         type = Type.IMAGE;
         pixels = i.getPixels();
     }
@@ -50,9 +56,9 @@ public class Particle implements Graphic {
     @Override
     public void render(GameLoop gl, Render r) {
         if (type == Type.RECTANGLE)
-            r.addRectangle(new Rectangle(new Vector(x, y), new Vector(width, height), color, true));
+            r.addRectangle(new Rectangle(new Vector(x, y), new Vector(width, height), color, true, movable));
         else if (type == Type.IMAGE)
-            r.addImage(new Image(pixels, width, height), x, y);
+            r.addImage(new Image(pixels, width, height, movable, opaque), x, y);
     }
 
     @Override
