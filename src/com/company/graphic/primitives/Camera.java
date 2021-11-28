@@ -1,31 +1,33 @@
 package com.company.graphic.primitives;
 
-import com.company.entities.human.GameEntity;
-import com.company.world.World;
+import com.company.ai.movement.Point;
+import com.company.observer.Observer;
+import com.company.observer.Subject;
 
-public class Camera {
-    private final GameEntity entityRegistered;
-    private final World worldRegistered;
+import java.io.Serializable;
+
+public class Camera implements Observer, Serializable {
     private int viewportSizeX;
     private int viewportSizeY;
     private int camX;
     private int camY;
 
-    public Camera(World world) {
-        this.worldRegistered = world;
-        this.entityRegistered = worldRegistered.getPlayer();
-    }
+    private int widthInPixel;
+    private int heightInPixel;
+
+    private int posX;
+    private int posY;
 
     public void centerCamera() {
         viewportSizeX = Window.WIDTH;
         viewportSizeY = Window.HEIGHT;
-        int offsetMaxX = worldRegistered.getWidthInPixel() - viewportSizeX;
-        int offsetMaxY = worldRegistered.getHeightInPixel() - viewportSizeY;
+        int offsetMaxX = widthInPixel - viewportSizeX;
+        int offsetMaxY = heightInPixel - viewportSizeY;
         int offsetMinX = 0;
         int offsetMinY = 0;
 
-        camX = entityRegistered.getPosX() - viewportSizeX / 2;
-        camY = entityRegistered.getPosY() - viewportSizeY / 2;
+        camX = posX - viewportSizeX / 2;
+        camY = posY - viewportSizeY / 2;
 
         if (camX > offsetMaxX)
             camX = offsetMaxX;
@@ -53,11 +55,39 @@ public class Camera {
         return viewportSizeY + camY;
     }
 
-    public int getMapWidthInPixel() {
-        return worldRegistered.getWidthInPixel();
+    public int getWidthInPixel() {
+        return widthInPixel;
     }
 
-    public int getMapHeightInPixel() {
-        return worldRegistered.getHeightInPixel();
+    public int getHeightInPixel() {
+        return heightInPixel;
+    }
+
+    public void updateCamera(RenderObject obj) {
+        widthInPixel = obj.getWidthInPixel();
+        heightInPixel = obj.getHeightInPixel();
+    }
+
+    @Override
+    public void registerEntityToObserver(Subject subject) {
+        if (subject != null)
+            subject.addObserver("camera", this);
+        else {
+            posX = 0;
+            posY = 0;
+        }
+    }
+
+    @Override
+    public void unregisterEntityToObserver(Subject subject) {
+        if (subject != null)
+            subject.removeObserver("camera");
+    }
+
+    @Override
+    public <T> void updateValue(T value) {
+        Point p = (Point) value;
+        posX = p.getX();
+        posY = p.getY();
     }
 }

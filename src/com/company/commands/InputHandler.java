@@ -14,12 +14,10 @@ public abstract class InputHandler implements Serializable {
 
     public InputHandler() {
         commands = new ArrayList<>();
-        controller = null;
     }
 
     public <T> void handleInput(GameLoop gl, T element) {
-        if (controller == null)
-            controller = gl.getController();
+        controller = Controller.getInstance();
         for (Command command : commands) {
             CommandType type = command.getType();
             if (type == CommandType.KEYBOARD)

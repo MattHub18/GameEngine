@@ -1,31 +1,17 @@
 package com.company.states;
 
-import com.company.graphic.primitives.Stack;
-
 import java.util.HashMap;
 
 public abstract class StateManager {
 
-    private final Stack gameStack;
+    private State currentState;
 
     private final HashMap<String, State> stateMap;
 
     public StateManager() {
-        gameStack = new Stack();
+        currentState = null;
         stateMap = new HashMap<>();
         insertStates();
-    }
-
-    public State head() {
-        return gameStack.getTop();
-    }
-
-    public void remove() {
-        gameStack.pop();
-    }
-
-    public void insert(String state) {
-        gameStack.push(stateMap.get(state));
     }
 
     protected abstract void insertStates();
@@ -34,9 +20,19 @@ public abstract class StateManager {
         stateMap.put(stateName, state);
     }
 
+    public State getCurrentState() {
+        return currentState;
+    }
+
+
     public abstract void init();
 
+
+    public void nextState(String state) {
+        currentState = stateMap.get(state);
+    }
+
     public void clear() {
-        gameStack.clear();
+        stateMap.clear();
     }
 }

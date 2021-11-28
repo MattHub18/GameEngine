@@ -2,35 +2,34 @@ package com.company.graphic.primitives;
 
 import com.company.commands.InputHandler;
 import com.company.graphic.gfx.Font;
+import com.company.states.State;
 import com.company.states.StateManager;
-import com.company.world.World;
 
 public class GameLoop implements Runnable {
-    public static float SCALE = 2f;
-
-    protected static boolean running = false;
-
-    private Thread gameThread;
-
+    protected static float SCALE = 2f;
     private final StateManager stateManager;
-
     private final Window window;
     private final Controller controller;
     private final Render render;
     private final InputHandler systemInputHandler;
+    private final Camera camera;
+    private boolean running = false;
+    private Thread gameThread;
 
-    private boolean pause = false;
-
-    public GameLoop(StateManager manager, InputHandler systemInputHandler, World world, String title) {
-
-        Camera camera = new Camera(world);
-        window = new Window(camera, title);
-        controller = new Controller(window);
-        render = new Render(camera, window);
-        this.systemInputHandler = systemInputHandler;
-        this.systemInputHandler.insertCommands();
+    public GameLoop(StateManager manager, InputHandler systemInputHandler, String title) {
         this.stateManager = manager;
         this.stateManager.init();
+
+        this.window = new Window(title);
+        this.camera = new Camera();
+
+        update();
+
+        this.controller = new Controller(window);
+        this.render = new Render(camera, window);
+
+        this.systemInputHandler = systemInputHandler;
+        this.systemInputHandler.insertCommands();
     }
 
     public synchronized void start() {
@@ -78,7 +77,7 @@ public class GameLoop implements Runnable {
                 rendering = false;
 
                 systemInputHandler.handleInput(this, this);
-                stateManager.head().update(this, (float) UPDATE_TIME);
+                stateManager.getCurrentState().update(this, (float) UPDATE_TIME);
                 controller.update();
 
                 if (frameTime >= 1.0) {
@@ -91,7 +90,7 @@ public class GameLoop implements Runnable {
             if (rendering) {
                 render.clear();
                 render.addFont(new Font("res/font/fps.png", "FPS: " + fps, 0, 0, 0xff0000ff, true));
-                stateManager.head().render(this, render);
+                stateManager.getCurrentState().render(this, render);
                 render.process();
                 window.update(this);
                 frames++;
@@ -99,19 +98,24 @@ public class GameLoop implements Runnable {
         }
     }
 
-    public Controller getController() {
-        return controller;
-    }
+    public void nextState(String state) {
+        camera.unregisterEntityToObserver(stateManager.getCurrentState().getActor());
+        stateManager.nextState(state);
 
-    public void pause() {
-        pause = !pause;
-        if (!pause)
-            stateManager.remove();
-        else
-            stateManager.insert("PAUSE");
+        update();
+
+        render.updateBuffer(window);
     }
 
     public void changeWindowSize() {
         window.changeWindowSize();
+    }
+
+    private void update() {
+        State current = stateManager.getCurrentState();
+        RenderObject obj = current.getRenderObject();
+        window.updateBuffer(obj);
+        camera.updateCamera(obj);
+        camera.registerEntityToObserver(current.getActor());
     }
 }

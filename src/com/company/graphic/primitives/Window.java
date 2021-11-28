@@ -10,7 +10,7 @@ public class Window {
     public static int WIDTH;
     public static int HEIGHT;
 
-    private final BufferedImage image;
+    private BufferedImage image;
     private final Canvas canvas;
     private final JFrame frame;
     private BufferStrategy bs;
@@ -20,12 +20,10 @@ public class Window {
 
     private GameLoop gl = null;
 
-    public Window(Camera camera, String title) {
+    public Window(String title) {
         Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
         WIDTH = (int) (fullDim.width / GameLoop.SCALE);
         HEIGHT = (int) (fullDim.height / GameLoop.SCALE);
-
-        image = new BufferedImage(camera.getMapWidthInPixel(), camera.getMapHeightInPixel(), BufferedImage.TYPE_INT_RGB);
 
         canvas = new Canvas();
 
@@ -91,5 +89,9 @@ public class Window {
         canvas.createBufferStrategy(2);
         bs = canvas.getBufferStrategy();
         g = bs.getDrawGraphics();
+    }
+
+    public void updateBuffer(RenderObject object) {
+        image = new BufferedImage(object.getWidthInPixel(), object.getHeightInPixel(), BufferedImage.TYPE_INT_RGB);
     }
 }

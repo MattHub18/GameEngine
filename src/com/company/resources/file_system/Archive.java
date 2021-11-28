@@ -5,7 +5,6 @@ import com.company.resources.loaders.LoaderData;
 import com.company.resources.loaders.LoaderResources;
 
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 public class Archive {
     public static final ArrayList<String> DATA = new ArrayList<>();
@@ -40,7 +39,10 @@ public class Archive {
     }
 
     public Object loadObject(String objectName) {
-        int index = IntStream.range(0, DATA.size()).filter(i -> exist(objectName)).findFirst().orElse(-1);
-        return data.get(index);
+        for (int i = 0; i < DATA.size(); i++) {
+            if (DATA.get(i).contains(objectName))
+                return data.get(i);
+        }
+        return null;
     }
 }

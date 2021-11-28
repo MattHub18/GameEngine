@@ -17,6 +17,8 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
     private int mouseY;
     private int scroll;
 
+    private static Controller instance;
+
     public Controller(Window window) {
         mouseX = 0;
         mouseY = 0;
@@ -26,6 +28,12 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
         window.getCanvas().addMouseListener(this);
         window.getCanvas().addMouseMotionListener(this);
         window.getCanvas().addMouseWheelListener(this);
+
+        instance = this;
+    }
+
+    public static Controller getInstance() {
+        return instance;
     }
 
     public void update() {

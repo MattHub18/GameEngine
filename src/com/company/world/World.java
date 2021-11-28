@@ -5,11 +5,12 @@ import com.company.entities.human.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.graphic.primitives.RenderObject;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
-public abstract class World implements Graphic, Serializable {
+public abstract class World implements Graphic, RenderObject, Serializable {
 
     protected Room currentRoom;
     protected EntityManager entityManager;
@@ -38,10 +39,12 @@ public abstract class World implements Graphic, Serializable {
         currentRoom.collisions(e);
     }
 
+    @Override
     public int getWidthInPixel() {
         return currentRoom.getWidthInPixel();
     }
 
+    @Override
     public int getHeightInPixel() {
         return currentRoom.getHeightInPixel();
     }
@@ -52,12 +55,10 @@ public abstract class World implements Graphic, Serializable {
         return currentRoom;
     }
 
-    public GameEntity getPlayer() {
-        return player;
-    }
-
-    public void init() {
+    public void init(GameEntity player) {
         entityManager.init();
+        this.player = player;
+        this.player.setRoom(currentRoom);
         entityManager.addEntity(player);
         currentRoom.spawnEntities();
     }
