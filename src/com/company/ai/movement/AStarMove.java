@@ -5,8 +5,8 @@ import com.company.world.Room;
 
 import java.util.*;
 
-import static com.company.resources.AbstractConstants.TILE_HEIGHT;
-import static com.company.resources.AbstractConstants.TILE_WIDTH;
+import static com.company.resources.SystemConstants.TILE_HEIGHT;
+import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class AStarMove implements MovementComponent {
 

@@ -10,8 +10,8 @@ import com.company.resources.file_system.Archive;
 
 import java.io.Serializable;
 
-import static com.company.resources.AbstractConstants.TILE_HEIGHT;
-import static com.company.resources.AbstractConstants.TILE_WIDTH;
+import static com.company.resources.SystemConstants.TILE_HEIGHT;
+import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public abstract class Room implements Graphic, Serializable {
     private final int roomId;

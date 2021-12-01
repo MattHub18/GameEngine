@@ -5,8 +5,8 @@ import com.company.ai.movement.Point;
 import com.company.entities.human.GameEntity;
 import com.company.entities.human.movable.MovableInterface;
 
-import static com.company.resources.AbstractConstants.TILE_HEIGHT;
-import static com.company.resources.AbstractConstants.TILE_WIDTH;
+import static com.company.resources.SystemConstants.TILE_HEIGHT;
+import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class MoveTask extends LeafTask {
     private final MovementComponent movementComponent;

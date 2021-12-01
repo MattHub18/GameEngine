@@ -11,8 +11,8 @@ import com.company.world.Room;
 import java.io.Serializable;
 
 import static com.company.directions.FacingDirections.*;
-import static com.company.resources.AbstractConstants.TILE_HEIGHT;
-import static com.company.resources.AbstractConstants.TILE_WIDTH;
+import static com.company.resources.SystemConstants.TILE_HEIGHT;
+import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public abstract class StaticBullet implements GameEntity, Serializable {
     protected final byte facingDirection;

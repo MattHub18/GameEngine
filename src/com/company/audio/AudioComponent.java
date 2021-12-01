@@ -17,7 +17,6 @@ public class AudioComponent implements Serializable {
         if (!singleFrame) {
             singleFrame = true;
             Sound sound = new Sound(Archive.SOUND.get(audioFilename));
-            sound.setVolume(-80f);
             sound.play();
         }
     }

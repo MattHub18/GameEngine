@@ -3,8 +3,8 @@ package com.company.world;
 import com.company.graphic.gfx.Rectangle;
 import com.company.physics.basics.Vector;
 
-import static com.company.resources.AbstractConstants.TILE_HEIGHT;
-import static com.company.resources.AbstractConstants.TILE_WIDTH;
+import static com.company.resources.SystemConstants.TILE_HEIGHT;
+import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class Tile {
     public static final byte FLOOR = 0;

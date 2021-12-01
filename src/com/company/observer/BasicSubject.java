@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class StandardSubject implements Subject, Serializable {
+public class BasicSubject implements Subject, Serializable {
     private final HashMap<String, Observer> observers;
 
-    public StandardSubject() {
+    public BasicSubject() {
         this.observers = new HashMap<>();
     }
 

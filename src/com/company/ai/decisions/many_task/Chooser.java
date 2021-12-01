@@ -1,6 +1,5 @@
 package com.company.ai.decisions.many_task;
 
-
 import com.company.ai.decisions.Task;
 import com.company.ai.decisions.UtilityBaseSystem;
 
