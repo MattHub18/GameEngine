@@ -2,6 +2,7 @@ package com.company.graphic.primitives.renders;
 
 import com.company.graphic.primitives.Camera;
 import com.company.graphic.primitives.CameraShift;
+import com.company.graphic.primitives.ColorPalette;
 import com.company.graphic.primitives.Window;
 
 import java.awt.image.DataBufferInt;
@@ -33,7 +34,7 @@ public class BasicRender implements RenderInterface {
     public void clear() {
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = 0;
-            lightPixels[i] = 0xff6b6b6b;
+            lightPixels[i] = ColorPalette.GREY;
             brightness[i] = false;
         }
     }

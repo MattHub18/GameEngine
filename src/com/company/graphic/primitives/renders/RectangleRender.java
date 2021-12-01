@@ -53,12 +53,12 @@ public class RectangleRender implements RenderInterface {
 
         for (int y = startY; y <= height; y++) {
             basicRender.setPixel(offX - camX, y + offY - camY, color);
-            basicRender.setPixel(offX - camX + width, y + offY - camY, color);
+            basicRender.setPixel(offX - camX + width - 1, y + offY - camY, color);
         }
 
-        for (int x = startX; x <= width; x++) {
+        for (int x = startX + 1; x < width - 1; x++) {
             basicRender.setPixel(x + offX - camX, offY - camY, color);
-            basicRender.setPixel(x + offX - camX, offY + height - camY, color);
+            basicRender.setPixel(x + offX - camX, offY + height - 1 - camY, color);
         }
     }
 
@@ -69,7 +69,7 @@ public class RectangleRender implements RenderInterface {
         int width = (int) rect.getWidth();
         int height = (int) rect.getHeight();
 
-        if (width < 0 || height < 0)
+        if (width <= 0 || height <= 0)
             return;
 
         drawFullRectangle(new Rectangle(new Vector(offX + 1, offY + 1), new Vector(offX + width - 1, offY + height - 1), rect.getColor(), rect.isFull(), rect.isMovable()));

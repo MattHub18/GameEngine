@@ -1,5 +1,7 @@
 package com.company.graphic.gfx;
 
+import com.company.graphic.primitives.ColorPalette;
+
 public class Font {
     private final Image fontImage;
     private final String text;
@@ -20,9 +22,9 @@ public class Font {
 
         int unicode = 0;
         for (int i = 0; i < fontImage.getWidth(); i++) {
-            if (fontImage.getPixels()[i] == 0xff0000ff)//start a new character
+            if (fontImage.getPixels()[i] == ColorPalette.BLUE)//start a new character
                 offsets[unicode] = i;
-            if (fontImage.getPixels()[i] == 0xffffff00) {//end a new character
+            if (fontImage.getPixels()[i] == ColorPalette.YELLOW) {//end a new character
                 widths[unicode] = i - offsets[unicode];
                 unicode++;
             }

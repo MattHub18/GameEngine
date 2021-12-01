@@ -2,7 +2,8 @@ package com.company.resources.file_system;
 
 import com.company.resources.loaders.LoaderAudio;
 import com.company.resources.loaders.LoaderData;
-import com.company.resources.loaders.LoaderResources;
+import com.company.resources.loaders.LoaderFont;
+import com.company.resources.loaders.LoaderResource;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ public class Archive {
     public static final ArrayList<String> DATA = new ArrayList<>();
     public static final ArrayList<String> SOUND = new ArrayList<>();
     public static final ArrayList<String> TEXTURES = new ArrayList<>();
+    public static final ArrayList<String> FONT = new ArrayList<>();
     private ArrayList<Object> data;
 
     public void close() {
@@ -22,14 +24,14 @@ public class Archive {
         filter.writeData(path, object);
     }
 
-    public void load(Filter filter) {
-        LoaderResources.getInstance().load();
+    public void load() {
+        LoaderResource.getInstance().load();
         LoaderAudio.getInstance().load();
-        LoaderData.getInstance().load();
-        loadData(filter);
+        LoaderFont.getInstance().load();
     }
 
-    private void loadData(Filter filter) {
+    public void loadData(Filter filter) {
+        LoaderData.getInstance().load();
         data = new ArrayList<>();
         data.addAll(filter.readData());
     }

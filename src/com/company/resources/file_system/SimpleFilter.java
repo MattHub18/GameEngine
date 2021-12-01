@@ -3,7 +3,7 @@ package com.company.resources.file_system;
 public class SimpleFilter extends Filter {
 
     @Override
-    public Object decrypt(Object data) {
+    protected Object decrypt(Object data) {
         return data;
     }
 

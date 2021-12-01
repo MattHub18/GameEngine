@@ -23,5 +23,17 @@ public abstract class Loader {
         }
     }
 
-    protected abstract void extractResources(File[] arr, int index);
+    private void extractResources(File[] arr, int index) {
+        if (index == arr.length)
+            return;
+
+        if (arr[index].isFile())
+            filenames.add(arr[index].getAbsolutePath());
+        else if (arr[index].isDirectory()) {
+            File[] files = arr[index].listFiles();
+            if (files != null)
+                extractResources(files, 0);
+        }
+        extractResources(arr, ++index);
+    }
 }

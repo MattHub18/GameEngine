@@ -3,11 +3,14 @@ package com.company.hud;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.gfx.Rectangle;
+import com.company.graphic.primitives.ColorPalette;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.observer.Observer;
 import com.company.observer.Subject;
 import com.company.physics.basics.Vector;
+import com.company.resources.SystemResources;
+import com.company.resources.file_system.Archive;
 
 import java.io.Serializable;
 
@@ -46,9 +49,9 @@ public class Bar implements Graphic, Observer, Serializable {
         this.maxValue = maxValue;
         this.text = text;
 
-        darkColor = 0xff555555;
-        borderColor = 0xff000000;
-        fontColor = 0xffffffff;
+        darkColor = ColorPalette.GREY;
+        borderColor = ColorPalette.BLACK;
+        fontColor = ColorPalette.WHITE;
 
         this.bar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), color, true, true);
         this.darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX, offY + height), darkColor, true, true);
@@ -83,7 +86,7 @@ public class Bar implements Graphic, Observer, Serializable {
         r.addRectangle(darkBar);
         r.addRectangle(bar);
         r.addThickRectangle(offX - borderSize, offY - borderSize, width + 2 * borderSize, height + 2 * borderSize, borderColor, borderSize, true);
-        r.addFont(new Font("res/font/fps.png", text, offX + width + 4, offY + 3, fontColor, true));
+        r.addFont(new Font(Archive.FONT.get(SystemResources.FPS_FONT), text, offX + width + 4, offY + 3, fontColor, true));
     }
 
     @Override
@@ -103,9 +106,9 @@ public class Bar implements Graphic, Observer, Serializable {
     }
 
     private void zeroBar() {
-        color = 0x00000000;
-        darkColor = 0x00000000;
-        borderColor = 0x00000000;
-        fontColor = 0x00000000;
+        color = ColorPalette.INVISIBLE;
+        darkColor = ColorPalette.INVISIBLE;
+        borderColor = ColorPalette.INVISIBLE;
+        fontColor = ColorPalette.INVISIBLE;
     }
 }

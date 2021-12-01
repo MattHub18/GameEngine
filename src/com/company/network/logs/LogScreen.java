@@ -1,5 +1,6 @@
 package com.company.network.logs;
 
+import com.company.graphic.primitives.ColorPalette;
 import com.company.network.Server;
 import com.company.network.packets.Packet;
 import com.company.network.packets.PacketType;
@@ -54,15 +55,16 @@ public class LogScreen extends JFrame {
     private static int getColor(LogType type) {
         switch (type) {
             case PLAIN:
-                return 0xff000000;
+                return ColorPalette.BLACK;
             case UNKNOWN:
-                return 0xffff0000;
+                return ColorPalette.RED;
             case SERVER:
-                return 0xff00ff00;
+                return ColorPalette.GREEN;
             case PLAYER:
-                return 0xff0000ff;
+                return ColorPalette.BLUE;
+            default:
+                return -1;
         }
-        return -1;
     }
 
     public static LogScreen getInstance(Server server) {

@@ -3,6 +3,7 @@ package com.company.resources.file_system;
 public class FileSystem {
 
     private static FileSystem instance = null;
+    private static FileSystem dataInstance = null;
     private final Archive archive;
 
     private FileSystem() {
@@ -11,7 +12,7 @@ public class FileSystem {
 
     private FileSystem(Filter filter) {
         archive = new Archive();
-        archive.load(filter);
+        archive.loadData(filter);
     }
 
     public static FileSystem getInstance() {
@@ -20,15 +21,20 @@ public class FileSystem {
         return instance;
     }
 
-    public static FileSystem getLoaderInstance() {
-        if (instance == null)
-            instance = new FileSystem(new SimpleFilter());
-        return instance;
+    public static FileSystem getDataInstance() {
+        if (dataInstance == null)
+            dataInstance = new FileSystem(new SimpleFilter());
+        return dataInstance;
+    }
+
+    public void loadResources() {
+        archive.load();
     }
 
     public void shutdown() {
         archive.close();
         instance = null;
+        dataInstance = null;
     }
 
     public void save(Object gameObject) {

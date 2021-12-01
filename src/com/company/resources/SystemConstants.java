@@ -1,10 +1,10 @@
 package com.company.resources;
 
-public abstract class AbstractConstants {
+public abstract class SystemConstants {
     private static int TILE_WIDTH = 0;
     private static int TILE_HEIGHT = 0;
 
-    public AbstractConstants() {
+    public SystemConstants() {
         TILE_WIDTH = giveWidth();
         TILE_HEIGHT = giveHeight();
     }

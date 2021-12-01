@@ -34,7 +34,6 @@ public class Window {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                frame.dispose();
                 gl.stop();
             }
         });
@@ -93,5 +92,9 @@ public class Window {
 
     public void updateBuffer(RenderObject object) {
         image = new BufferedImage(object.getWidthInPixel(), object.getHeightInPixel(), BufferedImage.TYPE_INT_RGB);
+    }
+
+    public void close() {
+        frame.dispose();
     }
 }
