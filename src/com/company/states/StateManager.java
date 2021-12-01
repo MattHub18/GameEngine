@@ -16,8 +16,8 @@ public abstract class StateManager {
 
     protected abstract void insertStates();
 
-    protected void addState(String stateName, State state) {
-        stateMap.put(stateName, state);
+    protected void addState(String stateName) {
+        stateMap.put(stateName, null);
     }
 
     public State getCurrentState() {
@@ -30,7 +30,11 @@ public abstract class StateManager {
 
     public void nextState(String state) {
         currentState = stateMap.get(state);
+        if (currentState == null)
+            currentState = createNewState(state);
     }
+
+    protected abstract State createNewState(String state);
 
     public void clear() {
         stateMap.clear();

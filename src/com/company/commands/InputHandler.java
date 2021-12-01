@@ -1,7 +1,6 @@
 package com.company.commands;
 
 import com.company.graphic.primitives.Controller;
-import com.company.graphic.primitives.GameLoop;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ public abstract class InputHandler implements Serializable {
         commands = new ArrayList<>();
     }
 
-    public <T> void handleInput(GameLoop gl, T element) {
+    public <T> void handleInput(T element) {
         controller = Controller.getInstance();
         for (Command command : commands) {
             CommandType type = command.getType();

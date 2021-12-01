@@ -7,20 +7,12 @@ import com.company.graphic.primitives.GameLoop;
 
 public class PauseCommand extends Command {
 
-    private boolean pause = false;
-
     public PauseCommand(CommandType type, int key, InputMode mode) {
         super(type, key, mode);
     }
 
     @Override
     public <T> void execute(T element) {
-        pause = !pause;
-        String exec;
-        if (!pause)
-            exec = "GAME";
-        else
-            exec = "PAUSE";
-        ((GameLoop) element).nextState(exec);
+        ((GameLoop) element).nextState("PAUSE");
     }
 }

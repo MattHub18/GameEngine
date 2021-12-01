@@ -2,6 +2,8 @@ package com.company.graphic.primitives;
 
 import com.company.commands.InputHandler;
 import com.company.graphic.gfx.Font;
+import com.company.resources.SystemResources;
+import com.company.resources.file_system.Archive;
 import com.company.states.State;
 import com.company.states.StateManager;
 
@@ -44,6 +46,7 @@ public class GameLoop implements Runnable {
         if (!running)
             return;
         running = false;
+        window.close();
         stateManager.clear();
         render.clear();
         gameThread.interrupt();
@@ -76,7 +79,7 @@ public class GameLoop implements Runnable {
                 remainingTime -= UPDATE_TIME;
                 rendering = false;
 
-                systemInputHandler.handleInput(this, this);
+                systemInputHandler.handleInput(this);
                 stateManager.getCurrentState().update(this, (float) UPDATE_TIME);
                 controller.update();
 
@@ -89,7 +92,7 @@ public class GameLoop implements Runnable {
 
             if (rendering) {
                 render.clear();
-                render.addFont(new Font("res/font/fps.png", "FPS: " + fps, 0, 0, 0xff0000ff, true));
+                render.addFont(new Font(Archive.FONT.get(SystemResources.FPS_FONT), "FPS: " + fps, 0, 0, ColorPalette.BLUE, true));
                 stateManager.getCurrentState().render(this, render);
                 render.process();
                 window.update(this);
