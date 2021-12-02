@@ -15,7 +15,7 @@ public abstract class InputHandler implements Serializable {
         commands = new ArrayList<>();
     }
 
-    public <T> void handleInput(T element) {
+    public void handleInput(Object element) {
         controller = Controller.getInstance();
         for (Command command : commands) {
             CommandType type = command.getType();
@@ -26,7 +26,7 @@ public abstract class InputHandler implements Serializable {
         }
     }
 
-    private <T> void handleInputKeys(Command command, T element) {
+    private void handleInputKeys(Command command, Object element) {
         switch (command.getMode()) {
             default: {
                 if (controller.isKey(command.getKey()))
@@ -48,7 +48,7 @@ public abstract class InputHandler implements Serializable {
         }
     }
 
-    private <T> void handleInputButtons(Command command, T element) {
+    private void handleInputButtons(Command command, Object element) {
         switch (command.getMode()) {
             default: {
                 if (controller.isButton(command.getKey()))

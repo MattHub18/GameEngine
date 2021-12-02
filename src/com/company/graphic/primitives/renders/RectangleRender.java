@@ -51,7 +51,7 @@ public class RectangleRender implements RenderInterface {
         int camX = structure.getCamX();
         int camY = structure.getCamY();
 
-        for (int y = startY; y <= height; y++) {
+        for (int y = startY; y < height; y++) {
             basicRender.setPixel(offX - camX, y + offY - camY, color);
             basicRender.setPixel(offX - camX + width - 1, y + offY - camY, color);
         }

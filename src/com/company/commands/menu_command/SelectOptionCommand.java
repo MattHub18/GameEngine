@@ -11,7 +11,7 @@ public class SelectOptionCommand extends Command {
     }
 
     @Override
-    public <T> void execute(T element) {
+    public void execute(Object element) {
         ((Menu) element).onClick();
     }
 }

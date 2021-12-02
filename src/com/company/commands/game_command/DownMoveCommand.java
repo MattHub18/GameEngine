@@ -14,7 +14,7 @@ public class DownMoveCommand extends Command implements Serializable {
     }
 
     @Override
-    public <T> void execute(T element) {
+    public void execute(Object element) {
         ((MovableInterface) element).moveDown();
     }
 }

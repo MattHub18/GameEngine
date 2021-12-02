@@ -12,7 +12,7 @@ public class PauseCommand extends Command {
     }
 
     @Override
-    public <T> void execute(T element) {
+    public void execute(Object element) {
         ((GameLoop) element).nextState("PAUSE");
     }
 }

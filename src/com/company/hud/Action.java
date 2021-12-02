@@ -14,5 +14,5 @@ public abstract class Action implements Serializable {
         return name;
     }
 
-    public abstract <T> void doAction(T element);
+    public abstract void doAction(Object element);
 }

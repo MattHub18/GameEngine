@@ -14,7 +14,7 @@ public abstract class Command implements Serializable {
         this.type = type;
     }
 
-    public abstract <T> void execute(T element);
+    public abstract void execute(Object element);
 
     public int getKey() {
         return key;

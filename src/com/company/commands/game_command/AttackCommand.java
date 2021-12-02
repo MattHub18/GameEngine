@@ -12,7 +12,7 @@ public class AttackCommand extends Command {
     }
 
     @Override
-    public <T> void execute(T element) {
+    public void execute(Object element) {
         ((CombatInterface) element).meleeAttack();
     }
 }
