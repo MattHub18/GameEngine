@@ -7,7 +7,6 @@ import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class Tile {
-    public static final byte FLOOR = 0;
     private final byte tileId;
     private final Rectangle box;
 
@@ -23,6 +22,6 @@ public class Tile {
     }
 
     public boolean isFloor() {
-        return tileId == FLOOR;
+        return tileId == 0;
     }
 }

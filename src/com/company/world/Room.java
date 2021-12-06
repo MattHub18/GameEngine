@@ -8,7 +8,15 @@ import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.resources.file_system.Archive;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Scanner;
+import java.util.stream.Stream;
 
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
@@ -19,9 +27,9 @@ public abstract class Room implements Graphic, Serializable {
     public int RIGHT;
     public int UP;
     public int DOWN;
-    protected int width;
-    protected int height;
-    protected EntityManager entityManager;
+    protected final EntityManager entityManager;
+    private int width;
+    private int height;
     protected transient boolean visited;
     private byte[][] tiles;
     private int withInPixel;
@@ -33,15 +41,40 @@ public abstract class Room implements Graphic, Serializable {
         this.textureFilename = textureFilename;
         this.entityManager = entityManager;
         visited = false;
+        build();
     }
 
-    protected void build(byte[][] tiles) {
-        this.tiles = tiles;
-        this.width = tiles[0].length;
-        this.height = tiles.length;
+    protected void build() {
+        String path = Archive.MAP.get(roomId);
+        File file = new File(path);
+        try {
+            Scanner sizeScanner = new Scanner(file);
+            String[] temp = sizeScanner.nextLine().split(",");
+            sizeScanner.close();
+            this.width = temp.length;
 
-        withInPixel = width * TILE_WIDTH();
-        heightInPixel = height * TILE_HEIGHT();
+            this.height = 0;
+            try (Stream<String> lines = Files.lines(Path.of(path), Charset.defaultCharset())) {
+                this.height = (int) lines.count();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            withInPixel = width * TILE_WIDTH();
+            heightInPixel = height * TILE_HEIGHT();
+
+            Scanner scanner = new Scanner(file);
+            this.tiles = new byte[height][width];
+            for (int i = 0; i < height; i++) {
+                String[] numbers = scanner.nextLine().split(",");
+                for (int j = 0; j < width; j++) {
+                    this.tiles[i][j] = Byte.parseByte(numbers[j]);
+                }
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public Tile getTile(int x, int y) {
