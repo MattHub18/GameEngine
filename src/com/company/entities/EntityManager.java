@@ -48,7 +48,8 @@ public class EntityManager implements Graphic, Serializable {
     @Override
     public void render(GameLoop gl, Render r) {
         for (GameEntity e : entities)
-            e.render(gl, r);
+            if (isInCurrentRoom(e))
+                e.render(gl, r);
     }
 
     public ArrayList<GameEntity> getEntities() {

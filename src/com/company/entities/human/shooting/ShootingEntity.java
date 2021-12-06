@@ -5,6 +5,7 @@ import com.company.entities.bullet.StaticBullet;
 import com.company.entities.human.Entity;
 import com.company.entities.human.GameEntity;
 import com.company.entities.human.combat.CombatInterface;
+import com.company.entities.human.combat.Damageable;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
@@ -55,11 +56,13 @@ public class ShootingEntity implements Graphic, ShootingInterface, Serializable 
         while (enemyIterator.hasNext()) {
             GameEntity enemy = enemyIterator.next();
             if (entityManager.isInCurrentRoom(enemy)) {
-                if (handleAttackCollision(enemy, bullet)) {
-                    ((CombatInterface) enemy).receiveDamage(enemy, bullet.getDamage());
-                    if (((CombatInterface) enemy).isDead()) {
-                        enemyIterator.remove();
-                        return true;
+                if (enemy instanceof Damageable) {
+                    if (handleAttackCollision(enemy, bullet)) {
+                        ((Damageable) enemy).receiveDamage(enemy, bullet.getDamage());
+                        if (((CombatInterface) enemy).isDead()) {
+                            enemyIterator.remove();
+                            return true;
+                        }
                     }
                 }
             }
@@ -70,7 +73,7 @@ public class ShootingEntity implements Graphic, ShootingInterface, Serializable 
     private boolean handleAttackCollision(GameEntity enemy, StaticBullet bullet) {
         Rectangle attack = bullet.getBox();
         Rectangle enemyBox = enemy.getBox();
-        return !CollisionDetector.isCollided(attack, enemyBox);
+        return CollisionDetector.isCollided(attack, enemyBox);
     }
 
     @Override

@@ -92,7 +92,7 @@ public abstract class StaticBullet implements GameEntity, Serializable {
     public void handleCollisionWith(Rectangle tileBox) {
         entity.updateBox();
 
-        if (CollisionDetector.isCollided(tileBox, entity.getBox()))
+        if (!CollisionDetector.isCollided(tileBox, entity.getBox()))
             return;
         maxTime = 0;
     }

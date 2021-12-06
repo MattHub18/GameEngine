@@ -125,7 +125,7 @@ public class Entity implements GameEntity, Serializable {
     public void handleCollisionWith(Rectangle tileBox) {
         updateBox();
 
-        if (CollisionDetector.isCollided(tileBox, box))
+        if (!CollisionDetector.isCollided(tileBox, box))
             return;
 
         Rectangle intersection = CollisionDetector.intersection(box, tileBox);
@@ -184,5 +184,9 @@ public class Entity implements GameEntity, Serializable {
 
     public void setMaxFrames(int maxFrames) {
         this.maxFrames = maxFrames;
+    }
+
+    public byte getTextureFilename() {
+        return textureFilename;
     }
 }

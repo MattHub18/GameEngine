@@ -23,10 +23,10 @@ public class ComboCombatEntity extends CombatEntity implements Serializable {
     protected void doDamage(GameEntity enemy, Iterator<GameEntity> enemyIterator) {
         combo++;
         if (combo == 4) {
-            ((CombatInterface) enemy).receiveDamage(enemy, weapon.getDamage() * 2);
+            ((Damageable) enemy).receiveDamage(enemy, weapon.getDamage() * 2);
             combo = 0;
         } else
-            ((CombatInterface) enemy).receiveDamage(enemy, weapon.getDamage());
+            ((Damageable) enemy).receiveDamage(enemy, weapon.getDamage());
         if (((CombatInterface) enemy).isDead())
             enemyIterator.remove();
 

@@ -15,7 +15,7 @@ import com.company.weapons.Weapon;
 import java.io.Serializable;
 import java.util.Iterator;
 
-public class CombatEntity implements Graphic, CombatInterface, Serializable {
+public class CombatEntity implements Graphic, CombatInterface, Damageable, Serializable {
 
     protected final Weapon weapon;
     private final int maxLifePoints;
@@ -80,8 +80,10 @@ public class CombatEntity implements Graphic, CombatInterface, Serializable {
         while (enemyIterator.hasNext()) {
             GameEntity enemy = enemyIterator.next();
             if (entityManager.isInCurrentRoom(enemy)) {
-                if (handleAttackCollision(enemy)) {
-                    doDamage(enemy, enemyIterator);
+                if (enemy instanceof Damageable) {
+                    if (handleAttackCollision(enemy)) {
+                        doDamage(enemy, enemyIterator);
+                    }
                 }
             }
         }
@@ -91,12 +93,12 @@ public class CombatEntity implements Graphic, CombatInterface, Serializable {
         Rectangle attack = weapon.getBox(entity);
         entity.updateBox();
         Rectangle enemyBox = enemy.getBox();
-        return !CollisionDetector.isCollided(attack, enemyBox);
+        return CollisionDetector.isCollided(attack, enemyBox);
     }
 
 
     protected void doDamage(GameEntity enemy, Iterator<GameEntity> enemyIterator) {
-        ((CombatInterface) enemy).receiveDamage(enemy, weapon.getDamage());
+        ((Damageable) enemy).receiveDamage(enemy, weapon.getDamage());
         if (((CombatInterface) enemy).isDead())
             enemyIterator.remove();
     }
