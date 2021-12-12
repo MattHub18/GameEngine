@@ -48,10 +48,15 @@ public class LightRender implements RenderInterface {
         int errD = dx - dy;
         int err;
 
+        CameraShift structure = basicRender.cameraShift(offX, offY, light.getDiameter(), light.getDiameter(), light.isMovable());
+
+        int camX = structure.getCamX();
+        int camY = structure.getCamY();
+
         while (true) {
 
-            int screenX = x0 - light.getRadius() + offX;
-            int screenY = y0 - light.getRadius() + offY;
+            int screenX = x0 + offX - camX;
+            int screenY = y0 + offY - camY;
 
             if (basicRender.outOfBounds(screenX, 0, Window.WIDTH, screenY, 0, Window.HEIGHT))
                 return;
@@ -64,7 +69,7 @@ public class LightRender implements RenderInterface {
             if (basicRender.getBrightness(screenX, screenY))
                 return;
 
-            setLightPixels(screenX, screenY, lightColor, light.isMovable());
+            setLightPixels(screenX, screenY, lightColor);
 
             if (x0 == x1 && y0 == y1)
                 break;
@@ -80,20 +85,14 @@ public class LightRender implements RenderInterface {
         }
     }
 
-    private void setLightPixels(int x, int y, int value, boolean movable) {
-
-        CameraShift structure = basicRender.cameraShift(x, y, x, y, movable);
-
-        int camX = structure.getCamX();
-        int camY = structure.getCamY();
-
-        if (basicRender.outOfBounds(x, camX, Window.WIDTH, y, camY, Window.HEIGHT))
+    private void setLightPixels(int x, int y, int value) {
+        if (basicRender.outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT))
             return;
 
         int baseColor = basicRender.getLightPixels(x, y);
         int maxRed = Math.max(((baseColor >> 16) & 0xff), ((value >> 16) & 0xff));
         int maxGreen = Math.max(((baseColor >> 8) & 0xff), ((value >> 8) & 0xff));
         int maxBlue = Math.max(((baseColor) & 0xff), ((value) & 0xff));
-        basicRender.setLightPixel(x - camX, y - camY, (maxRed << 16 | maxGreen << 8 | maxBlue));
+        basicRender.setLightPixel(x, y, (maxRed << 16 | maxGreen << 8 | maxBlue));
     }
 }

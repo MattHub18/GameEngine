@@ -24,7 +24,7 @@ public abstract class Menu implements Graphic, RenderObject {
         this.menuInputHandler.insertCommands();
         options = new ArrayList<>();
         insertOptions();
-        background = new Image(Archive.TEXTURES.get(textureBackgroundFilename), false, false);
+        background = new Image(Archive.TEXTURES.get(textureBackgroundFilename), false, true);
         currentOption = null;
     }
 
