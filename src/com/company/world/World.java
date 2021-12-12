@@ -10,15 +10,19 @@ import com.company.graphic.primitives.RenderObject;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import static com.company.resources.SystemConstants.TILE_HEIGHT;
+import static com.company.resources.SystemConstants.TILE_WIDTH;
+
 public abstract class World implements Graphic, RenderObject, Serializable {
 
     protected Room currentRoom;
     protected EntityManager entityManager;
     protected HashMap<Integer, Room> worldMap;
-    protected GameEntity player;
+    private GameEntity player;
 
     public World() {
         worldMap = new HashMap<>();
+        entityManager = new EntityManager();
     }
 
     @Override
@@ -32,6 +36,25 @@ public abstract class World implements Graphic, RenderObject, Serializable {
     public void render(GameLoop gl, Render r) {
         currentRoom.render(gl, r);
         entityManager.render(gl, r);
+    }
+
+    private void transition() {
+        if (player.getPosX() > currentRoom.getWidth() * TILE_WIDTH()) {
+            player.setPosX(0);
+            currentRoom = worldMap.get(currentRoom.RIGHT);
+        } else if (player.getPosY() < 0) {
+            player.setPosY(currentRoom.getHeight() * TILE_HEIGHT());
+            currentRoom = worldMap.get(currentRoom.UP);
+        } else if (player.getPosY() > currentRoom.getHeight() * TILE_HEIGHT()) {
+            player.setPosY(0);
+            currentRoom = worldMap.get(currentRoom.DOWN);
+        } else if (player.getPosX() < 0) {
+            player.setPosX(currentRoom.getWidth() * TILE_WIDTH());
+            currentRoom = worldMap.get(currentRoom.LEFT);
+        }
+
+        player.setRoom(currentRoom);
+        currentRoom.spawnEntities();
     }
 
 
@@ -49,16 +72,21 @@ public abstract class World implements Graphic, RenderObject, Serializable {
         return currentRoom.getHeightInPixel();
     }
 
-    public abstract void transition();
-
     public Room getCurrentRoom() {
         return currentRoom;
     }
 
     public void init(GameEntity player) {
-        entityManager.init();
         this.player = player;
-        this.player.setRoom(currentRoom);
+        Room r = this.player.getRoom();
+        if (r == null)
+            this.player.setRoom(currentRoom);
+        else {
+            currentRoom = r;
+            worldMap.replace(r.getRoomId(), currentRoom);
+            currentRoom.setEntityManager(entityManager);
+        }
+        entityManager.init();
         entityManager.addEntity(player);
         currentRoom.spawnEntities();
     }

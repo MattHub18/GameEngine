@@ -27,7 +27,8 @@ public abstract class Room implements Graphic, Serializable {
     public int RIGHT;
     public int UP;
     public int DOWN;
-    protected final EntityManager entityManager;
+    private final int shiftIndex;
+    protected EntityManager entityManager;
     private int width;
     private int height;
     protected transient boolean visited;
@@ -36,16 +37,17 @@ public abstract class Room implements Graphic, Serializable {
     private int heightInPixel;
     private final byte textureFilename;
 
-    public Room(byte textureFilename, int roomId, EntityManager entityManager) {
+    public Room(byte textureFilename, int roomId, int shiftIndex, EntityManager entityManager) {
         this.roomId = roomId;
         this.textureFilename = textureFilename;
+        this.shiftIndex = shiftIndex;
         this.entityManager = entityManager;
         visited = false;
         build();
     }
 
     protected void build() {
-        String path = Archive.MAP.get(roomId);
+        String path = Archive.MAP.get(roomId + shiftIndex);
         File file = new File(path);
         try {
             Scanner sizeScanner = new Scanner(file);
@@ -134,5 +136,9 @@ public abstract class Room implements Graphic, Serializable {
 
     public int getRoomId() {
         return roomId;
+    }
+
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 }

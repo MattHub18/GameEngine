@@ -4,14 +4,22 @@ import java.util.HashMap;
 
 public abstract class StateManager {
 
-    private State currentState;
-
-    private final HashMap<String, State> stateMap;
+    protected final HashMap<String, State> stateMap;
+    protected final HashMap<String, String> roomToWorld;
+    protected State currentState;
 
     public StateManager() {
         currentState = null;
         stateMap = new HashMap<>();
+        roomToWorld = new HashMap<>();
         insertStates();
+        mapNames();
+    }
+
+    protected abstract void mapNames();
+
+    protected void addRoomWorld(String room, String world) {
+        roomToWorld.put(room, world);
     }
 
     protected abstract void insertStates();
@@ -24,9 +32,7 @@ public abstract class StateManager {
         return currentState;
     }
 
-
     public abstract void init();
-
 
     public void nextState(String state) {
         currentState = stateMap.get(state);
@@ -38,5 +44,10 @@ public abstract class StateManager {
 
     public void clear() {
         stateMap.clear();
+    }
+
+    protected void empty() {
+        for (String key : stateMap.keySet())
+            stateMap.replace(key, null);
     }
 }
