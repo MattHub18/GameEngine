@@ -10,7 +10,7 @@ import com.company.world.Room;
 
 import java.io.Serializable;
 
-import static com.company.directions.FacingDirections.*;
+import static com.company.directions.SystemFacingDirections.*;
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
@@ -30,20 +30,14 @@ public abstract class StaticBullet implements GameEntity, Serializable {
     }
 
     private void switchingDirection(byte facingDirection, byte textureFilename, int posX, int posY, int maxFrames, Room room) {
-        switch (facingDirection) {
-            case NORTH:
-                posY -= TILE_HEIGHT();
-                break;
-            case SOUTH:
-                posY += TILE_HEIGHT();
-                break;
-            case WEST:
-                posX -= TILE_WIDTH();
-                break;
-            case EAST:
-                posX += TILE_WIDTH();
-                break;
-        }
+        if (facingDirection == NORTH())
+            posY -= TILE_HEIGHT();
+        else if (facingDirection == SOUTH())
+            posY += TILE_HEIGHT();
+        else if (facingDirection == WEST())
+            posX -= TILE_WIDTH();
+        else if (facingDirection == EAST())
+            posX += TILE_WIDTH();
 
         this.entity = new Entity(textureFilename, posX, posY, maxFrames, room, facingDirection);
     }

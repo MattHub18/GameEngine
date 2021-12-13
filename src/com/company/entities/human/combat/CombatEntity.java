@@ -1,7 +1,6 @@
 package com.company.entities.human.combat;
 
 import com.company.death_strategy.Death;
-import com.company.directions.FacingDirections;
 import com.company.entities.EntityManager;
 import com.company.entities.human.Entity;
 import com.company.entities.human.GameEntity;
@@ -14,6 +13,8 @@ import com.company.weapons.Weapon;
 
 import java.io.Serializable;
 import java.util.Iterator;
+
+import static com.company.directions.SystemFacingDirections.TOTAL_DIRECTION;
 
 public class CombatEntity implements Graphic, CombatInterface, Damageable, Serializable {
 
@@ -49,8 +50,8 @@ public class CombatEntity implements Graphic, CombatInterface, Damageable, Seria
 
     @Override
     public void render(GameLoop gl, Render r) {
-        byte amount = FacingDirections.TOTAL_DIRECTION;
-        amount += FacingDirections.TOTAL_DIRECTION;
+        byte amount = TOTAL_DIRECTION();
+        amount += TOTAL_DIRECTION();
         entity.incrementFacingDirection(amount);
         entity.render(gl, r);
         entity.decrementFacingDirection(amount);

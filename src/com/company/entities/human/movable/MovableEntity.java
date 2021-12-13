@@ -1,6 +1,5 @@
 package com.company.entities.human.movable;
 
-import com.company.directions.FacingDirections;
 import com.company.entities.human.Entity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
@@ -8,10 +7,12 @@ import com.company.graphic.primitives.Render;
 
 import java.io.Serializable;
 
-public class MovableEntity implements Graphic, MovableInterface, Serializable {
+import static com.company.directions.SystemFacingDirections.TOTAL_DIRECTION;
+
+public abstract class MovableEntity implements Graphic, MovableInterface, Serializable {
 
     private final int velocity;
-    private final Entity entity;
+    protected final Entity entity;
     private boolean up;
     private boolean down;
     private boolean left;
@@ -39,7 +40,7 @@ public class MovableEntity implements Graphic, MovableInterface, Serializable {
             entity.setAnimationFrame(0);
             entity.render(gl, r);
         } else {
-            byte amount = FacingDirections.TOTAL_DIRECTION;
+            byte amount = TOTAL_DIRECTION();
             entity.incrementFacingDirection(amount);
             entity.render(gl, r);
             entity.decrementFacingDirection(amount);
@@ -50,28 +51,24 @@ public class MovableEntity implements Graphic, MovableInterface, Serializable {
     public void moveUp() {
         up = true;
         entity.decrementPosY(velocity);
-        entity.setFacingDirection(FacingDirections.NORTH);
     }
 
     @Override
     public void moveDown() {
         down = true;
         entity.incrementPosY(velocity);
-        entity.setFacingDirection(FacingDirections.SOUTH);
     }
 
     @Override
     public void moveLeft() {
         left = true;
         entity.decrementPosX(velocity);
-        entity.setFacingDirection(FacingDirections.WEST);
     }
 
     @Override
     public void moveRight() {
         right = true;
         entity.incrementPosX(velocity);
-        entity.setFacingDirection(FacingDirections.EAST);
     }
 
     @Override

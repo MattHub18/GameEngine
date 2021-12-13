@@ -1,6 +1,6 @@
 package com.company.entities.bullet;
 
-import com.company.entities.human.movable.MovableEntity;
+import com.company.entities.human.movable.AllDirectionalEntity;
 import com.company.entities.human.movable.MovableInterface;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
@@ -8,14 +8,14 @@ import com.company.world.Room;
 
 import java.io.Serializable;
 
-import static com.company.directions.FacingDirections.*;
+import static com.company.directions.SystemFacingDirections.*;
 
 public abstract class Bullet extends StaticBullet implements MovableInterface, Serializable {
-    private final MovableEntity movableEntity;
+    private final AllDirectionalEntity movableEntity;
 
     public Bullet(byte textureFilename, int posX, int posY, int maxFrames, Room room, int maxTime, int damage, byte facingDirection, float animationDelay) {
         super(textureFilename, posX, posY, maxFrames, room, maxTime, damage, facingDirection, animationDelay);
-        this.movableEntity = new MovableEntity(entity);
+        this.movableEntity = new AllDirectionalEntity(entity);
     }
 
     @Override
@@ -62,19 +62,13 @@ public abstract class Bullet extends StaticBullet implements MovableInterface, S
     }
 
     private void move() {
-        switch (facingDirection) {
-            case NORTH:
-                moveUp();
-                break;
-            case SOUTH:
-                moveDown();
-                break;
-            case WEST:
-                moveLeft();
-                break;
-            case EAST:
-                moveRight();
-                break;
-        }
+        if (facingDirection == NORTH())
+            moveUp();
+        else if (facingDirection == SOUTH())
+            moveDown();
+        else if (facingDirection == WEST())
+            moveLeft();
+        else if (facingDirection == EAST())
+            moveRight();
     }
 }

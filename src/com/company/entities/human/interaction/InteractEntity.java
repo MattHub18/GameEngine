@@ -9,7 +9,7 @@ import com.company.physics.basics.Vector;
 
 import java.io.Serializable;
 
-import static com.company.directions.FacingDirections.*;
+import static com.company.directions.SystemFacingDirections.*;
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
@@ -21,16 +21,15 @@ public class InteractEntity implements Graphic, Serializable {
     }
 
     public Rectangle generateInteraction() {
-        switch (entity.getFacingDirection()) {
-            case NORTH:
-                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY() - TILE_HEIGHT()));
-            case WEST:
-                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() - TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT()));
-            case EAST:
-                return new Rectangle(new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH() + TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT()));
-            default:
-                return new Rectangle(new Vector(entity.getPosX(), entity.getPosY() + TILE_HEIGHT()), new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT() + TILE_HEIGHT()));
-        }
+        byte facingDirection = entity.getFacingDirection();
+        if (facingDirection == NORTH())
+            return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY() - TILE_HEIGHT()));
+        else if (facingDirection == SOUTH())
+            return new Rectangle(new Vector(entity.getPosX(), entity.getPosY() + TILE_HEIGHT()), new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT() + TILE_HEIGHT()));
+        else if (facingDirection == WEST())
+            return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() - TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT()));
+        else//east
+            return new Rectangle(new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH() + TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT()));
     }
 
     @Override
