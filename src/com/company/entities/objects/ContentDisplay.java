@@ -4,5 +4,5 @@ import com.company.graphic.primitives.Render;
 
 public interface ContentDisplay {
 
-    void show(Render r, Content content);
+    void show(Render r, Chest chest);
 }

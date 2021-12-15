@@ -16,12 +16,14 @@ public abstract class Weapon implements Content, Serializable {
     private final int lengthWidth;
     private final int lengthHeight;
     private final byte icon;
+    private final String name;
 
-    public Weapon(int damage, int lengthWidth, int lengthHeight, byte icon) {
+    public Weapon(int damage, int lengthWidth, int lengthHeight, byte icon, String name) {
         this.damage = damage;
         this.lengthWidth = lengthWidth;
         this.lengthHeight = lengthHeight;
         this.icon = icon;
+        this.name = name;
     }
 
     public int getDamage() {
@@ -43,5 +45,10 @@ public abstract class Weapon implements Content, Serializable {
     @Override
     public byte getIcon() {
         return icon;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

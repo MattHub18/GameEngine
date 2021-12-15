@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public abstract class Action implements Serializable {
 
-    private final String name;
+    protected final String name;
 
     public Action(String name) {
         this.name = name;
