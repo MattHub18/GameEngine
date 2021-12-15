@@ -47,4 +47,9 @@ public class SinglePlayerGameState implements State {
     public Subject getActor() {
         return (Subject) player;
     }
+
+    @Override
+    public void stopSound() {
+        world.stopSound();
+    }
 }

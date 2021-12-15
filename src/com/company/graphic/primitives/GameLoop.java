@@ -46,6 +46,7 @@ public class GameLoop implements Runnable {
         if (!running)
             return;
         running = false;
+        stateManager.getCurrentState().stopSound();
         window.close();
         stateManager.clear();
         render.clear();

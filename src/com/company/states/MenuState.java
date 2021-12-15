@@ -34,6 +34,11 @@ public class MenuState implements State {
         return null;
     }
 
+    @Override
+    public void stopSound() {
+        menu.stopSound();
+    }
+
     public Class<? extends Menu> instanceOf() {
         return menu.getClass();
     }

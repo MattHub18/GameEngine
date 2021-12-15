@@ -1,11 +1,15 @@
 package com.company.world;
 
+import com.company.audio.Sound;
+import com.company.audio.Theme;
 import com.company.entities.EntityManager;
 import com.company.entities.human.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.graphic.primitives.RenderObject;
+import com.company.resources.SystemResources;
+import com.company.resources.file_system.Archive;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -13,16 +17,22 @@ import java.util.HashMap;
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
-public abstract class World implements Graphic, RenderObject, Serializable {
+public abstract class World implements Graphic, RenderObject, Theme, Serializable {
 
     protected Room currentRoom;
     protected EntityManager entityManager;
     protected HashMap<Integer, Room> worldMap;
     private GameEntity player;
+    private Sound theme;
 
-    public World() {
+    public World(byte themeFilename) {
         worldMap = new HashMap<>();
         entityManager = new EntityManager();
+        theme = null;
+        if (themeFilename != SystemResources.NO_SOUND) {
+            theme = new Sound(Archive.SOUND.get(themeFilename));
+            theme.loop();
+        }
     }
 
     @Override
@@ -89,5 +99,11 @@ public abstract class World implements Graphic, RenderObject, Serializable {
         entityManager.init();
         entityManager.addEntity(player);
         currentRoom.spawnEntities();
+    }
+
+    @Override
+    public void stopSound() {
+        if (theme != null)
+            theme.close();
     }
 }

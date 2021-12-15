@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public class Sound implements Serializable {
-    private Clip clip;
-    private FloatControl gainControl;
+    private transient Clip clip;
+    private transient FloatControl gainControl;
 
     public Sound(String path) {
         try {

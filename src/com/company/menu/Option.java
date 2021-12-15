@@ -1,5 +1,7 @@
 package com.company.menu;
 
+import com.company.audio.AudioComponent;
+import com.company.audio.Sound;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.gfx.Rectangle;
@@ -24,6 +26,8 @@ public abstract class Option extends Component implements Graphic {
     private final Rectangle lightHover;
     protected GameLoop gl;
     private boolean hover = false;
+    private final AudioComponent over;
+    private final Sound click;
 
     public Option(String name, int offX, int offY, int width, int height, int textColor, int backColor, boolean enable) {
         this.name = name;
@@ -35,14 +39,22 @@ public abstract class Option extends Component implements Graphic {
         this.darkHover = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), backColor, true, false);
         this.lightHover = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), ColorPalette.INVISIBLE, true, false);
         this.enable = enable;
+        over = new AudioComponent(SystemResources.OPTION_OVER);
+        click = new Sound(Archive.SOUND.get(SystemResources.OPTION_CLICK));
     }
 
-    public abstract void onClick();
+    public void onClick() {
+        click.play();
+    }
 
 
     public void update(GameLoop gl, float dt, int mouseX, int mouseY) {
         update(gl, dt);
         hover = mouseEntered(mouseX, mouseY) && enable;
+        if (hover)
+            over.update();
+        else
+            over.reset();
     }
 
     private boolean mouseEntered(int mouseX, int mouseY) {
