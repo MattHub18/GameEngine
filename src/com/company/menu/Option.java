@@ -12,9 +12,7 @@ import com.company.physics.basics.Vector;
 import com.company.resources.SystemResources;
 import com.company.resources.file_system.Archive;
 
-import java.awt.*;
-
-public abstract class Option extends Component implements Graphic {
+public abstract class Option implements Graphic {
     private final String name;
     private final int offX;
     private final int offY;

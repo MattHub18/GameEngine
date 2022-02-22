@@ -10,6 +10,7 @@ public class Archive {
     public static final ArrayList<String> TEXTURES = new ArrayList<>();
     public static final ArrayList<String> FONT = new ArrayList<>();
     public static final ArrayList<String> MAP = new ArrayList<>();
+    public static final ArrayList<String> DIALOG = new ArrayList<>();
     private ArrayList<Object> data;
 
     public void close() {
@@ -27,6 +28,7 @@ public class Archive {
         LoaderAudio.getInstance().load();
         LoaderFont.getInstance().load();
         LoaderMap.getInstance().load();
+        LoaderDialog.getInstance().load();
     }
 
     public void loadData(Filter filter) {
