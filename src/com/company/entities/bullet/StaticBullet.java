@@ -2,9 +2,9 @@ package com.company.entities.bullet;
 
 import com.company.entities.human.Entity;
 import com.company.entities.human.GameEntity;
-import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.world.Room;
 
@@ -30,14 +30,14 @@ public abstract class StaticBullet implements GameEntity, Serializable {
     }
 
     private void switchingDirection(byte facingDirection, byte textureFilename, int posX, int posY, int maxFrames, Room room) {
-        if (facingDirection == NORTH())
-            posY -= TILE_HEIGHT();
-        else if (facingDirection == SOUTH())
-            posY += TILE_HEIGHT();
-        else if (facingDirection == WEST())
-            posX -= TILE_WIDTH();
-        else if (facingDirection == EAST())
-            posX += TILE_WIDTH();
+        if (facingDirection == NORTH)
+            posY -= TILE_HEIGHT;
+        else if (facingDirection == SOUTH)
+            posY += TILE_HEIGHT;
+        else if (facingDirection == WEST)
+            posX -= TILE_WIDTH;
+        else if (facingDirection == EAST)
+            posX += TILE_WIDTH;
 
         this.entity = new Entity(textureFilename, posX, posY, maxFrames, room, facingDirection);
     }
@@ -73,7 +73,7 @@ public abstract class StaticBullet implements GameEntity, Serializable {
     }
 
     @Override
-    public Rectangle getBox() {
+    public AxisAlignedBoundingBox getBox() {
         return entity.getBox();
     }
 
@@ -83,7 +83,7 @@ public abstract class StaticBullet implements GameEntity, Serializable {
     }
 
     @Override
-    public void handleCollisionWith(Rectangle tileBox) {
+    public void handleCollisionWith(AxisAlignedBoundingBox tileBox) {
         entity.updateBox();
 
         if (!CollisionDetector.isCollided(tileBox, entity.getBox()))

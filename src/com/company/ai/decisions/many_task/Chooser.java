@@ -3,8 +3,9 @@ package com.company.ai.decisions.many_task;
 import com.company.ai.decisions.Task;
 import com.company.ai.decisions.UtilityBaseSystem;
 
-public class Chooser extends ParentTask {
+public class Chooser extends Selector {
 
+    @Override
     public Task chooseNewTask() {
         Task task = null;
         boolean found = false;
@@ -27,19 +28,6 @@ public class Chooser extends ParentTask {
         }
 
         return task;
-    }
-
-    @Override
-    public void childFailed() {
-        control.curTask = chooseNewTask();
-        if (control.curTask == null) {
-            control.finishWithFailure();
-        }
-    }
-
-    @Override
-    public void childSucceeded() {
-        control.finishWithSuccess();
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.company.entities.human;
 
-import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.basics.Vector;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.resources.file_system.Archive;
@@ -22,7 +22,7 @@ public class Entity implements GameEntity, Serializable {
     private byte facingDirection;
     private float animationFrame;
     private int maxFrames;
-    private Rectangle box;
+    private AxisAlignedBoundingBox box;
 
     private Room room;
 
@@ -38,12 +38,12 @@ public class Entity implements GameEntity, Serializable {
         this.animationDelay = 15;
         this.maxFrames = maxFrames;
 
-        this.box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
+        this.box = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + TILE_WIDTH, posY + TILE_HEIGHT));
 
         this.room = room;
     }
 
-    private Entity(float animationDelay, byte textureFilename, int posX, int posY, byte facingDirection, float animationFrame, int maxFrames, Rectangle box, Room room) {
+    private Entity(float animationDelay, byte textureFilename, int posX, int posY, byte facingDirection, float animationFrame, int maxFrames, AxisAlignedBoundingBox box, Room room) {
         this.animationDelay = animationDelay;
         this.textureFilename = textureFilename;
         this.posX = posX;
@@ -89,12 +89,12 @@ public class Entity implements GameEntity, Serializable {
 
     @Override
     public void render(GameLoop gl, Render r) {
-        TileImage tileImage = new TileImage(Archive.TEXTURES.get(this.textureFilename), TILE_WIDTH(), TILE_HEIGHT(), false, true);
+        TileImage tileImage = new TileImage(Archive.TEXTURES.get(this.textureFilename), TILE_WIDTH, TILE_HEIGHT, false, true);
         r.addImage(tileImage.getTile(facingDirection, (int) animationFrame), posX, posY);
     }
 
     @Override
-    public Rectangle getBox() {
+    public AxisAlignedBoundingBox getBox() {
         return box;
     }
 
@@ -109,7 +109,7 @@ public class Entity implements GameEntity, Serializable {
     }
 
     public void updateBox() {
-        box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
+        box = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + TILE_WIDTH, posY + TILE_HEIGHT));
     }
 
     @Override
@@ -122,13 +122,13 @@ public class Entity implements GameEntity, Serializable {
     }
 
     @Override
-    public void handleCollisionWith(Rectangle tileBox) {
+    public void handleCollisionWith(AxisAlignedBoundingBox tileBox) {
         updateBox();
 
         if (!CollisionDetector.isCollided(tileBox, box))
             return;
 
-        Rectangle intersection = CollisionDetector.intersection(box, tileBox);
+        AxisAlignedBoundingBox intersection = CollisionDetector.intersection(box, tileBox);
 
         if (intersection != null) {
             if (intersection.getWidth() > intersection.getHeight()) {

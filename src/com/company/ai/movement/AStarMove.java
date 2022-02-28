@@ -1,6 +1,7 @@
 package com.company.ai.movement;
 
 import com.company.entities.human.GameEntity;
+import com.company.physics.basics.Point;
 import com.company.world.Room;
 
 import java.util.*;
@@ -12,7 +13,7 @@ public class AStarMove implements MovementComponent {
 
     public Point move(GameEntity aiEntity, int targetX, int targetY) {
 
-        if (Math.abs(aiEntity.getPosX() - targetX) <= TILE_WIDTH() && Math.abs(aiEntity.getPosY() - targetY) <= TILE_HEIGHT())
+        if (Math.abs(aiEntity.getPosX() - targetX) <= TILE_WIDTH && Math.abs(aiEntity.getPosY() - targetY) <= TILE_HEIGHT)
             return null;
 
         ArrayList<Node> path = AStar(aiEntity, aiEntity.getRoom(), targetX, targetY);
@@ -41,12 +42,12 @@ public class AStarMove implements MovementComponent {
 
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingInt(o -> o.fScore));
 
-        Node start = new Node(aiEntity.getPosX() / TILE_WIDTH(), aiEntity.getPosY() / TILE_HEIGHT());
+        Node start = new Node(aiEntity.getPosX() / TILE_WIDTH, aiEntity.getPosY() / TILE_HEIGHT);
         openSet.add(start);
 
         Map<Node, Integer> gScore = new HashMap<>();
-        for (int y = 0; y < room.getHeightInPixel() / TILE_HEIGHT(); y++) {
-            for (int x = 0; x < room.getWidthInPixel() / TILE_WIDTH(); x++) {
+        for (int y = 0; y < room.getHeightInPixel() / TILE_HEIGHT; y++) {
+            for (int x = 0; x < room.getWidthInPixel() / TILE_WIDTH; x++) {
                 if (x == start.x && y == start.y)
                     gScore.put(start, 0);
                 else
@@ -62,7 +63,7 @@ public class AStarMove implements MovementComponent {
 
         while (!openSet.isEmpty()) {
             Node current = openSet.peek();
-            if (current.equals(new Node(targetX / TILE_WIDTH(), targetY / TILE_HEIGHT())))
+            if (current.equals(new Node(targetX / TILE_WIDTH, targetY / TILE_HEIGHT)))
                 return makePath(cameFrom, current);
             openSet.remove(current);
             List<Node> neighborhood = new ArrayList<>();
@@ -71,9 +72,9 @@ public class AStarMove implements MovementComponent {
                 neighborhood.add(Node.getNode(gScore, current.x - 1, current.y));
             if (current.y != 0)
                 neighborhood.add(Node.getNode(gScore, current.x, current.y - 1));
-            if (current.y != room.getWidthInPixel() / TILE_WIDTH() - 1)
+            if (current.y != room.getWidthInPixel() / TILE_WIDTH - 1)
                 neighborhood.add(Node.getNode(gScore, current.x + 1, current.y));
-            if (current.y != room.getHeightInPixel() / TILE_HEIGHT() - 1)
+            if (current.y != room.getHeightInPixel() / TILE_HEIGHT - 1)
                 neighborhood.add(Node.getNode(gScore, current.x, current.y + 1));
 
             for (Node neighbor : neighborhood) {

@@ -8,7 +8,6 @@ import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.observer.Observer;
 import com.company.observer.Subject;
-import com.company.physics.basics.Vector;
 import com.company.resources.SystemResources;
 import com.company.resources.file_system.Archive;
 
@@ -53,8 +52,8 @@ public class Bar implements Graphic, Observer, Serializable {
         borderColor = ColorPalette.BLACK;
         fontColor = ColorPalette.WHITE;
 
-        this.bar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), color, true, true);
-        this.darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX, offY + height), darkColor, true, true);
+        this.bar = new Rectangle(offX, offY, width, height, true, color, true);
+        this.darkBar = new Rectangle(offX, offY, 0, height, true, darkColor, true);
 
         lineSeparator = offX;
         currentValue = maxValue;
@@ -77,8 +76,8 @@ public class Bar implements Graphic, Observer, Serializable {
             blackWidth = width;
 
         int barWidth = width - blackWidth;
-        darkBar = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), darkColor, true, true);
-        bar = new Rectangle(new Vector(lineSeparator, offY), new Vector(lineSeparator + barWidth, offY + height), color, true, true);
+        darkBar = new Rectangle(offX, offY, width, height, true, darkColor, true);
+        bar = new Rectangle(lineSeparator, offY, barWidth, height, true, color, true);
     }
 
     @Override

@@ -34,5 +34,6 @@ public abstract class Chest extends InteractObject {
     public void off() {
         super.off();
         closed = true;
+        entity.getRoom().getEntityManager().setToBeEliminated(this);
     }
 }

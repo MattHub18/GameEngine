@@ -1,6 +1,6 @@
 package com.company.physics.collisions;
 
-import com.company.graphic.gfx.Rectangle;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 
 public class CollisionDetector {
 
@@ -8,7 +8,7 @@ public class CollisionDetector {
         return colliders[0].collision(colliders[1]);
     }
 
-    public static Rectangle intersection(Collider... colliders) {
+    public static AxisAlignedBoundingBox intersection(Collider... colliders) {
         return colliders[0].intersect(colliders[1]);
     }
 }

@@ -32,8 +32,8 @@ public class CircleRender implements RenderInterface {
     }
 
     private void drawCircumference(Circle circle, int color, boolean isFull) {
-        int xc = (int) circle.getCenter().getX();
-        int yc = (int) circle.getCenter().getY();
+        int xc = circle.getXCenter();
+        int yc = circle.getYCenter();
         int r = circle.getRadius();
 
         int x = 0;

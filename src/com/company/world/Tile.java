@@ -1,6 +1,6 @@
 package com.company.world;
 
-import com.company.graphic.gfx.Rectangle;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.basics.Vector;
 
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
@@ -8,16 +8,16 @@ import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class Tile {
     private final byte tileId;
-    private final Rectangle box;
+    private final AxisAlignedBoundingBox box;
 
     public Tile(byte tileId, int x, int y) {
         this.tileId = tileId;
-        int posX = x * TILE_WIDTH();
-        int posY = y * TILE_HEIGHT();
-        box = new Rectangle(new Vector(posX, posY), new Vector(posX + TILE_WIDTH(), posY + TILE_HEIGHT()));
+        int posX = x * TILE_WIDTH;
+        int posY = y * TILE_HEIGHT;
+        box = new AxisAlignedBoundingBox(new Vector(posX, posY), new Vector(posX + TILE_WIDTH, posY + TILE_HEIGHT));
     }
 
-    public Rectangle getBox() {
+    public AxisAlignedBoundingBox getBox() {
         return box;
     }
 

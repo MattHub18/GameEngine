@@ -5,10 +5,8 @@ import com.company.audio.Sound;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.gfx.Rectangle;
-import com.company.graphic.primitives.ColorPalette;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
-import com.company.physics.basics.Vector;
 import com.company.resources.SystemResources;
 import com.company.resources.file_system.Archive;
 
@@ -21,7 +19,6 @@ public abstract class Option implements Graphic {
     private final int textColor;
     private final boolean enable;
     private final Rectangle darkHover;
-    private final Rectangle lightHover;
     protected GameLoop gl;
     private boolean hover = false;
     private final AudioComponent over;
@@ -34,8 +31,7 @@ public abstract class Option implements Graphic {
         this.width = width;
         this.height = height;
         this.textColor = textColor;
-        this.darkHover = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), backColor, true, false);
-        this.lightHover = new Rectangle(new Vector(offX, offY), new Vector(offX + width, offY + height), ColorPalette.INVISIBLE, true, false);
+        this.darkHover = new Rectangle(offX, offY, width, height, true, backColor, false);
         this.enable = enable;
         over = new AudioComponent(SystemResources.OPTION_OVER);
         click = new Sound(Archive.SOUND.get(SystemResources.OPTION_CLICK));
@@ -44,7 +40,6 @@ public abstract class Option implements Graphic {
     public void onClick() {
         click.play();
     }
-
 
     public void update(GameLoop gl, float dt, int mouseX, int mouseY) {
         update(gl, dt);
@@ -69,8 +64,6 @@ public abstract class Option implements Graphic {
     public void render(GameLoop gl, Render r) {
         if (hover)
             r.addRectangle(darkHover);
-        else
-            r.addRectangle(lightHover);
         r.addFont(new Font(Archive.FONT.get(SystemResources.MENU_FONT), name, offX, offY, textColor, false));
     }
 

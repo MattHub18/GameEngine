@@ -2,7 +2,6 @@ package com.company.world;
 
 import com.company.audio.Sound;
 import com.company.audio.Theme;
-import com.company.entities.EntityManager;
 import com.company.entities.human.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
@@ -20,14 +19,12 @@ import static com.company.resources.SystemConstants.TILE_WIDTH;
 public abstract class World implements Graphic, RenderObject, Theme, Serializable {
 
     protected Room currentRoom;
-    protected EntityManager entityManager;
     protected HashMap<Integer, Room> worldMap;
     private GameEntity player;
     private Sound theme;
 
     public World(byte themeFilename) {
         worldMap = new HashMap<>();
-        entityManager = new EntityManager();
         theme = null;
         if (themeFilename != SystemResources.NO_SOUND) {
             theme = new Sound(Archive.SOUND.get(themeFilename));
@@ -37,7 +34,6 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
 
     @Override
     public void update(GameLoop gl, float dt) {
-        entityManager.update(gl, dt, this);
         transition();
         currentRoom.update(gl, dt);
     }
@@ -45,31 +41,6 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
     @Override
     public void render(GameLoop gl, Render r) {
         currentRoom.render(gl, r);
-        entityManager.render(gl, r);
-    }
-
-    private void transition() {
-        if (player.getPosX() > currentRoom.getWidth() * TILE_WIDTH()) {
-            player.setPosX(0);
-            currentRoom = worldMap.get(currentRoom.RIGHT);
-        } else if (player.getPosY() < 0) {
-            player.setPosY(currentRoom.getHeight() * TILE_HEIGHT());
-            currentRoom = worldMap.get(currentRoom.UP);
-        } else if (player.getPosY() > currentRoom.getHeight() * TILE_HEIGHT()) {
-            player.setPosY(0);
-            currentRoom = worldMap.get(currentRoom.DOWN);
-        } else if (player.getPosX() < 0) {
-            player.setPosX(currentRoom.getWidth() * TILE_WIDTH());
-            currentRoom = worldMap.get(currentRoom.LEFT);
-        }
-
-        player.setRoom(currentRoom);
-        currentRoom.spawnEntities();
-    }
-
-
-    public void collisions(GameEntity e) {
-        currentRoom.collisions(e);
     }
 
     @Override
@@ -80,6 +51,28 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
     @Override
     public int getHeightInPixel() {
         return currentRoom.getHeightInPixel();
+    }
+
+    private void transition() {
+        currentRoom.removePlayer(player);
+
+        if (player.getPosX() > currentRoom.getWidth() * TILE_WIDTH) {
+            player.setPosX(0);
+            currentRoom = worldMap.get(currentRoom.RIGHT);
+        } else if (player.getPosY() < 0) {
+            player.setPosY(currentRoom.getHeight() * TILE_HEIGHT);
+            currentRoom = worldMap.get(currentRoom.UP);
+        } else if (player.getPosY() > currentRoom.getHeight() * TILE_HEIGHT) {
+            player.setPosY(0);
+            currentRoom = worldMap.get(currentRoom.DOWN);
+        } else if (player.getPosX() < 0) {
+            player.setPosX(currentRoom.getWidth() * TILE_WIDTH);
+            currentRoom = worldMap.get(currentRoom.LEFT);
+        }
+
+        player.setRoom(currentRoom);
+        currentRoom.addPlayer(player);
+        currentRoom.spawnEntities();
     }
 
     public Room getCurrentRoom() {
@@ -94,10 +87,8 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
         else {
             currentRoom = r;
             worldMap.replace(r.getRoomId(), currentRoom);
-            currentRoom.setEntityManager(entityManager);
         }
-        entityManager.init();
-        entityManager.addEntity(player);
+        currentRoom.addPlayer(player);
         currentRoom.spawnEntities();
     }
 

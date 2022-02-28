@@ -4,13 +4,11 @@ import java.io.Serializable;
 
 public class Healer implements Healing, Content, Serializable {
     private final int healingPower;
-    private final byte icon;
-    private final String name;
+    private final ContentGraphicComponent component;
 
-    public Healer(int healingPower, byte icon, String name) {
+    public Healer(int healingPower, ContentGraphicComponent component) {
         this.healingPower = healingPower;
-        this.icon = icon;
-        this.name = name;
+        this.component = component;
     }
 
     @Override
@@ -20,11 +18,11 @@ public class Healer implements Healing, Content, Serializable {
 
     @Override
     public byte getIcon() {
-        return icon;
+        return component.getIcon();
     }
 
     @Override
     public String getName() {
-        return name;
+        return component.getName();
     }
 }

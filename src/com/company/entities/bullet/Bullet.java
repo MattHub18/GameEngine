@@ -62,13 +62,13 @@ public abstract class Bullet extends StaticBullet implements MovableInterface, S
     }
 
     private void move() {
-        if (facingDirection == NORTH())
+        if (facingDirection == NORTH)
             moveUp();
-        else if (facingDirection == SOUTH())
+        else if (facingDirection == SOUTH)
             moveDown();
-        else if (facingDirection == WEST())
+        else if (facingDirection == WEST)
             moveLeft();
-        else if (facingDirection == EAST())
+        else if (facingDirection == EAST)
             moveRight();
     }
 }

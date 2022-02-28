@@ -16,12 +16,12 @@ public class HorizontalEntity extends MovableEntity implements Serializable {
     @Override
     public void moveLeft() {
         super.moveLeft();
-        entity.setFacingDirection(WEST());
+        entity.setFacingDirection(WEST);
     }
 
     @Override
     public void moveRight() {
         super.moveRight();
-        entity.setFacingDirection(EAST());
+        entity.setFacingDirection(EAST);
     }
 }

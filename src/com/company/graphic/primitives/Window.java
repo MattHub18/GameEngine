@@ -18,8 +18,6 @@ public class Window {
 
     private boolean fullScreen = true;
 
-    private GameLoop gl = null;
-
     public Window(String title) {
         Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
         WIDTH = (int) (fullDim.width / GameLoop.SCALE);
@@ -34,14 +32,12 @@ public class Window {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                gl.stop();
+                GameLoop.stop();
             }
         });
     }
 
     public void update(GameLoop gl) {
-        if (this.gl == null)
-            this.gl = gl;
         g.drawImage(image, 0, 0, (int) (image.getWidth() * GameLoop.SCALE), (int) (image.getHeight() * GameLoop.SCALE), null);
         bs.show();
     }

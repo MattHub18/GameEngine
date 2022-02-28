@@ -12,7 +12,6 @@ public class Image {
     private final boolean movable;
     private final boolean opaque;
 
-
     public Image(String path, boolean movable, boolean opaque) {
         BufferedImage image = null;
         try {

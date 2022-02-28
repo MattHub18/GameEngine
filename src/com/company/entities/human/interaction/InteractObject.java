@@ -3,9 +3,9 @@ package com.company.entities.human.interaction;
 import com.company.entities.human.Entity;
 import com.company.entities.human.GameEntity;
 import com.company.entities.objects.Interactive;
-import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.world.Room;
 
 public abstract class InteractObject implements GameEntity, Interactive {
@@ -48,7 +48,7 @@ public abstract class InteractObject implements GameEntity, Interactive {
     }
 
     @Override
-    public Rectangle getBox() {
+    public AxisAlignedBoundingBox getBox() {
         return entity.getBox();
     }
 
@@ -58,7 +58,7 @@ public abstract class InteractObject implements GameEntity, Interactive {
     }
 
     @Override
-    public void handleCollisionWith(Rectangle tileBox) {
+    public void handleCollisionWith(AxisAlignedBoundingBox tileBox) {
     }
 
     @Override

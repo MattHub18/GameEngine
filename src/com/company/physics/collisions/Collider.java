@@ -1,6 +1,6 @@
 package com.company.physics.collisions;
 
-import com.company.graphic.gfx.Rectangle;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.basics.Vector;
 
 public interface Collider {
@@ -8,5 +8,5 @@ public interface Collider {
 
     boolean collision(Collider collider);
 
-    Rectangle intersect(Collider collider);
+    AxisAlignedBoundingBox intersect(Collider collider);
 }

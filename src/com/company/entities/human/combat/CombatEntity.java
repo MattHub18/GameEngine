@@ -5,9 +5,9 @@ import com.company.entities.EntityManager;
 import com.company.entities.human.Entity;
 import com.company.entities.human.GameEntity;
 import com.company.graphic.Graphic;
-import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.collisions.CollisionDetector;
 import com.company.weapons.Weapon;
 
@@ -50,8 +50,8 @@ public class CombatEntity implements Graphic, CombatInterface, Damageable, Seria
 
     @Override
     public void render(GameLoop gl, Render r) {
-        byte amount = TOTAL_DIRECTION();
-        amount += TOTAL_DIRECTION();
+        byte amount = TOTAL_DIRECTION;
+        amount += TOTAL_DIRECTION;
         entity.incrementFacingDirection(amount);
         entity.render(gl, r);
         entity.decrementFacingDirection(amount);
@@ -80,20 +80,18 @@ public class CombatEntity implements Graphic, CombatInterface, Damageable, Seria
         Iterator<GameEntity> enemyIterator = entityManager.getEntities().iterator();
         while (enemyIterator.hasNext()) {
             GameEntity enemy = enemyIterator.next();
-            if (entityManager.isInCurrentRoom(enemy)) {
                 if (enemy instanceof Damageable) {
                     if (handleAttackCollision(enemy)) {
                         doDamage(enemy, enemyIterator);
                     }
                 }
-            }
         }
     }
 
     private boolean handleAttackCollision(GameEntity enemy) {
-        Rectangle attack = weapon.getBox(entity);
+        AxisAlignedBoundingBox attack = weapon.getBox(entity);
         entity.updateBox();
-        Rectangle enemyBox = enemy.getBox();
+        AxisAlignedBoundingBox enemyBox = enemy.getBox();
         return CollisionDetector.isCollided(attack, enemyBox);
     }
 

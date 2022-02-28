@@ -2,9 +2,9 @@ package com.company.entities.human.interaction;
 
 import com.company.entities.human.Entity;
 import com.company.graphic.Graphic;
-import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.basics.Vector;
 
 import java.io.Serializable;
@@ -20,16 +20,16 @@ public class InteractEntity implements Graphic, Serializable {
         this.entity = entity;
     }
 
-    public Rectangle generateInteraction() {
+    public AxisAlignedBoundingBox generateInteraction() {
         byte facingDirection = entity.getFacingDirection();
-        if (facingDirection == NORTH())
-            return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY() - TILE_HEIGHT()));
-        else if (facingDirection == SOUTH())
-            return new Rectangle(new Vector(entity.getPosX(), entity.getPosY() + TILE_HEIGHT()), new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT() + TILE_HEIGHT()));
-        else if (facingDirection == WEST())
-            return new Rectangle(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() - TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT()));
+        if (facingDirection == NORTH)
+            return new AxisAlignedBoundingBox(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH, entity.getPosY() - TILE_HEIGHT));
+        else if (facingDirection == SOUTH)
+            return new AxisAlignedBoundingBox(new Vector(entity.getPosX(), entity.getPosY() + TILE_HEIGHT), new Vector(entity.getPosX() + TILE_WIDTH, entity.getPosY() + TILE_HEIGHT + TILE_HEIGHT));
+        else if (facingDirection == WEST)
+            return new AxisAlignedBoundingBox(new Vector(entity.getPosX(), entity.getPosY()), new Vector(entity.getPosX() - TILE_WIDTH, entity.getPosY() + TILE_HEIGHT));
         else//east
-            return new Rectangle(new Vector(entity.getPosX() + TILE_WIDTH(), entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH() + TILE_WIDTH(), entity.getPosY() + TILE_HEIGHT()));
+            return new AxisAlignedBoundingBox(new Vector(entity.getPosX() + TILE_WIDTH, entity.getPosY()), new Vector(entity.getPosX() + TILE_WIDTH + TILE_WIDTH, entity.getPosY() + TILE_HEIGHT));
     }
 
     @Override

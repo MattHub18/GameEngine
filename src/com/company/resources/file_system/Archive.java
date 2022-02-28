@@ -1,7 +1,5 @@
 package com.company.resources.file_system;
 
-import com.company.resources.loaders.*;
-
 import java.util.ArrayList;
 
 public class Archive {
@@ -24,15 +22,15 @@ public class Archive {
     }
 
     public void load() {
-        LoaderResource.getInstance().load();
-        LoaderAudio.getInstance().load();
-        LoaderFont.getInstance().load();
-        LoaderMap.getInstance().load();
-        LoaderDialog.getInstance().load();
+        new Loader("res\\texture", TEXTURES).load();
+        new Loader("res\\audio", SOUND).load();
+        new Loader("res\\font", FONT).load();
+        new Loader("res\\map", MAP).load();
+        new Loader("res\\dialog", DIALOG).load();
     }
 
     public void loadData(Filter filter) {
-        LoaderData.getInstance().load();
+        new Loader("saves", Archive.DATA).load();
         data = new ArrayList<>();
         data.addAll(filter.readData());
     }

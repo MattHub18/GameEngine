@@ -203,7 +203,7 @@ public class FontGenerator extends JFrame {
     }
 
     private void save() {
-        // Save file dialog
+        // Save file com.company.dialog
         JFileChooser fileChooser = new JFileChooser() {
 
             @Override

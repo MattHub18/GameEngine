@@ -16,12 +16,12 @@ public class VerticalEntity extends MovableEntity implements Serializable {
     @Override
     public void moveUp() {
         super.moveUp();
-        entity.setFacingDirection(NORTH());
+        entity.setFacingDirection(NORTH);
     }
 
     @Override
     public void moveDown() {
         super.moveDown();
-        entity.setFacingDirection(SOUTH());
+        entity.setFacingDirection(SOUTH);
     }
 }

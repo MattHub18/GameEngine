@@ -1,4 +1,4 @@
-package com.company.ai.movement;
+package com.company.physics.basics;
 
 public class Point {
     private final int x;

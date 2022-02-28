@@ -1,9 +1,9 @@
-package com.company.resources.loaders;
+package com.company.resources.file_system;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public abstract class Loader {
+public class Loader {
 
     private final String rootDir;
     protected ArrayList<String> filenames;

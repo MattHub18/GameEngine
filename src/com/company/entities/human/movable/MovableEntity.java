@@ -40,7 +40,7 @@ public abstract class MovableEntity implements Graphic, MovableInterface, Serial
             entity.setAnimationFrame(0);
             entity.render(gl, r);
         } else {
-            byte amount = TOTAL_DIRECTION();
+            byte amount = TOTAL_DIRECTION;
             entity.incrementFacingDirection(amount);
             entity.render(gl, r);
             entity.decrementFacingDirection(amount);

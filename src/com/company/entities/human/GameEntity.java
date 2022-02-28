@@ -1,7 +1,7 @@
 package com.company.entities.human;
 
 import com.company.graphic.Graphic;
-import com.company.graphic.gfx.Rectangle;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.world.Room;
 
 public interface GameEntity extends Graphic {
@@ -20,9 +20,9 @@ public interface GameEntity extends Graphic {
 
     void setRoom(Room room);
 
-    Rectangle getBox();
+    AxisAlignedBoundingBox getBox();
 
     byte getFacingDirection();
 
-    void handleCollisionWith(Rectangle tileBox);
+    void handleCollisionWith(AxisAlignedBoundingBox tileBox);
 }

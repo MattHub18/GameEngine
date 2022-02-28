@@ -7,9 +7,9 @@ import com.company.entities.human.GameEntity;
 import com.company.entities.human.combat.CombatInterface;
 import com.company.entities.human.combat.Damageable;
 import com.company.graphic.Graphic;
-import com.company.graphic.gfx.Rectangle;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
+import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.collisions.CollisionDetector;
 
 import java.io.Serializable;
@@ -35,7 +35,8 @@ public class ShootingEntity implements Graphic, ShootingInterface, Serializable 
             StaticBullet bullet = iterator.next();
             if (bullet.getMaxTime() > 0) {
                 bullet.update(gl, dt);
-                entity.getRoom().collisions(bullet);
+                entity.getRoom().tileCollision(bullet);
+                entity.getRoom().getEntityManager().entityCollision(bullet);
                 if (handleCollisionWithEntity(bullet))
                     remove(iterator);
             } else
@@ -55,7 +56,7 @@ public class ShootingEntity implements Graphic, ShootingInterface, Serializable 
         Iterator<GameEntity> enemyIterator = entityManager.getEntities().iterator();
         while (enemyIterator.hasNext()) {
             GameEntity enemy = enemyIterator.next();
-            if (entityManager.isInCurrentRoom(enemy)) {
+
                 if (enemy instanceof Damageable) {
                     if (handleAttackCollision(enemy, bullet)) {
                         ((Damageable) enemy).receiveDamage(enemy, bullet.getDamage());
@@ -65,14 +66,13 @@ public class ShootingEntity implements Graphic, ShootingInterface, Serializable 
                         }
                     }
                 }
-            }
         }
         return false;
     }
 
     private boolean handleAttackCollision(GameEntity enemy, StaticBullet bullet) {
-        Rectangle attack = bullet.getBox();
-        Rectangle enemyBox = enemy.getBox();
+        AxisAlignedBoundingBox attack = bullet.getBox();
+        AxisAlignedBoundingBox enemyBox = enemy.getBox();
         return CollisionDetector.isCollided(attack, enemyBox);
     }
 

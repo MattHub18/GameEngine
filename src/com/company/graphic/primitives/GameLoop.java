@@ -9,26 +9,26 @@ import com.company.states.StateManager;
 
 public class GameLoop implements Runnable {
     protected static float SCALE = 2f;
-    private final StateManager stateManager;
-    private final Window window;
+    private static StateManager stateManager;
+    private static Window window;
     private final Controller controller;
-    private final Render render;
+    private static Render render;
     private final InputHandler systemInputHandler;
     private final Camera camera;
-    private boolean running = false;
-    private Thread gameThread;
+    private static boolean running = false;
+    private static Thread gameThread;
 
     public GameLoop(StateManager manager, InputHandler systemInputHandler, String title) {
-        this.stateManager = manager;
-        this.stateManager.init();
+        stateManager = manager;
+        stateManager.init();
 
-        this.window = new Window(title);
+        window = new Window(title);
         this.camera = new Camera();
 
         update();
 
         this.controller = new Controller(window);
-        this.render = new Render(camera, window);
+        render = new Render(camera, window);
 
         this.systemInputHandler = systemInputHandler;
         this.systemInputHandler.insertCommands();
@@ -42,7 +42,7 @@ public class GameLoop implements Runnable {
         gameThread.start();
     }
 
-    public synchronized void stop() {
+    public static synchronized void stop() {
         if (!running)
             return;
         running = false;

@@ -1,8 +1,9 @@
 package com.company.graphic.primitives;
 
-import com.company.ai.movement.Point;
+import com.company.entities.human.GameEntity;
 import com.company.observer.Observer;
 import com.company.observer.Subject;
+import com.company.physics.basics.Point;
 
 import java.io.Serializable;
 
@@ -70,11 +71,10 @@ public class Camera implements Observer, Serializable {
 
     @Override
     public void registerEntityToObserver(Subject subject) {
-        if (subject != null)
+        if (subject != null) {
             subject.addObserver("camera", this);
-        else {
-            posX = 0;
-            posY = 0;
+            posX = ((GameEntity) subject).getPosX();
+            posY = ((GameEntity) subject).getPosY();
         }
     }
 

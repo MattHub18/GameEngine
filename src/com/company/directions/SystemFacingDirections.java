@@ -1,12 +1,12 @@
 package com.company.directions;
 
 public abstract class SystemFacingDirections {
-    private static byte SOUTH = 0;
-    private static byte WEST = 0;
-    private static byte NORTH = 0;
-    private static byte EAST = 0;
+    public static byte SOUTH = -1;
+    public static byte WEST = -1;
+    public static byte NORTH = -1;
+    public static byte EAST = -1;
 
-    private static byte TOTAL_DIRECTION = 0;
+    public static byte TOTAL_DIRECTION = -1;
 
     public SystemFacingDirections() {
         SOUTH = giveSouth();
@@ -14,26 +14,6 @@ public abstract class SystemFacingDirections {
         NORTH = giveNorth();
         EAST = giveEast();
         TOTAL_DIRECTION = giveTotalDirection();
-    }
-
-    public static byte SOUTH() {
-        return SOUTH;
-    }
-
-    public static byte WEST() {
-        return WEST;
-    }
-
-    public static byte NORTH() {
-        return NORTH;
-    }
-
-    public static byte EAST() {
-        return EAST;
-    }
-
-    public static byte TOTAL_DIRECTION() {
-        return TOTAL_DIRECTION;
     }
 
     public abstract byte giveSouth();
