@@ -74,8 +74,4 @@ public class Render implements RenderInterface {
     public void addLight(Light light) {
         lightRender.addLight(light);
     }
-
-    public void updateBuffer(Window window) {
-        basicRender.updateBuffer(window);
-    }
 }

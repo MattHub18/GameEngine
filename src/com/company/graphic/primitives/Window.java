@@ -10,7 +10,7 @@ public class Window {
     public static int WIDTH;
     public static int HEIGHT;
 
-    private BufferedImage image;
+    private final BufferedImage image;
     private final Canvas canvas;
     private final JFrame frame;
     private BufferStrategy bs;
@@ -35,9 +35,11 @@ public class Window {
                 GameLoop.stop();
             }
         });
+
+        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     }
 
-    public void update(GameLoop gl) {
+    public void update() {
         g.drawImage(image, 0, 0, (int) (image.getWidth() * GameLoop.SCALE), (int) (image.getHeight() * GameLoop.SCALE), null);
         bs.show();
     }
@@ -84,10 +86,6 @@ public class Window {
         canvas.createBufferStrategy(2);
         bs = canvas.getBufferStrategy();
         g = bs.getDrawGraphics();
-    }
-
-    public void updateBuffer(RenderObject object) {
-        image = new BufferedImage(object.getWidthInPixel(), object.getHeightInPixel(), BufferedImage.TYPE_INT_RGB);
     }
 
     public void close() {

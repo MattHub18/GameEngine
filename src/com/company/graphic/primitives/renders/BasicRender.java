@@ -9,9 +9,9 @@ import java.awt.image.DataBufferInt;
 
 public class BasicRender implements RenderInterface {
     private final Camera camera;
-    private int[] pixels;
-    private int[] lightPixels;
-    private boolean[] brightness;
+    private final int[] pixels;
+    private final int[] lightPixels;
+    private final boolean[] brightness;
 
     public BasicRender(Camera camera, Window window) {
         this.camera = camera;
@@ -45,7 +45,7 @@ public class BasicRender implements RenderInterface {
         if (outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT) || alpha == 0)
             return;
 
-        int index = x + y * camera.getWidthInPixel();
+        int index = x + y * Window.WIDTH;
 
         if (alpha == 255)
             pixels[index] = value;
@@ -62,7 +62,7 @@ public class BasicRender implements RenderInterface {
     public void setBrightness(int x, int y, boolean value) {
         if (outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT))
             return;
-        int index = x + y * camera.getWidthInPixel();
+        int index = x + y * Window.WIDTH;
         brightness[index] = value;
     }
 
@@ -71,15 +71,15 @@ public class BasicRender implements RenderInterface {
     }
 
     public boolean getBrightness(int x, int y) {
-        return brightness[x + y * camera.getWidthInPixel()];
+        return brightness[x + y * Window.WIDTH];
     }
 
     public int getLightPixels(int x, int y) {
-        return lightPixels[x + y * camera.getWidthInPixel()];
+        return lightPixels[x + y * Window.WIDTH];
     }
 
     public void setLightPixel(int x, int y, int value) {
-        lightPixels[x + y * camera.getWidthInPixel()] = value;
+        lightPixels[x + y * Window.WIDTH] = value;
     }
 
     public CameraShift cameraShift(int offX, int offY, int w, int h, boolean movable) {
@@ -112,11 +112,5 @@ public class BasicRender implements RenderInterface {
             height -= (height + offY - maxViewY);
 
         return new CameraShift(startX, startY, width, height, camX, camY);
-    }
-
-    public void updateBuffer(Window window) {
-        this.pixels = ((DataBufferInt) window.getImage().getRaster().getDataBuffer()).getData();
-        this.lightPixels = new int[pixels.length];
-        this.brightness = new boolean[pixels.length];
     }
 }

@@ -34,7 +34,7 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
 
     @Override
     public void update(GameLoop gl, float dt) {
-        transition();
+        transition(gl);
         currentRoom.update(gl, dt);
     }
 
@@ -53,7 +53,7 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
         return currentRoom.getHeightInPixel();
     }
 
-    private void transition() {
+    private void transition(GameLoop gl) {
         currentRoom.removePlayer(player);
 
         if (player.getPosX() > currentRoom.getWidth() * TILE_WIDTH) {
@@ -73,6 +73,7 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
         player.setRoom(currentRoom);
         currentRoom.addPlayer(player);
         currentRoom.spawnEntities();
+        gl.updateCamera(this);
     }
 
     public Room getCurrentRoom() {

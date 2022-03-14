@@ -96,7 +96,7 @@ public class GameLoop implements Runnable {
                 render.addFont(new Font(Archive.FONT.get(SystemResources.FPS_FONT), "FPS: " + fps, 0, 0, ColorPalette.BLUE, true));
                 stateManager.getCurrentState().render(this, render);
                 render.process();
-                window.update(this);
+                window.update();
                 frames++;
             }
         }
@@ -107,8 +107,6 @@ public class GameLoop implements Runnable {
         stateManager.nextState(state);
 
         update();
-
-        render.updateBuffer(window);
     }
 
     public void changeWindowSize() {
@@ -117,9 +115,11 @@ public class GameLoop implements Runnable {
 
     private void update() {
         State current = stateManager.getCurrentState();
-        RenderObject obj = current.getRenderObject();
-        window.updateBuffer(obj);
-        camera.updateCamera(obj);
+        updateCamera(current.getRenderObject());
         camera.registerEntityToObserver(current.getActor());
+    }
+
+    public void updateCamera(RenderObject obj) {
+        camera.updateCamera(obj);
     }
 }
