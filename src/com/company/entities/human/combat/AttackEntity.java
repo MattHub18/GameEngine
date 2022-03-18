@@ -1,6 +1,6 @@
-package com.company.entities.human.shooting;
+package com.company.entities.human.combat;
 
-import com.company.entities.bullet.Bullet;
+import com.company.entities.EntityManager;
 import com.company.entities.human.entity.Entity;
 import com.company.entities.human.entity.EntityGraphicComponent;
 import com.company.entities.human.entity.GameEntity;
@@ -8,50 +8,39 @@ import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.physics.basics.AxisAlignedBoundingBox;
+import com.company.physics.collisions.CollisionDetector;
+import com.company.weapons.Weapon;
 import com.company.world.Room;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ShootingEntity implements Graphic, GameEntity, ShootingInterface, Serializable {
+public class AttackEntity implements Graphic, GameEntity, CombatInterface, Serializable {
 
     protected final Entity entity;
     protected final EntityGraphicComponent component;
-    private final ArrayList<Bullet> currentQueue;
-    private boolean shooting;
+    protected final Weapon weapon;
+    private boolean attack;
 
-    public ShootingEntity(Entity entity, EntityGraphicComponent component) {
+    public AttackEntity(Entity entity, EntityGraphicComponent component, Weapon weapon) {
         this.entity = entity;
         this.component = component;
-        this.shooting = false;
-        currentQueue = new ArrayList<>();
+        this.weapon = weapon;
+        this.attack = false;
     }
 
     @Override
     public void update(GameLoop gl, float dt) {
-        Iterator<Bullet> iterator = currentQueue.iterator();
-        while (iterator.hasNext()) {
-            Bullet bullet = iterator.next();
-            bullet.update(gl, dt);
-            entity.getRoom().tileCollision(bullet);
-            entity.getRoom().getEntityManager().entityCollision(bullet);
-
-            if (bullet.getMaxTime() <= 0)
-                remove(iterator);
-        }
-
-        if (component != null)
+        if (component != null) {
             component.update(dt);
-        else
+            if (component.getAnimationFrame() == 0f)
+                attack = false;
+        } else
             entity.update(gl, dt);
     }
 
     @Override
     public void render(GameLoop gl, Render r) {
-        for (Bullet bullet : currentQueue)
-            bullet.render(gl, r);
-
         if (component != null)
             component.render(r, entity.getPosX(), entity.getPosY(), entity.getFacingDirection());
         else
@@ -105,25 +94,40 @@ public class ShootingEntity implements Graphic, GameEntity, ShootingInterface, S
 
     @Override
     public GameEntity copy() {
-        return new ShootingEntity((Entity) entity.copy(), component.copy());
-    }
-
-    public void addBullet(Bullet bullet) {
-        currentQueue.add(bullet);
-    }
-
-    private void remove(Iterator<Bullet> iterator) {
-        iterator.remove();
-        shooting = false;
+        return new AttackEntity((Entity) entity.copy(), component.copy(), weapon);
     }
 
     @Override
-    public void shooting() {
-        shooting = true;
+    public boolean isAttacking() {
+        return attack;
     }
 
     @Override
-    public boolean isShooting() {
-        return shooting;
+    public void meleeAttack() {
+        attack = true;
+
+        EntityManager entityManager = entity.getRoom().getEntityManager();
+        Iterator<GameEntity> enemyIterator = entityManager.getEntities().iterator();
+        while (enemyIterator.hasNext()) {
+            GameEntity enemy = enemyIterator.next();
+            if (enemy instanceof Damageable) {
+                if (handleAttackCollision(enemy)) {
+                    doDamage(enemy, enemyIterator);
+                }
+            }
+        }
+    }
+
+    private boolean handleAttackCollision(GameEntity enemy) {
+        AxisAlignedBoundingBox attack = weapon.getBox(entity);
+        AxisAlignedBoundingBox enemyBox = enemy.getBox();
+        return CollisionDetector.isCollided(attack, enemyBox);
+    }
+
+
+    protected void doDamage(GameEntity enemy, Iterator<GameEntity> enemyIterator) {
+        ((Damageable) enemy).receiveDamage(enemy, weapon.getDamage());
+        if (((Damageable) enemy).isDead())
+            enemyIterator.remove();
     }
 }

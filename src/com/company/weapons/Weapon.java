@@ -1,6 +1,6 @@
 package com.company.weapons;
 
-import com.company.entities.human.Entity;
+import com.company.entities.human.entity.Entity;
 import com.company.entities.objects.Content;
 import com.company.entities.objects.ContentGraphicComponent;
 import com.company.physics.basics.AxisAlignedBoundingBox;

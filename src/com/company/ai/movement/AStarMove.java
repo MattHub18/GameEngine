@@ -1,6 +1,6 @@
 package com.company.ai.movement;
 
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.physics.basics.Point;
 import com.company.world.Room;
 

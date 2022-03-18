@@ -1,6 +1,6 @@
 package com.company.graphic.primitives;
 
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.observer.Observer;
 import com.company.observer.Subject;
 import com.company.physics.basics.Point;

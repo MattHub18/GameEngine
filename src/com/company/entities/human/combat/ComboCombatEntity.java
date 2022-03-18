@@ -1,47 +1,44 @@
 package com.company.entities.human.combat;
 
 import com.company.death_strategy.Death;
-import com.company.entities.human.Entity;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.Entity;
+import com.company.entities.human.entity.EntityGraphicComponent;
+import com.company.entities.human.entity.GameEntity;
 import com.company.weapons.Weapon;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
-public class ComboCombatEntity extends CombatEntity implements Serializable {
-    private int combo;
-    private boolean doneDamage;
+public class ComboCombatEntity extends CombatEntity implements ComboInterface, Serializable {
 
-    public ComboCombatEntity(Entity entity, int lifePoints, Weapon weapon, Death deathStrategy) {
-        super(entity, lifePoints, weapon, deathStrategy);
 
-        combo = 0;
-        doneDamage = false;
+    public ComboCombatEntity(Entity entity, EntityGraphicComponent component, int lifePoints, Weapon weapon, Death deathStrategy, int maxCombo, int mul) {
+        super(entity, component, lifePoints, weapon, deathStrategy);
+
+        attackEntity = new ComboAttackEntity(entity, component, weapon, maxCombo, mul);
+
+    }
+
+    private ComboCombatEntity(Entity entity, AttackEntity attackEntity, DamageableEntity damageableEntity) {
+        super(entity, attackEntity, damageableEntity);
     }
 
     @Override
-    protected void doDamage(GameEntity enemy, Iterator<GameEntity> enemyIterator) {
-        combo++;
-        if (combo == 4) {
-            ((Damageable) enemy).receiveDamage(enemy, weapon.getDamage() * 2);
-            combo = 0;
-        } else
-            ((Damageable) enemy).receiveDamage(enemy, weapon.getDamage());
-        if (((CombatInterface) enemy).isDead())
-            enemyIterator.remove();
-
-        doneDamage = true;
+    public GameEntity copy() {
+        return new ComboCombatEntity((Entity) entity.copy(), (AttackEntity) attackEntity.copy(), damageableEntity.copy());
     }
 
+    @Override
     public int getCombo() {
-        return combo;
+        return ((ComboInterface) attackEntity).getCombo();
     }
 
+    @Override
     public boolean isDoneDamage() {
-        return doneDamage;
+        return ((ComboInterface) attackEntity).isDoneDamage();
     }
 
+    @Override
     public void resetDoneDamage() {
-        doneDamage = false;
+        ((ComboInterface) attackEntity).resetDoneDamage();
     }
 }

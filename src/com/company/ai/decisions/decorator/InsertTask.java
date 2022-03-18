@@ -1,7 +1,7 @@
 package com.company.ai.decisions.decorator;
 
 import com.company.ai.decisions.Task;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 
 public abstract class InsertTask extends TaskDecorator {
 

@@ -1,6 +1,6 @@
 package com.company.entities;
 
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.entities.human.movable.MovableInterface;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class EntityManager implements Graphic, Serializable {
 
     private transient ArrayList<GameEntity> entities;
+
     private transient ArrayList<GameEntity> toBeEliminated;
 
     public EntityManager() {
@@ -25,6 +26,7 @@ public class EntityManager implements Graphic, Serializable {
             init();
             addEntity(e);
         }
+
     }
 
 
@@ -33,7 +35,7 @@ public class EntityManager implements Graphic, Serializable {
         for (GameEntity e : entities) {
             if (e instanceof MovableInterface)
                 ((MovableInterface) e).clearMove();
-            e.update(gl, dt);
+            ((Graphic) e).update(gl, dt);
             entityCollision(e);
         }
     }
@@ -41,7 +43,7 @@ public class EntityManager implements Graphic, Serializable {
     @Override
     public void render(GameLoop gl, Render r) {
         for (GameEntity e : entities)
-            e.render(gl, r);
+            ((Graphic) e).render(gl, r);
         erase();
     }
 

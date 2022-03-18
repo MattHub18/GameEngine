@@ -1,6 +1,6 @@
 package com.company.entities;
 
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 
 public class Spawner {
 
@@ -13,7 +13,7 @@ public class Spawner {
     }
 
     public GameEntity spawnMonster() {
-        return prototype.copy();
+        return prototype;
     }
 
     public int getNum() {

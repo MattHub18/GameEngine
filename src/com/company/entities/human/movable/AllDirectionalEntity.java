@@ -1,6 +1,8 @@
 package com.company.entities.human.movable;
 
-import com.company.entities.human.Entity;
+import com.company.entities.human.entity.Entity;
+import com.company.entities.human.entity.EntityGraphicComponent;
+import com.company.entities.human.entity.GameEntity;
 
 import java.io.Serializable;
 
@@ -9,10 +11,10 @@ public class AllDirectionalEntity extends MovableEntity implements Serializable 
     private final HorizontalEntity horizontalEntity;
     private final VerticalEntity verticalEntity;
 
-    public AllDirectionalEntity(Entity entity) {
-        super(entity);
-        horizontalEntity = new HorizontalEntity(entity);
-        verticalEntity = new VerticalEntity(entity);
+    public AllDirectionalEntity(Entity entity, EntityGraphicComponent component) {
+        super(entity, component);
+        horizontalEntity = new HorizontalEntity(entity, component);
+        verticalEntity = new VerticalEntity(entity, component);
     }
 
     @Override
@@ -44,5 +46,10 @@ public class AllDirectionalEntity extends MovableEntity implements Serializable 
     @Override
     public boolean isMoving() {
         return verticalEntity.isMoving() || horizontalEntity.isMoving();
+    }
+
+    @Override
+    public GameEntity copy() {
+        return new AllDirectionalEntity((Entity) entity.copy(), component.copy());
     }
 }

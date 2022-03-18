@@ -1,7 +1,7 @@
 package com.company.ai.decisions.single_task;
 
 import com.company.ai.movement.MovementComponent;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.entities.human.movable.MovableInterface;
 import com.company.physics.basics.Point;
 

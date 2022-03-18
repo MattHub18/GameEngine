@@ -1,10 +1,9 @@
-package com.company.entities.human;
+package com.company.entities.human.entity;
 
-import com.company.graphic.Graphic;
 import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.world.Room;
 
-public interface GameEntity extends Graphic {
+public interface GameEntity {
 
     int getPosX();
 

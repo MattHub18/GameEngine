@@ -1,7 +1,7 @@
 package com.company.world;
 
 import com.company.entities.EntityManager;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.TileImage;
 import com.company.graphic.primitives.GameLoop;

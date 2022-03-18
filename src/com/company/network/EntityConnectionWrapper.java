@@ -1,6 +1,6 @@
 package com.company.network;
 
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 
 import java.io.Serializable;
 import java.net.InetAddress;

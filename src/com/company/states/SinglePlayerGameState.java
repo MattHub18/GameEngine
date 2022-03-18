@@ -1,7 +1,7 @@
 package com.company.states;
 
 import com.company.commands.InputHandler;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.graphic.primitives.RenderObject;

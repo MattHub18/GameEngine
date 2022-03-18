@@ -2,16 +2,17 @@ package com.company.entities.objects;
 
 import java.io.Serializable;
 
-public class Healer implements Healing, Content, Serializable {
+public class Healer implements Content, Serializable {
     private final int healingPower;
     private final ContentGraphicComponent component;
+    private final String initial;
 
-    public Healer(int healingPower, ContentGraphicComponent component) {
+    public Healer(int healingPower, ContentGraphicComponent component, String initial) {
         this.healingPower = healingPower;
         this.component = component;
+        this.initial = initial;
     }
 
-    @Override
     public int getHealingPower() {
         return healingPower;
     }
@@ -24,5 +25,9 @@ public class Healer implements Healing, Content, Serializable {
     @Override
     public String getName() {
         return component.getName();
+    }
+
+    public String getInitial() {
+        return initial;
     }
 }

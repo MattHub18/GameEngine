@@ -2,7 +2,7 @@ package com.company.world;
 
 import com.company.audio.Sound;
 import com.company.audio.Theme;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;

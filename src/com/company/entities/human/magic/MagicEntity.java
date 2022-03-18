@@ -1,21 +1,21 @@
 package com.company.entities.human.magic;
 
+import com.company.entities.bullet.Bullet;
 import com.company.entities.bullet.MagicBullet;
-import com.company.entities.bullet.StaticBullet;
+import com.company.entities.human.entity.Entity;
+import com.company.entities.human.entity.EntityGraphicComponent;
+import com.company.entities.human.entity.GameEntity;
+import com.company.entities.human.healer.HealProperty;
 import com.company.entities.human.shooting.ShootingEntity;
-import com.company.graphic.Graphic;
-import com.company.graphic.primitives.GameLoop;
-import com.company.graphic.primitives.Render;
 
 import java.io.Serializable;
 
-public class MagicEntity implements Graphic, MagicInterface, Serializable {
+public class MagicEntity extends ShootingEntity implements MagicInterface, HealProperty, Serializable {
     private final int maxMagicPoints;
-    private final ShootingEntity shootingEntity;
     private int magicPoints;
 
-    public MagicEntity(ShootingEntity entity, int magicPoints) {
-        this.shootingEntity = entity;
+    public MagicEntity(Entity entity, EntityGraphicComponent component, int magicPoints) {
+        super(entity, component);
         this.magicPoints = magicPoints;
         this.maxMagicPoints = magicPoints;
     }
@@ -43,24 +43,32 @@ public class MagicEntity implements Graphic, MagicInterface, Serializable {
             return;
         }
 
-        shootingEntity.addBullet((StaticBullet) magicBullet);
-        shootingEntity.shooting();
-    }
-
-    @Override
-    public void update(GameLoop gl, float dt) {
-        if (isDoingMagic())
-            shootingEntity.update(gl, dt);
-    }
-
-    @Override
-    public void render(GameLoop gl, Render r) {
-        if (isDoingMagic())
-            shootingEntity.render(gl, r);
+        addBullet((Bullet) magicBullet);
+        shooting();
     }
 
     @Override
     public boolean isDoingMagic() {
-        return shootingEntity.isShooting();
+        return isShooting();
+    }
+
+    @Override
+    public int getHealProperty() {
+        return getMagicPoints();
+    }
+
+    @Override
+    public void setHealProperty(int value) {
+        setMagicPoints(value);
+    }
+
+    @Override
+    public int getMaxHealProperty() {
+        return getMaxMagicPoints();
+    }
+
+    @Override
+    public GameEntity copy() {
+        return new MagicEntity((Entity) entity.copy(), component.copy(), magicPoints);
     }
 }

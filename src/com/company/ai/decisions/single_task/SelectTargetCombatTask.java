@@ -2,7 +2,7 @@ package com.company.ai.decisions.single_task;
 
 
 import com.company.ai.AiInterface;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 
 public class SelectTargetCombatTask extends LeafTask {
     @Override

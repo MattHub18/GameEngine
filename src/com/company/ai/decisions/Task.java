@@ -1,7 +1,7 @@
 package com.company.ai.decisions;
 
 import com.company.ai.decisions.controller.TaskController;
-import com.company.entities.human.GameEntity;
+import com.company.entities.human.entity.GameEntity;
 
 import java.util.LinkedList;
 import java.util.Queue;

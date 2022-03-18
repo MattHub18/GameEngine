@@ -1,9 +1,9 @@
-package com.company.entities.human.shooting;
+package com.company.entities.human.healer;
 
-import com.company.entities.bullet.Bullet;
 import com.company.entities.human.entity.Entity;
 import com.company.entities.human.entity.EntityGraphicComponent;
 import com.company.entities.human.entity.GameEntity;
+import com.company.entities.objects.Healer;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
@@ -11,36 +11,18 @@ import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.world.Room;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-public class ShootingEntity implements Graphic, GameEntity, ShootingInterface, Serializable {
+public class HealerEntity implements Graphic, GameEntity, Serializable {
+    private final Entity entity;
+    private final EntityGraphicComponent component;
 
-    protected final Entity entity;
-    protected final EntityGraphicComponent component;
-    private final ArrayList<Bullet> currentQueue;
-    private boolean shooting;
-
-    public ShootingEntity(Entity entity, EntityGraphicComponent component) {
+    public HealerEntity(Entity entity, EntityGraphicComponent component) {
         this.entity = entity;
         this.component = component;
-        this.shooting = false;
-        currentQueue = new ArrayList<>();
     }
 
     @Override
     public void update(GameLoop gl, float dt) {
-        Iterator<Bullet> iterator = currentQueue.iterator();
-        while (iterator.hasNext()) {
-            Bullet bullet = iterator.next();
-            bullet.update(gl, dt);
-            entity.getRoom().tileCollision(bullet);
-            entity.getRoom().getEntityManager().entityCollision(bullet);
-
-            if (bullet.getMaxTime() <= 0)
-                remove(iterator);
-        }
-
         if (component != null)
             component.update(dt);
         else
@@ -49,9 +31,6 @@ public class ShootingEntity implements Graphic, GameEntity, ShootingInterface, S
 
     @Override
     public void render(GameLoop gl, Render r) {
-        for (Bullet bullet : currentQueue)
-            bullet.render(gl, r);
-
         if (component != null)
             component.render(r, entity.getPosX(), entity.getPosY(), entity.getFacingDirection());
         else
@@ -105,25 +84,14 @@ public class ShootingEntity implements Graphic, GameEntity, ShootingInterface, S
 
     @Override
     public GameEntity copy() {
-        return new ShootingEntity((Entity) entity.copy(), component.copy());
+        return new HealerEntity((Entity) entity.copy(), component.copy());
     }
 
-    public void addBullet(Bullet bullet) {
-        currentQueue.add(bullet);
-    }
-
-    private void remove(Iterator<Bullet> iterator) {
-        iterator.remove();
-        shooting = false;
-    }
-
-    @Override
-    public void shooting() {
-        shooting = true;
-    }
-
-    @Override
-    public boolean isShooting() {
-        return shooting;
+    public void healing(HealProperty healPropertyEntity, Healer healer) {
+        int v = healPropertyEntity.getHealProperty() + healer.getHealingPower();
+        int maxV = healPropertyEntity.getMaxHealProperty();
+        if (v > maxV)
+            v = maxV;
+        healPropertyEntity.setHealProperty(v);
     }
 }
