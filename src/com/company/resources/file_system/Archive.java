@@ -1,6 +1,12 @@
 package com.company.resources.file_system;
 
+import com.company.event.Event;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Archive {
     public static final ArrayList<String> DATA = new ArrayList<>();
@@ -10,6 +16,7 @@ public class Archive {
     public static final ArrayList<String> MAP = new ArrayList<>();
     public static final ArrayList<String> DIALOG = new ArrayList<>();
     private ArrayList<Object> data;
+    private static final Properties rooms = new Properties();
 
     public void close() {
         if (data != null)
@@ -21,12 +28,8 @@ public class Archive {
         filter.writeData(path, object);
     }
 
-    public void load() {
-        new Loader("res\\texture", TEXTURES).load();
-        new Loader("res\\audio", SOUND).load();
-        new Loader("res\\font", FONT).load();
-        new Loader("res\\map", MAP).load();
-        new Loader("res\\dialog", DIALOG).load();
+    public static String worldByRoom(String roomName) {
+        return rooms.getProperty(roomName);
     }
 
     public void loadData(Filter filter) {
@@ -45,5 +48,25 @@ public class Archive {
                 return data.get(i);
         }
         return null;
+    }
+
+    private static void loadWorld() {
+        try {
+            InputStream read = new FileInputStream("res/map/worlds.xml");
+            rooms.loadFromXML(read);
+            read.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void load() {
+        new Loader("res\\texture", TEXTURES).load();
+        new Loader("res\\audio", SOUND).load();
+        new Loader("res\\font", FONT).load();
+        new Loader("res\\map", MAP).load();
+        new Loader("res\\dialog", DIALOG).load();
+        Event.loadEvents();
+        loadWorld();
     }
 }

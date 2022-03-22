@@ -48,7 +48,6 @@ public class GameLoop implements Runnable {
         running = false;
         stateManager.getCurrentState().stopSound();
         window.close();
-        stateManager.clear();
         render.clear();
         gameThread.interrupt();
     }

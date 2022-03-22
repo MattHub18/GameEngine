@@ -16,7 +16,7 @@ public class DialogNPC extends InteractObject {
     public void update(GameLoop gl, float dt) {
         super.update(gl, dt);
         if (on) {
-            gl.nextState("Dialog-Dialog");
+            gl.nextState("Dialog");
             off();
         }
     }

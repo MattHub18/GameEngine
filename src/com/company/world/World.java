@@ -7,6 +7,7 @@ import com.company.graphic.Graphic;
 import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.graphic.primitives.RenderObject;
+import com.company.physics.basics.Point;
 import com.company.resources.SystemResources;
 import com.company.resources.file_system.Archive;
 
@@ -22,14 +23,14 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
     protected HashMap<Integer, Room> worldMap;
     private GameEntity player;
     private Sound theme;
+    private final byte themeFilename;
+    protected Point start;
 
     public World(byte themeFilename) {
         worldMap = new HashMap<>();
         theme = null;
-        if (themeFilename != SystemResources.NO_SOUND) {
-            theme = new Sound(Archive.SOUND.get(themeFilename));
-            theme.loop();
-        }
+        this.themeFilename = themeFilename;
+        startSound();
     }
 
     @Override
@@ -82,13 +83,6 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
 
     public void init(GameEntity player) {
         this.player = player;
-        Room r = this.player.getRoom();
-        if (r == null)
-            this.player.setRoom(currentRoom);
-        else {
-            currentRoom = r;
-            worldMap.replace(r.getRoomId(), currentRoom);
-        }
         currentRoom.addPlayer(player);
         currentRoom.spawnEntities();
     }
@@ -97,5 +91,25 @@ public abstract class World implements Graphic, RenderObject, Theme, Serializabl
     public void stopSound() {
         if (theme != null)
             theme.close();
+    }
+
+    public void startSound() {
+        if (themeFilename != SystemResources.NO_SOUND) {
+            theme = new Sound(Archive.SOUND.get(themeFilename));
+            theme.loop();
+        }
+    }
+
+    protected void initialPosition(GameEntity player) {
+        player.setPosX(start.getX());
+        player.setPosY(start.getY());
+        player.setRoom(currentRoom);
+    }
+
+    public void continueGame(GameEntity player) {
+        Room r = player.getRoom();
+        currentRoom = r;
+        worldMap.replace(r.getRoomId(), currentRoom);
+        init(player);
     }
 }

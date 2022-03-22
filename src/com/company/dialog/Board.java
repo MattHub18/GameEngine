@@ -37,7 +37,7 @@ public class Board implements Graphic {
     public void update(GameLoop gl, float dt) {
         dialog.update(gl, dt);
         if (end)
-            gl.nextState("abc-Game");
+            gl.nextState("Game");
     }
 
     @Override

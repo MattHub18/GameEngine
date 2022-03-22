@@ -52,8 +52,4 @@ public class SinglePlayerGameState implements State {
     public void stopSound() {
         world.stopSound();
     }
-
-    public HUD getHud() {
-        return hud;
-    }
 }
