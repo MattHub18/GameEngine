@@ -1,5 +1,6 @@
 package com.company.ai.decisions.decorator;
 
+import com.company.ai.AiInterface;
 import com.company.ai.decisions.Task;
 import com.company.ai.decisions.controller.TaskController;
 
@@ -8,21 +9,30 @@ public abstract class TaskDecorator implements Task {
 
     public TaskDecorator(Task task) {
         this.task = task;
-        this.task.getControl().setTask(this);
     }
 
     @Override
-    public boolean checkConditions() {
-        return task.checkConditions();
+    public boolean checkConditions(AiInterface entity) {
+        return task.checkConditions(entity);
     }
 
     @Override
-    public TaskController getControl() {
-        return task.getControl();
+    public TaskController getController() {
+        return task.getController();
     }
 
     @Override
-    public void start() {
-        task.start();
+    public void start(AiInterface entity) {
+        task.start(entity);
+    }
+
+    @Override
+    public double getValue(AiInterface entity) {
+        return task.getValue(entity);
+    }
+
+    @Override
+    public void reset() {
+        task.reset();
     }
 }

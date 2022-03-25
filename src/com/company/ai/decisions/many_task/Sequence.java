@@ -1,5 +1,8 @@
 package com.company.ai.decisions.many_task;
 
+import com.company.ai.AiInterface;
+import com.company.ai.decisions.Task;
+
 public class Sequence extends ParentTask {
 
     @Override
@@ -9,14 +12,17 @@ public class Sequence extends ParentTask {
 
     @Override
     public void childSucceeded() {
-        int curPos = control.subtasks.indexOf(control.curTask);
-        if (curPos == (control.subtasks.size() - 1)) {
+        if (control.hasNext())
+            control.next();
+        else
             control.finishWithSuccess();
-        } else {
-            control.curTask = control.subtasks.elementAt(curPos + 1);
-            if (!control.curTask.checkConditions()) {
-                control.finishWithFailure();
-            }
-        }
+    }
+
+    @Override
+    public double getValue(AiInterface entity) {
+        int sum = 0;
+        for (Task t : control.getSubtasks())
+            sum += t.getValue(entity);
+        return sum;
     }
 }

@@ -1,26 +1,22 @@
 package com.company.ai.decisions.many_task;
 
 
+import com.company.ai.AiInterface;
 import com.company.ai.decisions.Task;
 import com.company.ai.decisions.controller.ParentTaskController;
 import com.company.ai.decisions.controller.TaskController;
 import com.company.entities.human.entity.GameEntity;
 
 public abstract class ParentTask implements Task {
-    ParentTaskController control;
+    protected final ParentTaskController control;
 
     public ParentTask() {
-        this.control = new ParentTaskController(this);
+        this.control = new ParentTaskController();
     }
 
     @Override
-    public TaskController getControl() {
-        return control;
-    }
-
-    @Override
-    public boolean checkConditions() {
-        return control.subtasks.size() > 0;
+    public boolean checkConditions(AiInterface entity) {
+        return control.getSize() > 0;
     }
 
     public abstract void childSucceeded();
@@ -30,23 +26,33 @@ public abstract class ParentTask implements Task {
     @Override
     public void doAction(GameEntity entity) {
         while (!control.finished()) {
-            if (!control.curTask.getControl().started()) {
-                control.curTask.getControl().safeStart();
-            }
-            control.curTask.doAction(entity);
-            if (control.curTask.getControl().succeeded()) {
-                childSucceeded();
-            } else {
+            if (control.getCurTask().checkConditions((AiInterface) entity)) {
+                control.getCurTask().start((AiInterface) entity);
+                control.getCurTask().doAction(entity);
+                if (control.getCurTask().getController().succeeded())
+                    childSucceeded();
+                else
+                    childFailed();
+            } else
                 childFailed();
-            }
         }
     }
 
     @Override
-    public void start() {
-        control.curTask = control.subtasks.firstElement();
-        if (control.curTask == null) {
-            throw new NullPointerException("Current task has a null action");
+    public TaskController getController() {
+        return control;
+    }
+
+    @Override
+    public void start(AiInterface entity) {
+        control.start();
+    }
+
+    @Override
+    public void reset() {
+        for (Task t : control.getSubtasks()) {
+            t.reset();
         }
+        control.reset();
     }
 }

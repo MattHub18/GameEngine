@@ -5,11 +5,7 @@ import com.company.entities.human.entity.GameEntity;
 import com.company.physics.basics.Point;
 
 public interface AiInterface {
-    default Point chooseMoveTarget() {
-        throw new UnsupportedOperationException();
-    }
+    Point chooseMoveTarget();
 
-    default GameEntity chooseCombatTarget() {
-        throw new UnsupportedOperationException();
-    }
+    GameEntity chooseCombatTarget();
 }

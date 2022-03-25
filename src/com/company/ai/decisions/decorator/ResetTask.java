@@ -12,8 +12,8 @@ public class ResetTask extends TaskDecorator {
     @Override
     public void doAction(GameEntity entity) {
         task.doAction(entity);
-        if (task.getControl().finished()) {
-            task.getControl().reset();
+        if (task.getController().finished()) {
+            task.reset();
         }
     }
 }

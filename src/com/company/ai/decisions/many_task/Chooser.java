@@ -1,40 +1,20 @@
 package com.company.ai.decisions.many_task;
 
-import com.company.ai.decisions.Task;
-import com.company.ai.decisions.UtilityBaseSystem;
+import com.company.ai.AiInterface;
 
 public class Chooser extends Selector {
 
     @Override
-    public Task chooseNewTask() {
-        Task task = null;
-        boolean found = false;
-        int visited = 0;
-        int curPos = UtilityBaseSystem.getPositionByPoints(control.subtasks);
-
-        while (!found) {
-            if (visited == control.subtasks.size()) {
-                task = null;
-                break;
-            }
-
-            task = control.subtasks.elementAt(curPos);
-            if (task.checkConditions()) {
-                found = true;
-            }
-
-            visited++;
-            curPos = (curPos + 1) % control.subtasks.size();
-        }
-
-        return task;
-    }
-
-    @Override
-    public void start() {
-        control.curTask = chooseNewTask();
-        if (control.curTask == null) {
-            throw new NullPointerException("Current task has a null action");
-        }
+    public void start(AiInterface entity) {
+        control.getSubtasks().sort((t1, t2) -> {
+            double v1 = t1.getValue(entity);
+            double v2 = t2.getValue(entity);
+            if (v1 > v2)
+                return -1;
+            else if (v1 == v2)
+                return 0;
+            return 1;
+        });
+        super.start(entity);
     }
 }

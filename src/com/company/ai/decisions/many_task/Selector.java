@@ -1,41 +1,32 @@
 package com.company.ai.decisions.many_task;
 
-import com.company.ai.decisions.Task;
+import com.company.ai.AiInterface;
 
 public class Selector extends ParentTask {
 
-    public Task chooseNewTask() {
-        Task task = null;
-        boolean found = false;
-        int curPos = control.subtasks.indexOf(control.curTask);
-
-        while (!found) {
-            if (curPos == (control.subtasks.size() - 1)) {
-                task = null;
-                break;
-            }
-
-            curPos++;
-
-            task = control.subtasks.elementAt(curPos);
-            if (task.checkConditions()) {
-                found = true;
-            }
-        }
-
-        return task;
+    private int chooseNewTask() {
+        if (!control.hasNext())
+            return -1;
+        control.next();
+        return control.getIndex();
     }
 
     @Override
     public void childFailed() {
-        control.curTask = chooseNewTask();
-        if (control.curTask == null) {
+        int index = chooseNewTask();
+        if (index == -1)
             control.finishWithFailure();
-        }
+        else
+            control.setTask(index);
     }
 
     @Override
     public void childSucceeded() {
         control.finishWithSuccess();
+    }
+
+    @Override
+    public double getValue(AiInterface entity) {
+        return control.getCurTask().getValue(entity);
     }
 }
