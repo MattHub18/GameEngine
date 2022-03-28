@@ -86,6 +86,8 @@ public class Window {
         canvas.createBufferStrategy(2);
         bs = canvas.getBufferStrategy();
         g = bs.getDrawGraphics();
+
+        canvas.requestFocus();
     }
 
     public void close() {
