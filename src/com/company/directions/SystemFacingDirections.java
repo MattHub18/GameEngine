@@ -6,18 +6,10 @@ public abstract class SystemFacingDirections {
     public static byte NORTH = -1;
     public static byte EAST = -1;
 
-    public SystemFacingDirections() {
-        SOUTH = giveSouth();
-        WEST = giveWest();
-        NORTH = giveNorth();
-        EAST = giveEast();
+    public static void register(byte s, byte w, byte n, byte e) {
+        SOUTH = s;
+        WEST = w;
+        NORTH = n;
+        EAST = e;
     }
-
-    public abstract byte giveSouth();
-
-    public abstract byte giveWest();
-
-    public abstract byte giveNorth();
-
-    public abstract byte giveEast();
 }
