@@ -1,15 +1,13 @@
 package com.company.commands.game_command;
 
 import com.company.commands.Command;
-import com.company.commands.CommandType;
-import com.company.commands.InputMode;
 import com.company.entities.human.movable.MovableInterface;
 
 import java.io.Serializable;
 
 public class LeftMoveCommand extends Command implements Serializable {
 
-    public LeftMoveCommand(CommandType type, int key, InputMode mode) {
+    public LeftMoveCommand(byte type, int key, byte mode) {
         super(type, key, mode);
     }
 

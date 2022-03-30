@@ -28,14 +28,16 @@ public class SinglePlayerGameState implements State {
     @Override
     public void update(GameLoop gl, float dt) {
         world.update(gl, dt);
-        hud.update(gl, dt);
+        if (hud != null)
+            hud.update(gl, dt);
         gameHandler.handleInput(gl);
     }
 
     @Override
     public void render(GameLoop gl, Render r) {
         world.render(gl, r);
-        hud.render(gl, r);
+        if (hud != null)
+            hud.render(gl, r);
     }
 
     @Override

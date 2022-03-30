@@ -2,6 +2,7 @@ package com.company.world;
 
 import com.company.physics.basics.AxisAlignedBoundingBox;
 import com.company.physics.basics.Vector;
+import com.company.resources.SystemConstants;
 
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
@@ -22,6 +23,6 @@ public class Tile {
     }
 
     public boolean isFloor() {
-        return tileId == 0;
+        return SystemConstants.FLOOR.contains(tileId);
     }
 }

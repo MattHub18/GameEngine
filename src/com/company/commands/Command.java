@@ -5,10 +5,15 @@ import java.io.Serializable;
 public abstract class Command implements Serializable {
 
     private final int key;
-    private final InputMode mode;
-    private final CommandType type;
+    public static final byte KEYBOARD = 0;
+    public static final byte MOUSE = 1;
+    public static final byte BASIC = 0;
+    public static final byte UP = 1;
+    public static final byte DOWN = -1;
+    private final byte mode;
+    private final byte type;
 
-    public Command(CommandType type, int key, InputMode mode) {
+    public Command(byte type, int key, byte mode) {
         this.key = key;
         this.mode = mode;
         this.type = type;
@@ -20,11 +25,11 @@ public abstract class Command implements Serializable {
         return key;
     }
 
-    public InputMode getMode() {
+    public byte getMode() {
         return mode;
     }
 
-    public CommandType getType() {
+    public byte getType() {
         return type;
     }
 }

@@ -1,13 +1,11 @@
 package com.company.commands.system_command;
 
 import com.company.commands.Command;
-import com.company.commands.CommandType;
-import com.company.commands.InputMode;
 import com.company.graphic.primitives.GameLoop;
 
 public class WindowSizeCommand extends Command {
 
-    public WindowSizeCommand(CommandType type, int key, InputMode mode) {
+    public WindowSizeCommand(byte type, int key, byte mode) {
         super(type, key, mode);
     }
 

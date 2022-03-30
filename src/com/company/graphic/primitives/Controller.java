@@ -1,5 +1,7 @@
 package com.company.graphic.primitives;
 
+import com.company.resources.SystemConstants;
+
 import java.awt.event.*;
 import java.io.Serializable;
 
@@ -110,14 +112,14 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        mouseX = (int) (e.getX() / GameLoop.SCALE);
-        mouseY = (int) (e.getY() / GameLoop.SCALE);
+        mouseX = (int) (e.getX() / SystemConstants.SCALE);
+        mouseY = (int) (e.getY() / SystemConstants.SCALE);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        mouseX = (int) (e.getX() / GameLoop.SCALE);
-        mouseY = (int) (e.getY() / GameLoop.SCALE);
+        mouseX = (int) (e.getX() / SystemConstants.SCALE);
+        mouseY = (int) (e.getY() / SystemConstants.SCALE);
     }
 
     @Override

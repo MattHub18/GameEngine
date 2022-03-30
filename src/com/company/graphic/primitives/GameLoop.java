@@ -8,7 +8,6 @@ import com.company.states.State;
 import com.company.states.StateManager;
 
 public class GameLoop implements Runnable {
-    protected static float SCALE = 2f;
     private static StateManager stateManager;
     private static Window window;
     private final Controller controller;
@@ -92,7 +91,7 @@ public class GameLoop implements Runnable {
 
             if (rendering) {
                 render.clear();
-                render.addFont(new Font(Archive.FONT.get(SystemResources.FPS_FONT), "FPS: " + fps, 0, 0, ColorPalette.BLUE, true));
+                render.addFont(new Font(Archive.FONT.get(SystemResources.FPS_FONT), "FPS: " + fps, 0, 0, ColorPalette.FPS, true));
                 stateManager.getCurrentState().render(this, render);
                 render.process();
                 window.update();

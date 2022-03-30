@@ -18,8 +18,8 @@ public abstract class InputHandler implements Serializable {
     public void handleInput(Object element) {
         controller = Controller.getInstance();
         for (Command command : commands) {
-            CommandType type = command.getType();
-            if (type == CommandType.KEYBOARD)
+            byte type = command.getType();
+            if (type == Command.KEYBOARD)
                 handleInputKeys(command, element);
             else
                 handleInputButtons(command, element);
@@ -34,13 +34,13 @@ public abstract class InputHandler implements Serializable {
                 break;
             }
 
-            case UP: {
+            case Command.UP: {
                 if (controller.isKeyUp(command.getKey()))
                     command.execute(element);
                 break;
             }
 
-            case DOWN: {
+            case Command.DOWN: {
                 if (controller.isKeyDown(command.getKey()))
                     command.execute(element);
                 break;
@@ -56,13 +56,13 @@ public abstract class InputHandler implements Serializable {
                 break;
             }
 
-            case UP: {
+            case Command.UP: {
                 if (controller.isButtonUp(command.getKey()))
                     command.execute(element);
                 break;
             }
 
-            case DOWN: {
+            case Command.DOWN: {
                 if (controller.isButtonDown(command.getKey()))
                     command.execute(element);
                 break;
