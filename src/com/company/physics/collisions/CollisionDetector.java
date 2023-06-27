@@ -1,7 +1,5 @@
 package com.company.physics.collisions;
 
-import com.company.physics.basics.AxisAlignedBoundingBox;
-
 public class CollisionDetector {
 
     public static boolean isCollided(Collider... colliders) {

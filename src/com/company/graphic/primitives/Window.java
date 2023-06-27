@@ -1,5 +1,6 @@
 package com.company.graphic.primitives;
 
+import com.company.graphic.Engine;
 import com.company.resources.SystemConstants;
 
 import javax.swing.*;
@@ -9,8 +10,8 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 public class Window {
-    public static int WIDTH;
-    public static int HEIGHT;
+    private final int width;
+    private final int height;
 
     private final BufferedImage image;
     private final Canvas canvas;
@@ -20,10 +21,13 @@ public class Window {
 
     private boolean fullScreen = true;
 
+    private Engine engine;
+
     public Window(String title) {
+
         Dimension fullDim = Toolkit.getDefaultToolkit().getScreenSize();
-        WIDTH = (int) (fullDim.width / SystemConstants.SCALE);
-        HEIGHT = (int) (fullDim.height / SystemConstants.SCALE);
+        width = (int) (fullDim.width / SystemConstants.SCALE);
+        height = (int) (fullDim.height / SystemConstants.SCALE);
 
         canvas = new Canvas();
 
@@ -34,11 +38,11 @@ public class Window {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                GameLoop.stop();
+                engine.stop();
             }
         });
 
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
     public void update() {
@@ -94,5 +98,17 @@ public class Window {
 
     public void close() {
         frame.dispose();
+    }
+
+    public void registerEngine(Engine engine) {
+        this.engine = engine;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

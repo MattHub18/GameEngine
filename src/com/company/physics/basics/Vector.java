@@ -1,8 +1,6 @@
 package com.company.physics.basics;
 
-import java.io.Serializable;
-
-public class Vector implements Serializable {
+public class Vector {
     private float x;
     private float y;
 
@@ -16,20 +14,20 @@ public class Vector implements Serializable {
         y = v.y;
     }
 
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
-
     public float getX() {
         return x;
     }
 
+    public void setX(float x) {
+        this.x = x;
+    }
+
     public float getY() {
         return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public Vector add(Vector v) {

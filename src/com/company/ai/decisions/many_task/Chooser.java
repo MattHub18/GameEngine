@@ -3,7 +3,6 @@ package com.company.ai.decisions.many_task;
 import com.company.ai.AiInterface;
 
 public class Chooser extends Selector {
-
     @Override
     public void start(AiInterface entity) {
         control.getSubtasks().sort((t1, t2) -> {

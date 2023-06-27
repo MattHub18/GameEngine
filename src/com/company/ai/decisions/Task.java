@@ -1,11 +1,10 @@
 package com.company.ai.decisions;
 
 import com.company.ai.AiInterface;
-import com.company.ai.decisions.controller.TaskController;
-import com.company.entities.human.entity.GameEntity;
+import com.company.ai.decisions.controllers.TaskController;
+import com.company.entities.entity.GameEntity;
 
 public interface Task {
-
     boolean checkConditions(AiInterface entity);
 
     void doAction(GameEntity entity);

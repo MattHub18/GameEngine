@@ -1,7 +1,6 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Circle;
-import com.company.graphic.primitives.CameraShift;
 
 import java.util.ArrayList;
 
@@ -60,13 +59,14 @@ public class CircleRender implements RenderInterface {
     }
 
     private void drawCircumferencePixel(int xc, int yc, int x, int y, int color, boolean movable) {
-        CameraShift structure = basicRender.cameraShift(xc - x, yc - y, xc + x, yc + y, movable);
+
+        int[] structure = basicRender.cameraShift(xc - x, yc - y, xc + x, yc + y, movable);
 
         if (structure == null)
             return;
 
-        int camX = structure.getCamX();
-        int camY = structure.getCamY();
+        int camX = structure[4];
+        int camY = structure[5];
 
         basicRender.setPixel(xc + x - camX, yc + y - camY, color);
         basicRender.setPixel(xc - x - camX, yc + y - camY, color);
@@ -99,14 +99,14 @@ public class CircleRender implements RenderInterface {
             x0 = x0 - xf;
         }
 
-        CameraShift structure = basicRender.cameraShift(x0, y0, xf, yf, movable);
+        int[] structure = basicRender.cameraShift(x0, y0, xf, yf, movable);
 
-        int startX = structure.getStartX();
-        int startY = structure.getStartY();
-        int width = structure.getWidth();
-        int height = structure.getHeight();
-        int camX = structure.getCamX();
-        int camY = structure.getCamY();
+        int startX = structure[0];
+        int startY = structure[1];
+        int width = structure[2];
+        int height = structure[3];
+        int camX = structure[4];
+        int camY = structure[5];
 
         for (int y = startY; y <= height; y++) {
             for (int x = startX; x <= width; x++) {

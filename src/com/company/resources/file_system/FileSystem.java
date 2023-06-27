@@ -1,30 +1,19 @@
 package com.company.resources.file_system;
 
 public class FileSystem {
-
-    private static FileSystem instance = null;
-    private static FileSystem dataInstance = null;
+    private static FileSystem instance;
     private final Archive archive;
-
-    private FileSystem() {
-        archive = new Archive();
-    }
+    private final Filter filter;
 
     private FileSystem(Filter filter) {
-        archive = new Archive();
-        archive.loadData(filter);
+        this.archive = new Archive();
+        this.filter = filter;
     }
 
-    public static FileSystem getInstance() {
+    public static FileSystem getInstance(Filter filter) {
         if (instance == null)
-            instance = new FileSystem();
+            instance = new FileSystem(filter);
         return instance;
-    }
-
-    public static FileSystem getDataInstance() {
-        if (dataInstance == null)
-            dataInstance = new FileSystem(new SimpleFilter());
-        return dataInstance;
     }
 
     public void loadResources() {
@@ -34,16 +23,15 @@ public class FileSystem {
     public void shutdown() {
         archive.close();
         instance = null;
-        dataInstance = null;
     }
 
-    public void save(Object gameObject) {
-        String path = "saves\\" + gameObject.getClass().getSimpleName() + ".data";
-        Filter filter = new SimpleFilter();
+    public void save(String name, Object gameObject) {
+        String path = "saves\\" + name + ".data";
         archive.saveData(filter, path, gameObject);
     }
 
     public Object get(String objectName) {
+        archive.loadData(filter);
         if (archive.exist(objectName))
             return archive.loadObject(objectName);
         else

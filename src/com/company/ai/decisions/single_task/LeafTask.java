@@ -2,7 +2,7 @@ package com.company.ai.decisions.single_task;
 
 import com.company.ai.AiInterface;
 import com.company.ai.decisions.Task;
-import com.company.ai.decisions.controller.TaskController;
+import com.company.ai.decisions.controllers.TaskController;
 
 public abstract class LeafTask implements Task {
     protected TaskController control;

@@ -1,5 +1,7 @@
 package com.company.resources;
 
+import com.company.entities.directions.SystemFacingDirections;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,5 +20,9 @@ public abstract class SystemConstants {
 
     public static void setFloor(Byte... tiles) {
         FLOOR = new ArrayList<>(Arrays.asList(tiles));
+    }
+
+    public static void setDirections(byte south, byte west, byte north, byte east) {
+        SystemFacingDirections.register(south, west, north, east);
     }
 }

@@ -1,6 +1,6 @@
 package com.company.entities;
 
-import com.company.entities.human.entity.GameEntity;
+import com.company.entities.entity.GameEntity;
 
 public class Spawner {
 

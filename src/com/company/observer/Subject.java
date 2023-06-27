@@ -5,7 +5,7 @@ public interface Subject {
 
     void removeObserver(String name);
 
-    <T> void notifyChange(String name, T value);
+    void notifyChange(String name, Object value);
 
-    void clearObserver(Subject subject);
+    void clearObserver();
 }

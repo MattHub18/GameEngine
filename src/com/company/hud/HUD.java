@@ -1,7 +1,7 @@
 package com.company.hud;
 
 import com.company.graphic.Graphic;
-import com.company.world.World;
+import com.company.worlds.World;
 
 public abstract class HUD implements Graphic {
     protected final World world;

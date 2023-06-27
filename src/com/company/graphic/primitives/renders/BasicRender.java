@@ -1,7 +1,6 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.primitives.Camera;
-import com.company.graphic.primitives.CameraShift;
 import com.company.graphic.primitives.ColorPalette;
 import com.company.graphic.primitives.Window;
 
@@ -9,15 +8,18 @@ import java.awt.image.DataBufferInt;
 
 public class BasicRender implements RenderInterface {
     private final Camera camera;
+    private final Window window;
     private final int[] pixels;
     private final int[] lightPixels;
     private final boolean[] brightness;
 
     public BasicRender(Camera camera, Window window) {
         this.camera = camera;
-        this.pixels = ((DataBufferInt) window.getImage().getRaster().getDataBuffer()).getData();
+        this.window = window;
+        this.pixels = ((DataBufferInt) this.window.getImage().getRaster().getDataBuffer()).getData();
         this.lightPixels = new int[pixels.length];
         this.brightness = new boolean[pixels.length];
+
     }
 
     @Override
@@ -42,10 +44,10 @@ public class BasicRender implements RenderInterface {
     public void setPixel(int x, int y, int value) {
         int alpha = (value >> 24) & 0xff;
 
-        if (outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT) || alpha == 0)
+        if (outOfBounds(x, y) || alpha == 0)
             return;
 
-        int index = x + y * Window.WIDTH;
+        int index = x + y * window.getWidth();
 
         if (alpha == 255)
             pixels[index] = value;
@@ -60,29 +62,29 @@ public class BasicRender implements RenderInterface {
 
 
     public void setBrightness(int x, int y, boolean value) {
-        if (outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT))
+        if (outOfBounds(x, y))
             return;
-        int index = x + y * Window.WIDTH;
+        int index = x + y * window.getWidth();
         brightness[index] = value;
     }
 
-    public boolean outOfBounds(int width, int lw, int rw, int height, int lh, int rh) {
-        return width < lw || width >= rw || height < lh || height >= rh;
+    public boolean outOfBounds(int width, int height) {
+        return width < 0 || width >= window.getWidth() || height < 0 || height >= window.getHeight();
     }
 
     public boolean getBrightness(int x, int y) {
-        return brightness[x + y * Window.WIDTH];
+        return brightness[x + y * window.getWidth()];
     }
 
     public int getLightPixels(int x, int y) {
-        return lightPixels[x + y * Window.WIDTH];
+        return lightPixels[x + y * window.getWidth()];
     }
 
     public void setLightPixel(int x, int y, int value) {
-        lightPixels[x + y * Window.WIDTH] = value;
+        lightPixels[x + y * window.getWidth()] = value;
     }
 
-    public CameraShift cameraShift(int offX, int offY, int w, int h, boolean movable) {
+    public int[] cameraShift(int offX, int offY, int w, int h, boolean movable) {
         int startX = 0;
         int startY = 0;
         int width = w;
@@ -111,6 +113,6 @@ public class BasicRender implements RenderInterface {
         if (offY + height >= maxViewY)
             height -= (height + offY - maxViewY);
 
-        return new CameraShift(startX, startY, width, height, camX, camY);
+        return new int[]{startX, startY, width, height, camX, camY};
     }
 }

@@ -1,49 +1,43 @@
 package com.company.entities;
 
-import com.company.entities.human.entity.GameEntity;
-import com.company.entities.human.movable.MovableInterface;
+import com.company.entities.entity.GameEntity;
+import com.company.entities.move.MovableInterface;
+import com.company.graphic.Engine;
 import com.company.graphic.Graphic;
-import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class EntityManager implements Graphic, Serializable {
+public class EntityManager implements Graphic {
 
-    private transient ArrayList<GameEntity> entities;
+    private final ArrayList<GameEntity> entities;
 
-    private transient ArrayList<GameEntity> toBeEliminated;
+    private final ArrayList<GameEntity> toBeEliminated;
 
     public EntityManager() {
-        init();
+        entities = new ArrayList<>();
+        toBeEliminated = new ArrayList<>();
     }
 
     public void addEntity(GameEntity e) {
-        try {
-            entities.add(e);
-        } catch (NullPointerException ex) {
-            init();
-            addEntity(e);
-        }
-
+        entities.add(e);
     }
 
 
     @Override
-    public void update(GameLoop gl, float dt) {
+    public void update(Engine engine, float dt) {
         for (GameEntity e : entities) {
             if (e instanceof MovableInterface)
                 ((MovableInterface) e).clearMove();
-            ((Graphic) e).update(gl, dt);
+            ((Graphic) e).update(engine, dt);
             entityCollision(e);
         }
     }
 
     @Override
-    public void render(GameLoop gl, Render r) {
+    public void render(Render r) {
         for (GameEntity e : entities)
-            ((Graphic) e).render(gl, r);
+            ((Graphic) e).render(r);
         erase();
     }
 
@@ -69,10 +63,5 @@ public class EntityManager implements Graphic, Serializable {
 
     public void setToBeEliminated(GameEntity e) {
         toBeEliminated.add(e);
-    }
-
-    private void init() {
-        entities = new ArrayList<>();
-        toBeEliminated = new ArrayList<>();
     }
 }

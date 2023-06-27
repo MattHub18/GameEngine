@@ -1,8 +1,6 @@
 package com.company.graphic.gfx;
 
-import java.io.Serializable;
-
-public class Rectangle implements Serializable {
+public class Rectangle {
     private final int x;
     private final int y;
     private final int width;
@@ -48,4 +46,5 @@ public class Rectangle implements Serializable {
     public boolean isMovable() {
         return movable;
     }
+
 }

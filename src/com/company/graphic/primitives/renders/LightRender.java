@@ -1,8 +1,6 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Light;
-import com.company.graphic.primitives.CameraShift;
-import com.company.graphic.primitives.Window;
 
 import java.util.ArrayList;
 
@@ -48,17 +46,17 @@ public class LightRender implements RenderInterface {
         int errD = dx - dy;
         int err;
 
-        CameraShift structure = basicRender.cameraShift(offX, offY, light.getDiameter(), light.getDiameter(), light.isMovable());
+        int[] structure = basicRender.cameraShift(offX, offY, light.getDiameter(), light.getDiameter(), light.isMovable());
 
-        int camX = structure.getCamX();
-        int camY = structure.getCamY();
+        int camX = structure[4];
+        int camY = structure[5];
 
         while (true) {
 
             int screenX = x0 + offX - camX;
             int screenY = y0 + offY - camY;
 
-            if (basicRender.outOfBounds(screenX, 0, Window.WIDTH, screenY, 0, Window.HEIGHT))
+            if (basicRender.outOfBounds(screenX, screenY))
                 return;
 
             int lightColor = light.getLightValue(x0, y0);
@@ -73,6 +71,7 @@ public class LightRender implements RenderInterface {
 
             if (x0 == x1 && y0 == y1)
                 break;
+
             err = 2 * errD;
             if (err > -1 * dy) {
                 errD -= dy;
@@ -86,7 +85,7 @@ public class LightRender implements RenderInterface {
     }
 
     private void setLightPixels(int x, int y, int value) {
-        if (basicRender.outOfBounds(x, 0, Window.WIDTH, y, 0, Window.HEIGHT))
+        if (basicRender.outOfBounds(x, y))
             return;
 
         int baseColor = basicRender.getLightPixels(x, y);

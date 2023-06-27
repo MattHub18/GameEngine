@@ -1,11 +1,10 @@
 package com.company.ai.decisions.many_task;
 
-
 import com.company.ai.AiInterface;
 import com.company.ai.decisions.Task;
-import com.company.ai.decisions.controller.ParentTaskController;
-import com.company.ai.decisions.controller.TaskController;
-import com.company.entities.human.entity.GameEntity;
+import com.company.ai.decisions.controllers.ParentTaskController;
+import com.company.ai.decisions.controllers.TaskController;
+import com.company.entities.entity.GameEntity;
 
 public abstract class ParentTask implements Task {
     protected final ParentTaskController control;

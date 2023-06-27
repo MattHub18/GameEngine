@@ -1,7 +1,6 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Image;
-import com.company.graphic.primitives.CameraShift;
 import com.company.graphic.wrappers.ImageWrapper;
 
 import java.util.ArrayList;
@@ -33,14 +32,14 @@ public class ImageRender implements RenderInterface {
     }
 
     private void drawImage(Image image, int offX, int offY) {
-        CameraShift structure = basicRender.cameraShift(offX, offY, image.getWidth(), image.getHeight(), image.isMovable());
+        int[] structure = basicRender.cameraShift(offX, offY, image.getWidth(), image.getHeight(), image.isMovable());
 
-        int startX = structure.getStartX();
-        int startY = structure.getStartY();
-        int width = structure.getWidth();
-        int height = structure.getHeight();
-        int camX = structure.getCamX();
-        int camY = structure.getCamY();
+        int startX = structure[0];
+        int startY = structure[1];
+        int width = structure[2];
+        int height = structure[3];
+        int camX = structure[4];
+        int camY = structure[5];
 
         for (int y = startY; y < height; y++) {
             for (int x = startX; x < width; x++) {

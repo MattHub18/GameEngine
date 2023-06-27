@@ -1,7 +1,6 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Font;
-import com.company.graphic.primitives.CameraShift;
 
 import java.util.ArrayList;
 
@@ -32,18 +31,19 @@ public class FontRender implements RenderInterface {
     }
 
     private void drawFont(Font font, String text, int offX, int offY, int color) {
+
         int offset = 0;
         for (int i = 0; i < text.length(); i++) {
             int unicode = text.codePointAt(i);
 
-            CameraShift structure = basicRender.cameraShift(offX + offset, offY, font.getWidths()[unicode], font.getFontImage().getHeight(), font.isMovable());
+            int[] structure = basicRender.cameraShift(offX + offset, offY, font.getWidths()[unicode], font.getFontImage().getHeight(), font.isMovable());
 
-            int startX = structure.getStartX();
-            int startY = structure.getStartY();
-            int width = structure.getWidth();
-            int height = structure.getHeight();
-            int camX = structure.getCamX();
-            int camY = structure.getCamY();
+            int startX = structure[0];
+            int startY = structure[1];
+            int width = structure[2];
+            int height = structure[3];
+            int camX = structure[4];
+            int camY = structure[5];
 
             for (int y = startY; y < height; y++) {
                 for (int x = startX; x < width; x++) {
@@ -53,6 +53,7 @@ public class FontRender implements RenderInterface {
                 }
             }
             offset += font.getWidths()[unicode];
+
         }
     }
 }

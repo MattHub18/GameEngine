@@ -1,7 +1,6 @@
 package com.company.graphic.primitives.renders;
 
 import com.company.graphic.gfx.Rectangle;
-import com.company.graphic.primitives.CameraShift;
 
 import java.util.ArrayList;
 
@@ -41,14 +40,14 @@ public class RectangleRender implements RenderInterface {
 
     private void drawBorderRectangle(Rectangle rect, int offX, int offY, int color) {
 
-        CameraShift structure = basicRender.cameraShift(offX, offY, rect.getWidth(), rect.getHeight(), rect.isMovable());
+        int[] structure = basicRender.cameraShift(offX, offY, rect.getWidth(), rect.getHeight(), rect.isMovable());
 
-        int startX = structure.getStartX();
-        int startY = structure.getStartY();
-        int width = structure.getWidth();
-        int height = structure.getHeight();
-        int camX = structure.getCamX();
-        int camY = structure.getCamY();
+        int startX = structure[0];
+        int startY = structure[1];
+        int width = structure[2];
+        int height = structure[3];
+        int camX = structure[4];
+        int camY = structure[5];
 
         for (int y = startY; y < height; y++) {
             basicRender.setPixel(offX - camX, y + offY - camY, color);

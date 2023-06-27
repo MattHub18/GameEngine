@@ -1,7 +1,7 @@
 package com.company.ai.decisions.decorator;
 
 import com.company.ai.decisions.Task;
-import com.company.entities.human.entity.GameEntity;
+import com.company.entities.entity.GameEntity;
 
 public abstract class InsertTask extends TaskDecorator {
 
@@ -17,3 +17,4 @@ public abstract class InsertTask extends TaskDecorator {
 
     protected abstract void addLeaves();
 }
+

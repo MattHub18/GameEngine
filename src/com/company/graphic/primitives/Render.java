@@ -27,7 +27,6 @@ public class Render implements RenderInterface {
 
     @Override
     public void process() {
-
         imageRender.process();
         rectangleRender.process();
         circleRender.process();

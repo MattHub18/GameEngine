@@ -13,10 +13,4 @@ public abstract class ColorPalette {
     public static final int YELLOW = 0xffffff00;
 
     public static final int INVISIBLE = 0x00000000;
-
-    public static int FPS = BLACK;
-
-    public static void setPrimary(int color) {
-        FPS = color;
-    }
 }

@@ -5,5 +5,5 @@ public interface Observer {
 
     void unregisterEntityToObserver(Subject subject);
 
-    <T> void updateValue(T value);
+    void updateValue(Object value);
 }

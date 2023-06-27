@@ -5,15 +5,21 @@ import java.util.ArrayList;
 
 public class Loader {
 
-    private final String rootDir;
-    protected ArrayList<String> filenames;
+    private static Loader instance;
 
-    public Loader(String rootDir, ArrayList<String> filenames) {
-        this.rootDir = rootDir;
+    private final ArrayList<String> filenames;
+
+    private Loader(ArrayList<String> filenames) {
         this.filenames = filenames;
     }
 
-    public void load() {
+    public static Loader getInstance(ArrayList<String> filenames) {
+        if (instance == null)
+            instance = new Loader(filenames);
+        return instance;
+    }
+
+    public void load(String rootDir) {
         File mainDir = new File(rootDir);
 
         if (mainDir.exists() && mainDir.isDirectory()) {
@@ -21,19 +27,21 @@ public class Loader {
             if (arr != null)
                 extractResources(arr, 0);
         }
+
+        instance = null;
     }
 
-    private void extractResources(File[] arr, int index) {
-        if (index == arr.length)
+    private void extractResources(File[] source, int index) {
+        if (index == source.length)
             return;
 
-        if (arr[index].isFile())
-            filenames.add(arr[index].getAbsolutePath());
-        else if (arr[index].isDirectory()) {
-            File[] files = arr[index].listFiles();
+        if (source[index].isFile())
+            filenames.add(source[index].getAbsolutePath());
+        else if (source[index].isDirectory()) {
+            File[] files = source[index].listFiles();
             if (files != null)
                 extractResources(files, 0);
         }
-        extractResources(arr, ++index);
+        extractResources(source, ++index);
     }
 }

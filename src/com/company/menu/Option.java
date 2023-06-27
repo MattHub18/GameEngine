@@ -1,14 +1,14 @@
 package com.company.menu;
 
-import com.company.audio.AudioComponent;
 import com.company.audio.Sound;
+import com.company.graphic.Engine;
 import com.company.graphic.Graphic;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.gfx.Rectangle;
-import com.company.graphic.primitives.GameLoop;
 import com.company.graphic.primitives.Render;
 import com.company.resources.SystemResources;
 import com.company.resources.file_system.Archive;
+
 
 public abstract class Option implements Graphic {
     private final String name;
@@ -19,9 +19,9 @@ public abstract class Option implements Graphic {
     private final int textColor;
     private final boolean enable;
     private final Rectangle darkHover;
-    protected GameLoop gl;
+    private final Sound over;
     private boolean hover = false;
-    private final AudioComponent over;
+    protected Engine engine;
     private final Sound click;
 
     public Option(String name, int offX, int offY, int width, int height, int textColor, int backColor, boolean enable) {
@@ -33,21 +33,19 @@ public abstract class Option implements Graphic {
         this.textColor = textColor;
         this.darkHover = new Rectangle(offX, offY, width, height, true, backColor, false);
         this.enable = enable;
-        over = new AudioComponent(SystemResources.OPTION_OVER);
-        click = new Sound(Archive.SOUND.get(SystemResources.OPTION_CLICK));
+        this.over = new Sound(Archive.SOUND.get(SystemResources.OPTION_OVER));
+        this.click = new Sound(Archive.SOUND.get(SystemResources.OPTION_CLICK));
     }
 
     public void onClick() {
         click.play();
     }
 
-    public void update(GameLoop gl, float dt, int mouseX, int mouseY) {
-        update(gl, dt);
+    public void update(Engine engine, float dt, int mouseX, int mouseY) {
         hover = mouseEntered(mouseX, mouseY) && enable;
-        if (hover)
-            over.update();
-        else
-            over.reset();
+        if (this.engine == null)
+            this.engine = engine;
+        update(engine, dt);
     }
 
     private boolean mouseEntered(int mouseX, int mouseY) {
@@ -55,13 +53,13 @@ public abstract class Option implements Graphic {
     }
 
     @Override
-    public void update(GameLoop gl, float dt) {
-        if (this.gl == null)
-            this.gl = gl;
+    public void update(Engine engine, float dt) {
+        if (hover)
+            over.play();
     }
 
     @Override
-    public void render(GameLoop gl, Render r) {
+    public void render(Render r) {
         if (hover)
             r.addRectangle(darkHover);
         r.addFont(new Font(Archive.FONT.get(SystemResources.MENU_FONT), name, offX, offY, textColor, false));

@@ -1,11 +1,9 @@
 package com.company.physics.basics;
 
-import java.io.Serializable;
-
-public class RigidBody implements Serializable {
+public class RigidBody {
     private final Vector position;
-    private int mass;
     private final Vector resultantForce;
+    private int mass;
 
     public RigidBody(Vector center) {
         this.position = new Vector(center);

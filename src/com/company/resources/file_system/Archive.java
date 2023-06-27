@@ -2,21 +2,16 @@ package com.company.resources.file_system;
 
 import com.company.event.Event;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Properties;
 
 public class Archive {
-    public static final ArrayList<String> DATA = new ArrayList<>();
+    public static ArrayList<String> DATA = new ArrayList<>();
     public static final ArrayList<String> SOUND = new ArrayList<>();
     public static final ArrayList<String> TEXTURES = new ArrayList<>();
     public static final ArrayList<String> FONT = new ArrayList<>();
     public static final ArrayList<String> MAP = new ArrayList<>();
     public static final ArrayList<String> DIALOG = new ArrayList<>();
     private ArrayList<Object> data;
-    private static final Properties rooms = new Properties();
 
     public void close() {
         if (data != null)
@@ -28,12 +23,8 @@ public class Archive {
         filter.writeData(path, object);
     }
 
-    public static String worldByRoom(String roomName) {
-        return rooms.getProperty(roomName);
-    }
-
     public void loadData(Filter filter) {
-        new Loader("saves", Archive.DATA).load();
+        Loader.getInstance(DATA).load("saves");
         data = new ArrayList<>();
         data.addAll(filter.readData());
     }
@@ -50,23 +41,12 @@ public class Archive {
         return null;
     }
 
-    private static void loadWorld() {
-        try {
-            InputStream read = new FileInputStream("res/map/worlds.xml");
-            rooms.loadFromXML(read);
-            read.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void load() {
-        new Loader("res\\texture", TEXTURES).load();
-        new Loader("res\\audio", SOUND).load();
-        new Loader("res\\font", FONT).load();
-        new Loader("res\\map", MAP).load();
-        new Loader("res\\dialog", DIALOG).load();
+        Loader.getInstance(TEXTURES).load("res\\texture");
+        Loader.getInstance(SOUND).load("res\\audio");
+        Loader.getInstance(FONT).load("res\\font");
+        Loader.getInstance(MAP).load("res\\map");
+        Loader.getInstance(DIALOG).load("res\\dialog");
         Event.loadEvents();
-        loadWorld();
     }
 }

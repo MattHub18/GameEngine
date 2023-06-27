@@ -2,7 +2,7 @@ package com.company.ai.decisions.decorator;
 
 import com.company.ai.AiInterface;
 import com.company.ai.decisions.Task;
-import com.company.ai.decisions.controller.TaskController;
+import com.company.ai.decisions.controllers.TaskController;
 
 public abstract class TaskDecorator implements Task {
     protected Task task;
@@ -36,3 +36,4 @@ public abstract class TaskDecorator implements Task {
         task.reset();
     }
 }
+
