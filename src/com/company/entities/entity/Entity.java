@@ -14,13 +14,13 @@ import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class Entity implements GameEntity, Graphic {
-    protected EntityGraphicComponent component;
+    protected Sprite component;
     protected int posX;
     protected int posY;
     private Ambient ambient;
     protected byte facingDirection;
 
-    public Entity(int posX, int posY, byte facingDirection, Ambient ambient, EntityGraphicComponent component) {
+    public Entity(int posX, int posY, byte facingDirection, Ambient ambient, Sprite component) {
         this.posX = posX;
         this.posY = posY;
 
@@ -30,7 +30,7 @@ public class Entity implements GameEntity, Graphic {
         build(component);
     }
 
-    public Entity(String serial, Ambient ambient, EntityGraphicComponent component) {
+    public Entity(String serial, Ambient ambient, Sprite component) {
         HashMap<String, String> serialSplit = deserialize(serial);
 
         this.posX = Integer.parseInt(serialSplit.get("posX"));
@@ -43,7 +43,7 @@ public class Entity implements GameEntity, Graphic {
         build(component);
     }
 
-    private void build(EntityGraphicComponent component) {
+    private void build(Sprite component) {
         this.component = component;
     }
 

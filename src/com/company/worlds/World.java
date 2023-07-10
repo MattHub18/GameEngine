@@ -75,7 +75,7 @@ public abstract class World implements Graphic, RenderObject {
         gl.updateCamera(this);
     }
 
-    public void init(GameEntity player) {
+    private void init(GameEntity player) {
         this.player = player;
         currentAmbient.addPlayer(player);
         currentAmbient.spawnEntities();
@@ -98,6 +98,13 @@ public abstract class World implements Graphic, RenderObject {
         Ambient r = player.getRoom();
         currentAmbient = r;
         worldMap.replace(r.getRoomId(), currentAmbient);
+        init(player);
+    }
+
+    public void newGame(GameEntity player) {
+        player.setRoom(currentAmbient);
+        player.setPosX(start.getX());
+        player.setPosY(start.getY());
         init(player);
     }
 }

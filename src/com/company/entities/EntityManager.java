@@ -1,7 +1,6 @@
 package com.company.entities;
 
 import com.company.entities.entity.GameEntity;
-import com.company.entities.move.MovableInterface;
 import com.company.graphic.Engine;
 import com.company.graphic.Graphic;
 import com.company.graphic.primitives.Render;
@@ -27,8 +26,6 @@ public class EntityManager implements Graphic {
     @Override
     public void update(Engine engine, float dt) {
         for (GameEntity e : entities) {
-            if (e instanceof MovableInterface)
-                ((MovableInterface) e).clearMove();
             ((Graphic) e).update(engine, dt);
             entityCollision(e);
         }

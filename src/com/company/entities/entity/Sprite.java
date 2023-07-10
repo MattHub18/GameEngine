@@ -7,7 +7,7 @@ import com.company.resources.file_system.Archive;
 import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
-public class EntityGraphicComponent {
+public class Sprite {
     private final byte textureFilename;
     private final int maxFrames;
     private final int shiftIndex;
@@ -15,7 +15,7 @@ public class EntityGraphicComponent {
     private final float animationDelay;
     private float animationFrame;
 
-    public EntityGraphicComponent(byte textureFilename, int maxFrames, int shiftIndex) {
+    public Sprite(byte textureFilename, int maxFrames, int shiftIndex) {
         this.textureFilename = textureFilename;
         this.maxFrames = maxFrames;
         this.shiftIndex = shiftIndex;
