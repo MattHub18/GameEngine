@@ -1,6 +1,5 @@
 package com.company.graphic;
 
-import com.company.entities.entity.GameEntity;
 import com.company.event.Event;
 import com.company.graphic.gfx.Font;
 import com.company.graphic.primitives.*;
@@ -10,6 +9,7 @@ import com.company.resources.file_system.Archive;
 import com.company.resources.file_system.FileSystem;
 import com.company.scenes.Scene;
 import com.company.scenes.SceneManager;
+import com.company.util.Serializable;
 
 public class Engine implements Runnable {
     private final SceneManager sceneManager;
@@ -125,7 +125,7 @@ public class Engine implements Runnable {
     }
 
     public void save() {
-        GameEntity entity = ((GameEntity) sceneManager.getGameState().getActor());
+        Serializable entity = ((Serializable) sceneManager.getGameState().getActor());
         String name = entity.getClass().getSimpleName();
         Event.updateEvent(name);
         fileSystem.save(name, entity.serialize());

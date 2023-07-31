@@ -69,7 +69,7 @@ public abstract class World implements Graphic, RenderObject {
             currentAmbient = worldMap.get(currentAmbient.LEFT);
         }
 
-        player.setRoom(currentAmbient);
+        player.setAmbient(currentAmbient);
         currentAmbient.addPlayer(player);
         currentAmbient.spawnEntities();
         gl.updateCamera(this);
@@ -95,14 +95,14 @@ public abstract class World implements Graphic, RenderObject {
     }
 
     public void continueGame(GameEntity player) {
-        Ambient r = player.getRoom();
+        Ambient r = player.getAmbient();
         currentAmbient = r;
         worldMap.replace(r.getRoomId(), currentAmbient);
         init(player);
     }
 
     public void newGame(GameEntity player) {
-        player.setRoom(currentAmbient);
+        player.setAmbient(currentAmbient);
         player.setPosX(start.getX());
         player.setPosY(start.getY());
         init(player);

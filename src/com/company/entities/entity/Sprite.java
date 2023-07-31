@@ -8,34 +8,30 @@ import static com.company.resources.SystemConstants.TILE_HEIGHT;
 import static com.company.resources.SystemConstants.TILE_WIDTH;
 
 public class Sprite {
-    private final byte textureFilename;
+    private final TileImage texture;
     private final int maxFrames;
-    private final int shiftIndex;
-
+    private final int row;
     private final float animationDelay;
     private float animationFrame;
 
-    public Sprite(byte textureFilename, int maxFrames, int shiftIndex) {
-        this.textureFilename = textureFilename;
+    public Sprite(byte textureFilename, int maxFrames, int row) {
+        this.texture = new TileImage(Archive.TEXTURES.get(textureFilename), TILE_WIDTH, TILE_HEIGHT, false, true);
         this.maxFrames = maxFrames;
-        this.shiftIndex = shiftIndex;
+        this.row = row;
         this.animationFrame = 0;
         this.animationDelay = 15;
     }
 
     public void update(float dt) {
-        animationFrame += dt * animationDelay;
-        if (animationFrame >= maxFrames)
-            animationFrame = 0;
+        animationFrame = (animationFrame + dt * animationDelay) % maxFrames;
     }
 
 
     public void render(Render r, int posX, int posY, byte facingDirection) {
-        TileImage tileImage = new TileImage(Archive.TEXTURES.get(this.textureFilename), TILE_WIDTH, TILE_HEIGHT, false, true);
-        r.addImage(tileImage.getTile(facingDirection + shiftIndex, (int) animationFrame), posX, posY);
+        r.addImage(texture.getTile(facingDirection + row, (int) animationFrame), posX, posY);
     }
 
-    public float getAnimationFrame() {
-        return animationFrame;
+    public boolean endAnimation(float dt) {
+        return animationFrame <= dt * animationDelay;
     }
 }

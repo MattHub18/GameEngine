@@ -3,8 +3,6 @@ package com.company.entities.entity;
 import com.company.physics.collisions.AxisAlignedBoundingBox;
 import com.company.worlds.Ambient;
 
-import java.util.HashMap;
-
 public interface GameEntity {
 
     int getPosX();
@@ -15,9 +13,9 @@ public interface GameEntity {
 
     void setPosY(int posY);
 
-    Ambient getRoom();
+    Ambient getAmbient();
 
-    void setRoom(Ambient ambient);
+    void setAmbient(Ambient ambient);
 
     AxisAlignedBoundingBox getBox();
 
@@ -25,7 +23,5 @@ public interface GameEntity {
 
     void handleCollisionWith(AxisAlignedBoundingBox tileBox);
 
-    String serialize();
-
-    HashMap<String, String> deserialize(String serial);
+    Sprite getSprite();
 }
